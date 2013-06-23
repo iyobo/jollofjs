@@ -115,7 +115,7 @@ Example is like the first example giving:
 
     "user": { required: true }
 
-If both the `required` and `default` is set on a validation schema then `required` is ignored and the default value will just be inserted.
+If both the `required` and `default` are set on a validation schema then `required` is ignored and the default value will just be inserted.
 
 ### Type specific validators
 
@@ -126,9 +126,9 @@ Arrays has two validator besides the common validators.
 ##### Len validator
 Type: `Number` or `String`
 
-This ensures that an array has a specific number of items. This can be either a number or a range. The validator throws an exception if the array length is outside the specified range.
+This ensures that an array has a specific number of items. This can be either a number or a range. The validator throws an exception if the array length is outside the specified range(s).
 
-Example 1 shows an array that should have exactly 2 elements:
+Example 1 shows an array that should have exactly 2 items:
 
     {
         type: Array,
@@ -136,7 +136,7 @@ Example 1 shows an array that should have exactly 2 elements:
         schema: { … }
     }
 
-Exampe 2 shows an array that should have at least 2 elements:
+Example 2 shows an array that should have at least 2 items:
 
     {
         type: Array,
@@ -144,7 +144,7 @@ Exampe 2 shows an array that should have at least 2 elements:
         schema: { … }
     }
 
-Example 3 shows an array that should have a maximum of 2 elements:
+Example 3 shows an array that should have a maximum of 2 items:
 
     {
         type: Array,
@@ -152,7 +152,7 @@ Example 3 shows an array that should have a maximum of 2 elements:
         schema: { … }
     }
 
-Example 4 shows an array that should have at least 2 elements and a maximmum of 5:
+Example 4 shows an array that should have at least 2 items and a maximum of 5 items:
 
     {
         type: Array,
@@ -190,7 +190,7 @@ type: `RegExp`
 
 This ensures that a string can be matched against a regular expressions pattern. The validator throws an exception if the string does not match the pattern.
 
-Example shows a string that must contain at least one latin letter or numbers:
+Example shows a string that must contain at least one latin letter or decimal number:
 
     { type: String, match /^[a-zA-Z0-9]+$/ }
 
@@ -198,12 +198,11 @@ Example shows a string that must contain at least one latin letter or numbers:
 
 ### Numbers
 
-If schema has type `Number` and the input holds a `String` containing numbers (or/and a point), the validator will automaticly convert that into a number.
+If schema has type `Number` and the input holds a `String` containing numbers (or/and a point), the validator will automatically convert that into a number.
 
 ### Booleans
 
-Likewise will the schemas of type `Boolean` but with a type of `String` containing either `true` or `false` (only lowercase), the validator will automaticly convert that into the `Boolean` value.
-
+Likewise will schemas of type `Boolean` be automatically converted into a `Boolean` if a `String` with the value of `true` or `false` is in the data.
 
 ## Express.js Middlewares
 
@@ -215,7 +214,7 @@ Example of `validateBody`:
     
     app.post('/user', validator.validateBody(schema), function(req, res) {
     	
-    	// Body has been validated or an exception was thrown.
+    	// Body has been validated or an exception has been thrown.
     	
     });
 
@@ -225,6 +224,6 @@ Example of `validateQuery`:
     
     app.post('/user', validator.validateQuery(schema), function(req, res) {
     	
-    	// Query has been validated or an exception was thrown.
+    	// Query has been validated or an exception has been thrown.
     	
     });
