@@ -1,0 +1,20 @@
+{
+	"name": "express-validator.js",
+	"version": "0.0.1",
+	"description": "Validates route inputs in express.js using schemas.",
+	"main": "./validator.js",
+	"keywords": [
+		"express.js",
+		"validation"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/trenskow/express-validator.js.git"
+	},
+	"license": "BSD",
+	"author": {
+		"name": "Kristian Trenskow",
+		"email": "trenskow@me.com",
+		"url": "https://github.com/trenskow"
+	}
+}
