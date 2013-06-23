@@ -1,7 +1,5 @@
 /* Validation middleware for routes. */
 
-var Error = require('./lib/errors');
-
 var validate = function(obj, schema, callback, fieldName) {
 	
 	if (!schema)
