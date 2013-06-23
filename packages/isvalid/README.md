@@ -6,7 +6,7 @@ It uses a schema - inspired by the MongoDB schemas - to create templates for how
 
 And example of how to use the validator goes like this:
 
-    var validator = require('validator');
+    var validator = require('express-validator');
     
     var newUserValidationSchema = {
         "user": { type: String, required: true },
@@ -210,7 +210,7 @@ Express.js middleware can be created on the fly. Currently `validateBody` and `v
 
 Example of `validateBody`:
 
-    var validator = require('validator');
+    var validator = require('express-validator');
     
     app.post('/user', validator.validateBody(schema), function(req, res) {
     	
@@ -220,7 +220,7 @@ Example of `validateBody`:
 
 Example of `validateQuery`:
 
-    var validator = require('validator');
+    var validator = require('express-validator');
     
     app.post('/user', validator.validateQuery(schema), function(req, res) {
     	
