@@ -5,7 +5,7 @@ var Error = require('./lib/errors');
 var validate = function(obj, schema, callback, fieldName) {
 	
 	if (!schema)
-		throw new Error.Validation('No schema supplied for validation.');
+		throw new Error('No schema supplied for validation.');
 	fieldName = fieldName || 'obj';
 	
 	/* Type shortcuts. */
@@ -21,7 +21,7 @@ var validate = function(obj, schema, callback, fieldName) {
 		if (schema.default)
 			callback(null, schema.default);
 		else if (schema.required)
-			callback(new Error.Validation('Required key ' + fieldName + ' not set.'));
+			callback(new Error('Validation: Required key ' + fieldName + ' not set.'));
 		else
 			callback(null, obj);
 		
@@ -32,13 +32,13 @@ var validate = function(obj, schema, callback, fieldName) {
 			if (obj === null)
 				callback(null, null);
 			else if ('Object' != obj.constructor.name) /* Enforce obj type. */
-				callback(new Error.Validation('Key ' + fieldName + ' is not of type Object.'));
+				callback(new Error('Validation: Key ' + fieldName + ' is not of type Object.'));
 			else {
 				
 				/* Find unknown keys. */
 				for (var key in obj)
 					if (!schema.schema[key]) {
-						callback(new Error.Validation('Unknown key ' + fieldName + '.' + key + '.'));
+						callback(new Error('Validation: Unknown key ' + fieldName + '.' + key + '.'));
 						return;
 					}
 				
@@ -73,7 +73,7 @@ var validate = function(obj, schema, callback, fieldName) {
 			if (obj === null)
 				callback(null, null);
 			else if ('Array' != obj.constructor.name) /* Enforce obj type. */
-				callback(new Error.Validation('Key ' + fieldName + ' is not of type Array.'));
+				callback(new Error('Validation: Key ' + fieldName + ' is not of type Array.'));
 			else {
 				
 				/* Enforce range option. */
@@ -97,12 +97,12 @@ var validate = function(obj, schema, callback, fieldName) {
 					}
 					
 					if (!lengthValid) {
-						callback(new Error.Validation('Key ' + fieldName + ' length is not within the range(s) ' + schema.len + '.'));
+						callback(new Error('Validation: Key ' + fieldName + ' length is not within the range(s) ' + schema.len + '.'));
 						return;
 					}
 					
 				} else if (schema.len && 'Number' == schema.len.constructor.name && obj.length != schema.len) {
-					callback(new Error.Validation('Key ' + fieldName + ' array does not hold ' + schema.len + ' items.'));
+					callback(new Error('Validation: Key ' + fieldName + ' array does not hold ' + schema.len + ' items.'));
 					return;
 				}
 
@@ -131,7 +131,7 @@ var validate = function(obj, schema, callback, fieldName) {
 								for (var b = 0 ; b < a ; b++)
 									if (('Boolean' == schema.unique.constructor.type && validatedArr[a] == validatedArr[b])
 										|| ('String' == schema.unique.constructor.name && validatedArr[a][schema.unique] == validatedArr[b][schema.unique])) {
-										callback(new Error.Validation('Index ' + b + ' and ' + a + ' are non-unique in key ' + fieldName + '.'));
+										callback(new Error('Validation: Index ' + b + ' and ' + a + ' are non-unique in key ' + fieldName + '.'));
 										return;
 									}
 							
@@ -150,9 +150,9 @@ var validate = function(obj, schema, callback, fieldName) {
 			if (obj === null && !schema.match)
 				callback(null, null)
 			else if (obj === null)
-				callback(new Error.Validation('Key ' + fieldName + ' does not match expression ' + schema.match.source + '.'));
+				callback(new Error('Validation: Key ' + fieldName + ' does not match expression ' + schema.match.source + '.'));
 			else if ('String' != obj.constructor.name) /* Enforce obj type */
-				callback(new Error.Validation('Key ' + fieldName + ' is not of type String.'));
+				callback(new Error('Validation: Key ' + fieldName + ' is not of type String.'));
 			else {
 				
 				var validStr = obj;
@@ -161,7 +161,7 @@ var validate = function(obj, schema, callback, fieldName) {
 					validStr = validStr.replace(/^\s+|\s+$/g,'');
 				
 				if (schema.match && !schema.match.test(obj)) {
-					callback(new Error.Validation('Key ' + fieldName + ' does not match expression ' + schema.match.source + '.' ));
+					callback(new Error('Validation: Key ' + fieldName + ' does not match expression ' + schema.match.source + '.' ));
 					return;
 				}
 				
@@ -187,7 +187,7 @@ var validate = function(obj, schema, callback, fieldName) {
 
 				}
 				
-				callback(new Error.Validation('Key ' + fieldName + ' is not a number.'));
+				callback(new Error('Validation: Key ' + fieldName + ' is not a number.'));
 				
 			}
 			
@@ -198,12 +198,12 @@ var validate = function(obj, schema, callback, fieldName) {
 			else if ('String' == obj.constructor.name && (obj.toLowerCase() == 'true' || obj.toLowerCase() == 'false'))
 				callback(null, (obj.toLowerCase() == 'true'));
 			else
-				callback(new Error.Validation(fieldName + ' is not a boolean.'));
+				callback(new Error('Validation: ' + fieldName + ' is not a boolean.'));
 			
 		} else {
 			
 			if (obj.constructor.name != schema.type.name)
-				callback(new Error.Validation('Key ' + fieldName + ' is not a ' + schema.type.name + '.'));
+				callback(new Error('Validation: Key ' + fieldName + ' is not a ' + schema.type.name + '.'));
 			else
 				callback(null, obj);
 			

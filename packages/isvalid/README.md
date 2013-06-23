@@ -2,7 +2,7 @@
 
 This tools is a basic validation tool i made for another node.js project. It's main purpose is to make a general purpose request input validator for the express.js applications.
 
-It uses a schema - inspired by the MongoDB schemas - to create templates for how incoming data should be structured. It then validates and throws an exception if validation did not succeed.
+It uses a schema - inspired by the MongoDB schemas - to create templates for how incoming data should be structured. It then validates or sends an error to the error handler if validation did not succeed.
 
 And example of how to use the validator goes like this:
 
@@ -17,7 +17,7 @@ And example of how to use the validator goes like this:
         
         // req.body is now validated and no further validation needs to take place.
         
-        // If body could not be validated, and exception has been thrown.
+        // If body could not be validated, an error has been passed to the error handler.
         
     });
 
@@ -109,7 +109,7 @@ Now if the `receive-newsletter` field has not been specified, the validator will
 #### Required validator
 Type: `Boolean`
 
-Required works a bit like default. But instead of replacing the value if the field is absent, we instead throw an exception.
+Required works a bit like default. But instead of replacing the value if the field is absent, we instead send an error to the error handler.
 
 Example is like the first example giving:
 
@@ -126,7 +126,7 @@ Arrays has two validator besides the common validators.
 ##### Len validator
 Type: `Number` or `String`
 
-This ensures that an array has a specific number of items. This can be either a number or a range. The validator throws an exception if the array length is outside the specified range(s).
+This ensures that an array has a specific number of items. This can be either a number or a range. The validator sends an error to the error handler if the array length is outside the specified range(s).
 
 Example 1 shows an array that should have exactly 2 items:
 
@@ -171,7 +171,7 @@ Finally example 5 shows an advanced usage. In this example the array must have a
 ##### Unique validator
 Type: `Boolean`
 
-This ensures that all elements in the array are unique. If two or more elements are the same, the validator will throw an exception.
+This ensures that all elements in the array are unique. If two or more elements are the same, the validator send an error to the error handler.
 
 Example:
 
@@ -188,7 +188,7 @@ Strings has one validator besides the common validators.
 ##### Match validator
 type: `RegExp`
 
-This ensures that a string can be matched against a regular expressions pattern. The validator throws an exception if the string does not match the pattern.
+This ensures that a string can be matched against a regular expressions pattern. The validator sends an error to the error handler if the string does not match the pattern.
 
 Example shows a string that must contain at least one latin letter or decimal number:
 
@@ -214,7 +214,7 @@ Example of `validateBody`:
     
     app.post('/user', validator.validateBody(schema), function(req, res) {
     	
-    	// Body has been validated or an exception has been thrown.
+    	// Body has been validated or an error has been send to the error handler.
     	
     });
 
@@ -224,6 +224,6 @@ Example of `validateQuery`:
     
     app.post('/user', validator.validateQuery(schema), function(req, res) {
     	
-    	// Query has been validated or an exception has been thrown.
+    	// Query has been validated or an error has been send to the error handler.
     	
     });
