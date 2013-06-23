@@ -1,15 +1,16 @@
 {
-	"name": "express-validator",
+	"name": "express-schema-validator",
 	"version": "0.0.1",
 	"description": "Validates route inputs in express.js using schemas.",
 	"main": "./validator.js",
 	"keywords": [
 		"express.js",
+		"schemas",
 		"validation"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/trenskow/express-validator.js.git"
+		"url": "https://github.com/trenskow/express-schema-validator.js.git"
 	},
 	"license": "BSD",
 	"author": {
