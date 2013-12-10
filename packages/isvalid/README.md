@@ -2,7 +2,7 @@
 
 This tools is a basic validation tool i made for another node.js project. It's main purpose is to make a general purpose request input validator for the express.js applications.
 
-It uses a schema - inspired by the MongoDB schemas - to create templates for how incoming data should be structured. It then validates or sends an error to the error handler if validation did not succeed.
+It uses a schema - inspired by the MongoDB schemas - to create templates for how incoming data should be structured. It then validates or sends an error to the express.js or connect.js error handler if validation did not succeed.
 
 And example of how to use the validator goes like this:
 
@@ -90,7 +90,7 @@ There are some validators that are common to all types, and then some types have
 These validators are supported by all types.
 
 #### Default validator
-Type: `Boolean`
+Type: `Any`
 
 This validator specifies a default value for fields.
 
@@ -115,7 +115,7 @@ Example is like the first example giving:
 
     "user": { required: true }
 
-If both the `required` and `default` are set on a validation schema then `required` is ignored and the default value will just be inserted.
+If both `required` and `default` are set on a validation schema then `required` is ignored.
 
 ### Type specific validators
 
