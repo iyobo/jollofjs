@@ -16,7 +16,7 @@ var validate = function(obj, schema, callback, fieldName) {
 	
 	if (obj === undefined) {
 		
-		if (schema.default)
+		if (schema.default !== undefined)
 			callback(null, schema.default);
 		else if (schema.required)
 			callback(new Error('Validation: Required key ' + fieldName + ' not set.'));
