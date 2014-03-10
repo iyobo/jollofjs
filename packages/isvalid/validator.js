@@ -183,10 +183,9 @@ var validate = function(obj, schema, callback, fieldName) {
 						return;
 					}
 
+				} else {
+					callback(new Error('Validation: Key ' + fieldName + ' is not a number.'));
 				}
-				else{
-                    			callback(new Error('Validation: Key ' + fieldName + ' is not a number.'));
-                		}
 				
 			}
 			
