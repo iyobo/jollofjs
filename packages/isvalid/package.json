@@ -4,7 +4,7 @@
 	"description": "Validates route inputs in express.js using schemas.",
 	"main": "./index.js",
 	"keywords": [
-		"express.js",
+		"express",
 		"schemas",
 		"validation"
 	],
