@@ -1,238 +1,207 @@
-/* Validation middleware for routes. */
+var ValidationError = require('./error.js'),
+	ranges = require('./ranges.js'),
+	unique = require('./unique.js');
 
-var validate = function(obj, schema, callback, fieldName) {
+var copyObject = function(obj) {
+	var copy = {};
+	for (var key in obj) copy[key] = obj[key];
+	return copy;
+};
+
+var validateObject = function(obj, schema, callback, keyPath) {
 	
-	if (!schema)
-		throw new Error('No schema supplied for validation.');
-	fieldName = fieldName || 'obj';
+	if (obj) {
+		
+		if ('Object' != obj.constructor.name) {
+			return callback(new ValidationError(keyPath, 'Is not of type Object.'));
+		}
+		
+		// Copy schema
+		var schemaCopy = {};
+		for (var key in schema.schema) schemaCopy[key] = schema.schema[key];
 	
-	/* Type shortcuts. */
-	if ('Object' == schema.constructor.name && schema.type === undefined)
-		schema = { type: Object, schema: schema };
-	else if ('Array' == schema.constructor.name)
-		schema = { type: Array, schema: schema[0] };
-	else if ('Function' == schema.constructor.name)
-		schema = { type: schema };
+		// Put validated object here
+		var validObj = {};
 	
-	if (obj === undefined) {
-		
-		if (schema.default !== undefined)
-			callback(null, schema.default);
-		else if (schema.required)
-			callback(new Error('Validation: Required key ' + fieldName + ' not set.'));
-		else
-			callback(null, obj);
-		
-	} else {
-		
-		if ('Object' == schema.type.name) { /* Validate type Object. */
+		return (function validateNextKey() {
 			
-			if (obj === null)
-				callback(null, null);
-			else if ('Object' != obj.constructor.name) /* Enforce obj type. */
-				callback(new Error('Validation: Key ' + fieldName + ' is not of type Object.'));
-			else {
+			for (var key in schemaCopy) break;
+			if (!key) return callback(null, validObj);
+		
+			var keySchema = schemaCopy[key];
+			delete schemaCopy[key];
+		
+			validate(obj[key], keySchema, function(err, validatedObj) {
+				if (err) return callback(err);
+				validObj[key] = validatedObj;
+				validateNextKey();
+			}, keyPath.concat([key]));
 				
-				/* Find unknown keys. */
-				for (var key in obj)
-					if (!schema.schema[key]) {
-						callback(new Error('Validation: Unknown key ' + fieldName + '.' + key + '.'));
-						return;
-					}
-				
-				/* Copy schema. */
-				var schemaCopy = {};
-				for (var key in schema.schema)
-					schemaCopy[key] = schema.schema[key];
-				
-				/* Validate obj and build validated object (validObj). */
-				var validatedObj = {};
-				
-				(function validateKey() {
-					for (var key in schemaCopy) break; /* Get first key. */
-					if (key !== undefined) {
-						validate(obj[key], schemaCopy[key], function(err, val) {
-							if (!err) {
-								delete schemaCopy[key];
-								if (val !== undefined)
-									validatedObj[key] = val;
-								validateKey();
-							} else
-								callback(err);
-						}, fieldName + '.' + key);
-					} else
-						callback(null, validatedObj);
-				})();
-				
-			}
+		})();
+		
+	}
+	
+	return callback(null, obj);
+	
+};
+
+var validateArray = function(arr, schema, callback, keyPath) {
+	
+	if (arr) {
+		
+		var validArray = [];
+		
+		return (function validateNext(idx) {
 			
-		} else if ('Array' == schema.type.name) { /* Validate type Array. */
-			
-			if (obj === null)
-				callback(null, null);
-			else if ('Array' != obj.constructor.name) /* Enforce obj type. */
-				callback(new Error('Validation: Key ' + fieldName + ' is not of type Array.'));
-			else {
+			if (idx == arr.length) {
 				
-				/* Enforce range option. */
-				if (schema.len && 'String' == schema.len.constructor.name) {
-					
-					var lengthValid = false;
-					var ranges = schema.len.replace(/[ ]+/, '').split(',');
-					for (var index in ranges) {
-						var range = ranges[index].split('-');
-						if (range.length == 1 && obj.length == parseInt(range[0])) {
-							lengthValid = true;
-							continue;
-						} else if (range.length == 2) {
-							range[0] = (range[0].length == 0 ? 0 : parseInt(range[0]));
-							range[1] = (range[1].length == 0 ? Infinity : parseInt(range[1]));
-							if (obj.length >= range[0] && obj.length <= range[1]) {
-								lengthValid = true;
-								continue;
+				if (schema.len && !ranges.testIndex(schema.len, validArray.length)) {
+					return callback(new ValidationError(keyPath, 'Array length is not within range of \'' + schema.len + '\''));
+				}
+				
+				if (schema.unique && validArray.length > 1) {
+					for (var idx1 = 0 ; idx1 < validArray.length - 1 ; idx1++) {
+						for (var idx2 = idx1 + 1 ; idx2 < validArray.length ; idx2++ ) {
+							if (unique.equals(validArray[idx1], validArray[idx2])) {
+								keyPath = keyPath.concat([ idx1.toString() ]);
+								return callback(new ValidationError(keyPath, 'Is not unique.'));
 							}
 						}
 					}
-					
-					if (!lengthValid) {
-						callback(new Error('Validation: Key ' + fieldName + ' length is not within the range(s) ' + schema.len + '.'));
-						return;
-					}
-					
-				} else if (schema.len && 'Number' == schema.len.constructor.name && obj.length != schema.len) {
-					callback(new Error('Validation: Key ' + fieldName + ' array does not hold ' + schema.len + ' items.'));
-					return;
-				}
-
-				var validatedArr = [];
-				var index = 0;
-
-				(function validateIndex() {
-					
-					if (index < obj.length) {
-						
-						validate(obj[index], schema.schema, function(err, val) {
-							if (!err) {
-								if (val !== undefined)
-									validatedArr.push(val);
-								index++;
-								validateIndex();
-							} else
-								callback(err);
-						}, fieldName + '.' + index);
-						
-					} else {
-						
-						if (schema.unique) {
-							
-							for (var a = 1 ; a < validatedArr.length ; a++)
-								for (var b = 0 ; b < a ; b++)
-									if (('Boolean' == schema.unique.constructor.type && validatedArr[a] == validatedArr[b])
-										|| ('String' == schema.unique.constructor.name && validatedArr[a][schema.unique] == validatedArr[b][schema.unique])) {
-										callback(new Error('Validation: Index ' + b + ' and ' + a + ' are non-unique in key ' + fieldName + '.'));
-										return;
-									}
-							
-						}
-						
-						callback(null, validatedArr);
-						
-					}
-					
-				})();
-								
-			}
-			
-		} else if ('String' == schema.type.name) { /* Validate type String */
-			
-			if (obj === null && !schema.match)
-				callback(null, null)
-			else if (obj === null)
-				callback(new Error('Validation: Key ' + fieldName + ' does not match expression ' + schema.match.source + '.'));
-			else if ('String' != obj.constructor.name) /* Enforce obj type */
-				callback(new Error('Validation: Key ' + fieldName + ' is not of type String.'));
-			else {
-				
-				var validStr = obj;
-				
-				if (schema.trim)
-					validStr = validStr.replace(/^\s+|\s+$/g,'');
-				
-				if (schema.match && !schema.match.test(obj)) {
-					callback(new Error('Validation: Key ' + fieldName + ' does not match expression ' + schema.match.source + '.' ));
-					return;
 				}
 				
-				callback(null, validStr);
+				return callback(null, validArray);
 				
 			}
 			
-		} else if ('Number' == schema.type.name) {
+			validate(arr[idx], schema.schema, function(err, validObj) {
+				if (err) return callback(err);
+				validArray.push(validObj);
+				validateNext(idx + 1);
+			}, keyPath.concat([ idx.toString() ]));
 			
-			if (obj === null)
-				callback(null, null);
-			else {
-				
-				if ('Number' == obj.constructor.name)
-					callback(null, obj);
-				else if ('String' == obj.constructor.name) {
+		})(0);
+		
+	}
+	
+	return callback(null, arr);
+	
+};
 
-					var match = obj.match(/[0-9]+(?:\.[0.9])?/);
-					if (match && match[0].length == obj.length) {
-						callback(null, parseFloat(obj));
-						return;
-					}
-
-				} else {
-					callback(new Error('Validation: Key ' + fieldName + ' is not a number.'));
-				}
-				
+var validateString = function(str, schema, callback, keyPath) {
+	
+	if (str) {
+		
+		var validStr = str;
+	
+		if ('String' != validStr.constructor.name) {
+			return callback(new ValidationError(keyPath, 'Is not of type string.'));
+		};
+		
+		if (schema.trim) {
+			validStr = validStr.replace(/^\s+|\s+$/g,'');
+		}
+	
+		if (schema.match) {
+			if ('RegExp' != schema.match.constructor.name) {
+				throw new Error('Schema {type: String}: match is not a RegExp.');
 			}
-			
-		} else if ('Boolean' == schema.type.name) {
-			
-			if (obj === null || 'Boolean' == obj.constructor.name)
-				callback(null, obj);
-			else if ('String' == obj.constructor.name && (obj.toLowerCase() == 'true' || obj.toLowerCase() == 'false'))
-				callback(null, (obj.toLowerCase() == 'true'));
-			else
-				callback(new Error('Validation: ' + fieldName + ' is not a boolean.'));
-			
-		} else {
-			
-			if (obj.constructor.name != schema.type.name)
-				callback(new Error('Validation: Key ' + fieldName + ' is not a ' + schema.type.name + '.'));
-			else
-				callback(null, obj);
-			
+			if (!schema.match.test(validStr)) {
+				return callback(new ValidationError(keyPath, 'Does not match expression ' + schema.match.source + '.'));
+			}
 		}
 		
+		return callback(null, validStr);
+		
 	}
+	
+	return callback(null, str);
 	
 };
 
-module.exports = {
+var validateNumber = function(num, schema, callback, keyPath) {
 	
-	validate: validate,	
-	validateBody: function(schema) {
+	if (num) {
 		
-		return function(req, res, next) {
-			validate(req.body, schema, function(err, validObj) {
-				req.body = validObj;
-				next(err);
-			}, 'body');
-		};
+		var validNum = num;
+	
+		if ('String' == validNum.constructor.name && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
+			validNum = parseFloat(validNum);
+		} else if ('Number' != validNum.constructor.name) {
+			return callback(new ValidationError(keyPath, 'Is not of type number.'));
+		}
 		
-	},
-	validateQuery: function(schema) {
+		if (schema.range) {
+			if (!ranges.testIndex(schema.range, validNum)) {
+				return callback(new ValidationError(keyPath, 'Not within range of ' + schema.range));
+			}
+		}
 		
-		return function(req, res, next) {
-			validate(req.query, schema, function(err, validObj) {
-				req.query = validObj;
-				next(err);
-			}, 'query');
-		};
+		return callback(null, validNum);
 		
 	}
 	
+	return callback(null, num);
+	
 };
+
+var validateBoolean = function(val, schema, callback, keyPath) {
+	
+	if (val) {
+		
+		if ('String' == val.constructor.name && /^true|false$/i.test(val)) {
+			val = /^true$/i.test(val);
+		}
+		
+		if ('Boolean' != val.constructor.name) {
+			return callback(new ValidationError(keyPath, 'Is not of type boolean.'));
+		}
+		
+		return callback(null, val);
+		
+	}
+	
+	return callback(null, val);
+	
+};
+
+var validate = function(obj, schema, callback, keyPath) {
+	
+	if (!schema) throw new Error('Missing parameter schema');
+	if (!callback) throw new Error('Missing parameter callback');
+	
+	keyPath = keyPath || [];
+	
+	// Type Shortcuts
+	if (!schema.type) {
+		if ('Object' == schema.constructor.name) return validate(obj, { type: Object, schema: schema }, callback, keyPath);
+		if ('Array' == schema.constructor.name) {
+			if (schema.length == 0) return callback(new Error('Array shortcut must contain a schema object.'));
+			return validate(obj, { type: Array, schema: schema[0] }, callback, keyPath);
+		}
+	}
+	
+	if (!obj) {
+		if (schema.default) {
+			if ('Function' == schema.default.constructor.name) {
+				return schema.default(function(defaultValue) {
+					callback(null, defaultValue);
+				});
+			} else {
+				return callback(null, schema.default);
+			}
+		}
+		if (schema.required) return callback(new ValidationError(keyPath, 'Key is required.'));
+	}
+	
+	if ('Object' == schema.type.name) return validateObject(obj, schema, callback, keyPath);
+	if ('Array' == schema.type.name) return validateArray(obj, schema, callback, keyPath);
+	if ('String' == schema.type.name) return validateString(obj, schema, callback, keyPath);
+	if ('Number' == schema.type.name) return validateNumber(obj, schema, callback, keyPath);
+	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, callback, keyPath);
+	
+	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
+	
+};
+
+module.exports.validate = validate;

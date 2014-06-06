@@ -1,6 +1,6 @@
 {
 	"name": "express-schema-validator",
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"description": "Validates route inputs in express.js using schemas.",
 	"main": "./index.js",
 	"keywords": [
@@ -8,6 +8,13 @@
 		"schemas",
 		"validation"
 	],
+	"devDependencies": {
+		"mocha": ">= 1.20.0",
+		"chai": ">= 1.9.1"
+	},
+	"scripts": {
+		"test": "./node_modules/mocha/bin/mocha ./test/*.js"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/trenskow/express-schema-validator.js.git"
