@@ -48,7 +48,7 @@ module.exports.testIndex = function(ranges, index) {
 		
 	}
 	
-	// Index was not matched to any ranges.
+	// Index was not matched to any range.
 	return false;
 	
 };

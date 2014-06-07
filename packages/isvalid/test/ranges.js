@@ -5,7 +5,7 @@ var expect = require('chai').expect,
 describe('ranges', function() {
 	describe('#testIndex()', function() {
 		describe('[input]', function() {
-			it ('should throw an exception if ranges is not a string', function() {
+			it ('should throw an error if ranges is not a string', function() {
 				expect(function() {
 					ranges.testIndex([123], 1);
 				}).to.throw(Error);
