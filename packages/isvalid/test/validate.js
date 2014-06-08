@@ -1,7 +1,18 @@
-var expect = require('chai').expect,
-	should = require('chai').should(),
+var chai = require('chai'),
+	expect = chai.expect,
 	ValidationError = require('../lib/error.js'),
 	validate = require('../index.js').validate;
+
+chai.use(function(_chai, utils) {
+	var Assertion = chai.Assertion;
+	utils.addProperty(Assertion.prototype, 'validationError', function() {
+		var err = utils.flag(this, 'object');
+		new Assertion(err).to.have.property('keyPath').to.be.an('Array');
+		new Assertion(err).to.have.property('schema').to.be.an('Object');
+		new Assertion(err).to.have.property('schema').to.have.property('type');
+		new Assertion(err).to.have.property('message').to.be.a('String');
+	});
+});
 
 describe('Validate', function() {
 	describe('function', function() {
@@ -49,7 +60,7 @@ describe('Validate', function() {
 		describe('[Object validators]', function() {
 			it ('should come back with error if input is not an object', function(done) {
 				validate(123, {}, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -76,11 +87,10 @@ describe('Validate', function() {
 			});
 		});
 		describe('[Array validators]', function() {
-			it ('should come back with error if array shortcut contains no objects', function(done) {
-				validate([], [], function(err, validObj) {
-					expect(err).to.exist;
-					done();
-				});
+			it ('should throw an error if array shortcut contains no objects', function() {
+				expect(function() {
+					validate([], [], undefined);
+				}).to.throw(Error);
 			});
 			it ('should come back with no error and an empty array when supplying empty array', function(done) {
 				validate([], [{}], function(err, validObj) {
@@ -95,7 +105,7 @@ describe('Validate', function() {
 					len: '2-',
 					schema: {}
 				}, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -109,7 +119,7 @@ describe('Validate', function() {
 					unique: true,
 					schema: { awesome: { type: Boolean } }
 				}, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -132,7 +142,7 @@ describe('Validate', function() {
 		describe('[String validators]', function() {
 			it ('should come back with error if string is not supplied.', function(done) {
 				validate(123, { type: String }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -150,7 +160,7 @@ describe('Validate', function() {
 			});
 			it ('should come back with an error if string does not match RegExp', function(done) {
 				validate('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -185,7 +195,7 @@ describe('Validate', function() {
 			});
 			it ('should come back with error if input is not a number.', function(done) {
 				validate('abc', { type: Number }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -198,13 +208,13 @@ describe('Validate', function() {
 			});
 			it ('should come back with error if string is supplied - but not a number', function(done) {
 				validate('abc', { type: Number }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
 			it ('should come back with error if input is not within range', function(done) {
 				validate(1, { type: Number, range: '2-4' }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
@@ -219,7 +229,7 @@ describe('Validate', function() {
 		describe('[Boolean validators]', function() {
 			it ('should come back with error if input is not a Boolean', function(done) {
 				validate([], { type: Boolean }, function(err, validObj) {
-					expect(err).to.exist;
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
