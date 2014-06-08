@@ -22,9 +22,8 @@ var validateObject = function(obj, schema, callback, keyPath) {
 	
 		// Put validated object here
 		var validObj = {};
-	
-		return (function validateNextKey() {
-			
+		
+		var validateNextKey = function() {
 			for (var key in schemaCopy) break;
 			if (!key) return callback(null, validObj);
 		
@@ -36,8 +35,9 @@ var validateObject = function(obj, schema, callback, keyPath) {
 				validObj[key] = validatedObj;
 				validateNextKey();
 			}, keyPath.concat([key]));
-				
-		})();
+		};
+		
+		return validateNextKey();
 		
 	}
 	
@@ -51,7 +51,7 @@ var validateArray = function(arr, schema, callback, keyPath) {
 		
 		var validArray = [];
 		
-		return (function validateNext(idx) {
+		var validateNext = function(idx) {
 			
 			if (idx == arr.length) {
 				
@@ -80,8 +80,10 @@ var validateArray = function(arr, schema, callback, keyPath) {
 				validateNext(idx + 1);
 			}, keyPath.concat([ idx.toString() ]));
 			
-		})(0);
+		};
 		
+		return validateNext(0);
+				
 	}
 	
 	return callback(null, arr);
