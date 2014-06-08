@@ -171,7 +171,7 @@ var validateAny = function(obj, schema, callback, keyPath) {
 	if (!schema.type) {
 		if ('Object' == schema.constructor.name) return validateAny(obj, { type: Object, schema: schema }, callback, keyPath);
 		if ('Array' == schema.constructor.name) {
-			if (schema.length == 0) throw new Error('Array shortcut must contain a schema object.');
+			if (schema.length == 0) return callback(new Error('Array shortcut must contain a schema object.'));
 			return validateAny(obj, { type: Array, schema: schema[0] }, callback, keyPath);
 		}
 	}
