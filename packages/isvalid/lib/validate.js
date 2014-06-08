@@ -2,12 +2,6 @@ var ValidationError = require('./error.js'),
 	ranges = require('./ranges.js'),
 	unique = require('./unique.js');
 
-var copyObject = function(obj) {
-	var copy = {};
-	for (var key in obj) copy[key] = obj[key];
-	return copy;
-};
-
 var validateObject = function(obj, schema, callback, keyPath) {
 	
 	if (obj) {
