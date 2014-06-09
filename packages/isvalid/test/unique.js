@@ -1,5 +1,4 @@
 var expect = require('chai').expect,
-	should = require('chai').should(),
 	unique = require('../lib/unique.js');
 
 describe('unique', function() {
