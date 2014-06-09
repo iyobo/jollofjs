@@ -201,8 +201,8 @@ var validateAny = function(obj, schema, callback, keyPath) {
 	
 };
 
-var validate = function(obj, schema, callback, keyPath) {
-	
+module.exports = function(obj, schema, callback, keyPath) {
+
 	if (!schema) throw new Error('Missing parameter schema');
 	if (!callback) throw new Error('Missing parameter callback');
 	
@@ -213,5 +213,3 @@ var validate = function(obj, schema, callback, keyPath) {
 	return validateAny(obj, schema, callback, keyPath);
 	
 };
-
-module.exports.validate = validate;
