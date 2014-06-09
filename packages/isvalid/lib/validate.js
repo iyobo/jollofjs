@@ -14,7 +14,12 @@ var validateObject = function(obj, schema, callback, keyPath) {
 		// Copy schema
 		var schemaCopy = {};
 		for (var key in schema.schema) schemaCopy[key] = schema.schema[key];
-	
+		
+		// Find unknown keys
+		for (var key in obj) {
+			if (!schemaCopy[key]) return callback(new ValidationError(keyPath.concat([key]), schema, 'Unknown key.'));
+		}
+		
 		// Put validated object here
 		var validObj = {};
 		
@@ -24,12 +29,13 @@ var validateObject = function(obj, schema, callback, keyPath) {
 		
 			var keySchema = schemaCopy[key];
 			delete schemaCopy[key];
-		
+			
 			validateAny(obj[key], keySchema, function(err, validatedObj) {
 				if (err) return callback(err);
 				validObj[key] = validatedObj;
 				validateNextKey();
 			}, keyPath.concat([key]));
+			
 		};
 		
 		return validateNextKey();
