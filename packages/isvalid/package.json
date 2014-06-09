@@ -12,7 +12,7 @@
 		"chai": ">= 1.9.1"
 	},
 	"scripts": {
-		"test": "./node_modules/mocha/bin/mocha -b ./test/*.js"
+		"test": "./node_modules/mocha/bin/mocha ./test/*.js"
 	},
 	"repository": {
 		"type": "git",
