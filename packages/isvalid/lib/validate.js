@@ -162,6 +162,19 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 	
 };
 
+var validateCustom = function(obj, schema, callback, keyPath) {
+	
+	return schema.custom(obj, schema, function(err, validObj) {
+		if (err) {
+			var stack = err.stack;
+			err = new ValidationError(keyPath, schema, err.message);
+			err.stack = stack;
+		}
+		return callback(err, validObj);
+	});
+	
+};
+
 var validateAny = function(obj, schema, callback, keyPath) {
 	
 	if (!obj) {
@@ -177,6 +190,7 @@ var validateAny = function(obj, schema, callback, keyPath) {
 		if (schema.required) return callback(new ValidationError(keyPath, schema, 'Key is required.'));
 	}
 	
+	if (schema.custom) return validateCustom(obj, schema, callback, keyPath);
 	if ('Object' == schema.type.name) return validateObject(obj, schema, callback, keyPath);
 	if ('Array' == schema.type.name) return validateArray(obj, schema, callback, keyPath);
 	if ('String' == schema.type.name) return validateString(obj, schema, callback, keyPath);

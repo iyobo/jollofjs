@@ -9,7 +9,7 @@ chai.use(function(_chai, utils) {
 		var err = utils.flag(this, 'object');
 		new Assertion(err).to.have.property('keyPath').to.be.an('Array');
 		new Assertion(err).to.have.property('schema').to.be.an('Object');
-		new Assertion(err).to.have.property('schema').to.have.property('type');
+		new Assertion(err).to.have.property('schema').to.be.an('Object');
 		new Assertion(err).to.have.property('message').to.be.a('String');
 	});
 });
@@ -239,6 +239,41 @@ describe('Validate', function() {
 				validate('False', { type: Boolean }, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal(false);
+					done();
+				});
+			});
+		});
+		describe('[custom validators]', function() {
+			it ('should call function if custom is specified.', function(done) {
+				validate({}, {
+					custom: function(obj, schema, fn) {
+						expect(obj).to.be.an('Object');
+						expect(schema).to.have.property('custom');
+						fn(null, obj);
+					}
+				}, function(err, validObj) {
+					expect(validObj).to.be.an('Object');
+					done();
+				});
+			});
+			it ('should reformat err if custom is specified and returns an error', function(done) {
+				validate({}, {
+					custom: function(obj, schema, fn) {
+						fn(new Error('This is an error'));
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					done();
+				});
+			});
+			it ('should pass on custom schema options if specified', function(done) {
+				validate({}, {
+					custom: function(obj, schema, fn) {
+						expect(schema).to.have.property('options').to.be.equal('test');
+						fn();
+					},
+					options: 'test'
+				}, function(err, validObj) {
 					done();
 				});
 			});

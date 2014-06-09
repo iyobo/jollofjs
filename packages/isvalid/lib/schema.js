@@ -32,7 +32,7 @@ var formalizeArray = function(schema) {
 };
 
 var formalize = function(schema) {
-	
+		
 	// Type Shortcuts
 	if (!schema.type && !schema.custom) {
 		if ('Object' == schema.constructor.name) return formalize({ type: Object, schema: schema });
@@ -41,9 +41,11 @@ var formalize = function(schema) {
 			return formalize({ type: Array, schema: schema[0] });
 		}
 	}
-		
-	if ('Object' == schema.type.name) return formalizeObject(schema);
-	if ('Array' == schema.type.name) return formalizeArray(schema);
+	
+	if (!schema.custom) {
+		if ('Object' == schema.type.name) return formalizeObject(schema);
+		if ('Array' == schema.type.name) return formalizeArray(schema);
+	}
 	
 	return schema;
 	
