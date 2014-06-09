@@ -71,7 +71,7 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come out with same input as output is keys can validate.', function(done) {
+			it ('should come out with same input as output if keys can validate.', function(done) {
 				validate({
 					awesome: true,
 					why: 'It just is!'
@@ -87,11 +87,6 @@ describe('Validate', function() {
 			});
 		});
 		describe('[Array validators]', function() {
-			it ('should throw an error if array shortcut contains no objects', function() {
-				expect(function() {
-					validate([], [], undefined);
-				}).to.throw(Error);
-			});
 			it ('should come back with no error and an empty array when supplying empty array', function(done) {
 				validate([], [{}], function(err, validObj) {
 					expect(err).to.be.null;

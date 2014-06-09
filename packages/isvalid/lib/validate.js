@@ -1,6 +1,7 @@
 var ValidationError = require('./error.js'),
 	ranges = require('./ranges.js'),
-	unique = require('./unique.js');
+	unique = require('./unique.js'),
+	schemaTools = require('./schema.js');
 
 var validateObject = function(obj, schema, callback, keyPath) {
 	
@@ -163,15 +164,6 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 
 var validateAny = function(obj, schema, callback, keyPath) {
 	
-	// Type Shortcuts
-	if (!schema.type) {
-		if ('Object' == schema.constructor.name) return validateAny(obj, { type: Object, schema: schema }, callback, keyPath);
-		if ('Array' == schema.constructor.name) {
-			if (schema.length == 0) return callback(new Error('Array shortcut must contain a schema object.'));
-			return validateAny(obj, { type: Array, schema: schema[0] }, callback, keyPath);
-		}
-	}
-	
 	if (!obj) {
 		if (schema.default) {
 			if ('Function' == schema.default.constructor.name) {
@@ -201,6 +193,8 @@ var validate = function(obj, schema, callback, keyPath) {
 	if (!callback) throw new Error('Missing parameter callback');
 	
 	keyPath = keyPath || [];
+	
+	schema = schemaTools.formalize(schema);
 	
 	return validateAny(obj, schema, callback, keyPath);
 	
