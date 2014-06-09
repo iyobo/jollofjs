@@ -1,6 +1,6 @@
 # isvalid.js
 
-**isvalid.js** is an asyncronous node.js library for validating and error correcting JSON. It uses a schema modal - inspired by Mongoose schemas.
+**isvalid.js** is an asynchronous node.js library for validating and error correcting JSON. It uses a schema modal - inspired by Mongoose schemas.
 
 Here's a simple example on how to use the validator:
 
@@ -26,7 +26,7 @@ For usage with express.js - validating body and query data - use the easier [isv
 
 # How to Use
 
-**isvalid.js** uses a simple schema modal to specify how the data should be formattet. It supports generic validators for all types and type specific validators.
+**isvalid.js** uses a simple schema modal to specify how the data should be formatted. It supports generic validators for all types and type specific validators.
 
 ## Errors
 
@@ -110,7 +110,7 @@ In the above example the type must be a `String`.
 
 All schemas must have the `type` specified - or have a custom validator through a custom function. See more about custom validator in it's designated section below.
 
-Object and array shortcuts apply their type automatically. In fact the library uses the absend of `type` to determine object shortcuts.
+Object and array shortcuts apply their type automatically. In fact the library uses the absent of `type` to determine object shortcuts.
 
 ### Common Validators
 
@@ -156,7 +156,7 @@ Example:
 
 In the above example the function is called whenever the input data does not have a `created` field.
 
-The function *must* take one parameter which holds the callback function to call with the actual default data. The reason is the asyncronous nature of the library and allows for asyncronous work to be done before calling the callback.
+The function *must* take one parameter which holds the callback function to call with the actual default data. The reason is the asynchronous nature of the library and allows for asynchronous work to be done before calling the callback.
 
 #### Required Validator
 Values: `true`, `false` or `'implicit'`.
@@ -180,7 +180,7 @@ Example:
         }
     }
 
-The above example is to illustrate what `'implicit'` does. Because the `user` subschema is required, the parent object inhently also becomes required. If none of the subschemas is required, the parent object is also not required.
+The above example is to illustrate what `'implicit'` does. Because the `user` subschema is required, the parent object inherently also becomes required. If none of the subschemas is required, the parent object is also not required.
 
 This enables you to specify that some portion of the data is optional, but if it is present - it's content should have some required fields.
 
@@ -291,7 +291,7 @@ The `range` validator supports the same formatting as the array's `len` validato
 
 ## Custom Validators
 
-Custom validators are for usage when the posibilities of the validation schema falls short. Custom validators basically outsources validation to a custom function.
+Custom validators are for usage when the possibilities of the validation schema falls short. Custom validators basically outsources validation to a custom function.
 
 Custom validators are specified by the `custom` field of a schema - instead of `type`.
 
@@ -310,7 +310,7 @@ Example (remark the absent of `type`):
 
 In the above example we have specified a custom validator. In the specific case we test whether the data is of type `Date`. If not we pass an error to the callback. Otherwise we call the callback function with no error and the valid object.
 
-The asyncronous nature of the library, allows for syncronous operations in custom functions.
+The asynchronous nature of the library, allows for asynchronous operations in custom functions.
 
 The custom function must take three parameters
 
@@ -319,7 +319,7 @@ The custom function must take three parameters
    - This enables you to use the schema to pass in options.
  - *fn* The callback function to call when validation is either complete or failed.
    - The callback function takes to parameters
-     - *err* An `Error` describing the validation error that occured.
+     - *err* An `Error` describing the validation error that occurred.
      - *validObj* The finished and validated object.
 
 *Remark:* Errors are automatically converted into a ValidationError and sent to the the callback internally.
@@ -338,4 +338,4 @@ Likewise will schemas of type `Boolean` be automatically converted into a `Boole
 
 ### Object Shortcuts
 
-Internally the library tests for object shortcuts by examining the absend of the `type` and `custom` keys. So if you need objects schemas with validators for those keys, then you must use explicitly formatted object schemas - hence the shortcut cannot be used.
+Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for those keys, then you must use explicitly formatted object schemas - hence the shortcut cannot be used.
