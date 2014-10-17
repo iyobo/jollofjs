@@ -243,6 +243,21 @@ describe('Validate', function() {
 				});
 			});
 		});
+		describe('[Date validators]', function() {
+			it ('should come back with error if input is not a Date', function(done) {
+				validate([], { type: Date }, function(err, validObj) {
+					expect(err).to.be.validationError;
+					done();
+				});
+			});
+			it ('should come back with no error and validObj set to a Date if input is string with an ISO date', function(done) {
+				validate('2014-10-19T02:24:42.395Z', { type: Date }, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj.getTime()).to.equal(new Date("2014-10-19T02:24:42.395Z").getTime());
+					done();
+				});
+			});
+		});
 		describe('[custom validators]', function() {
 			it ('should call function if custom is specified.', function(done) {
 				validate({}, {

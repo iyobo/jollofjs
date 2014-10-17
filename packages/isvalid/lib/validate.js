@@ -168,6 +168,30 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 	
 };
 
+var validateDate = function(val, schema, callback, keyPath) {
+	
+	if (val) {
+		
+		if ('String' == val.constructor.name ) {
+			var date = new Date(val);
+			if ( ! isNaN(date.getDate()) )
+	 			return callback(null,date);
+
+			return callback(new ValidationError(keyPath, schema, 'Is not a valid Date string.'));	
+		}
+
+		if ('Date' != val.constructor.name) {
+			return callback(new ValidationError(keyPath, schema, 'Is not coerceable to a Date.'));
+		}
+		
+		return callback(null, val);
+		
+	}
+	
+	return callback(null, val);
+	
+};
+
 var validateCustom = function(obj, schema, callback, keyPath) {
 	
 	return schema.custom(obj, schema, function(err, validObj) {
@@ -202,6 +226,7 @@ var validateAny = function(obj, schema, callback, keyPath) {
 	if ('String' == schema.type.name) return validateString(obj, schema, callback, keyPath);
 	if ('Number' == schema.type.name) return validateNumber(obj, schema, callback, keyPath);
 	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, callback, keyPath);
+	if ('Date' == schema.type.name) return validateDate(obj, schema, callback, keyPath);
 	
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 	
