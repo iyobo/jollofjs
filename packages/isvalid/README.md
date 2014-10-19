@@ -289,6 +289,12 @@ This ensures that the number is within a certain range. If not the validator sen
 
 The `range` validator supports the same formatting as the array's `len` validator described above.
 
+#### Date Validators
+
+Date has no custom validators - though future validators are in the planning. Submit an [issue](https://github.com/trenskow/isvalid.js/issues) if you have any suggestions.
+
+Date does - though - have automatic conversion of ISO-8601 formatted strings. See below for more information.
+
 ## Custom Validators
 
 Custom validators are for usage when the possibilities of the validation schema falls short. Custom validators basically outsources validation to a custom function.
@@ -333,6 +339,10 @@ If the schema has type `Number` and the input holds a `String` containing number
 ### Booleans
 
 Likewise will schemas of type `Boolean` be automatically converted into a `Boolean` if a `String` with the value of `true` or `false` is in the data.
+
+### Date
+
+If the schema is of type `Date` and a `String` containing an [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) formatted date is supplied, it will automatically be parsed and converted into a `Date`.
 
 ## Be aware of...
 
