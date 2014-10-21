@@ -1,3 +1,22 @@
+var checkValidators = function(schema) {
+	
+	var validators = [];
+	
+	if (schema.custom) validators = [ 'custom', 'options' ];
+	if (schema.type) {
+		validators = [ 'type', 'required', 'default' ];
+		if ('Object' == schema.type.name) validators = validators.concat([ 'schema' ]);
+		if ('Array' == schema.type.name) validators = validators.concat([ 'schema', 'len', 'unique' ]);
+		if ('String' == schema.type.name) validators = validators.concat([ 'match', 'trim' ]);
+		if ('Number' == schema.type.name) validators = validators.concat([ 'range' ]);
+	}
+	
+	for (var key in schema) {
+		if (validators.indexOf(key) == -1) throw new Error('Validator \'' + key + '\' is unknown in this context.');
+	}
+	
+};
+
 var formalizeObject = function(schema) {
 	
 	for (var key in schema.schema) {
@@ -20,7 +39,7 @@ var formalizeObject = function(schema) {
 };
 
 var formalizeArray = function(schema) {
-	
+		
 	schema.schema = formalize(schema.schema);
 	
 	if (typeof(schema.required) === 'undefined' || schema.required === 'implicit') {
@@ -33,10 +52,6 @@ var formalizeArray = function(schema) {
 
 var formalize = function(schema) {
 		
-	if (schema.type && schema.custom) {
-		throw new Error('Schema cannot both have a \'type\' and a \'custom\' validator.')
-	}
-	
 	// Type Shortcuts
 	if (!schema.type && !schema.custom) {
 		if ('Object' == schema.constructor.name) return formalize({ type: Object, schema: schema });
@@ -46,11 +61,13 @@ var formalize = function(schema) {
 		}
 	}
 	
+	checkValidators(schema);
+	
 	if (!schema.custom) {
 		if ('Object' == schema.type.name) return formalizeObject(schema);
 		if ('Array' == schema.type.name) return formalizeArray(schema);
 	}
-		
+	
 	return schema;
 	
 };
