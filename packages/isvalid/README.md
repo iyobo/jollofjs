@@ -24,6 +24,16 @@ The `isvalid` function takes three parameters.
 
 For usage with express.js - validating body and query data - use the easier [isvalid-express.js](https://github.com/trenskow/isvalid-express.js) library.
 
+# What's New in Version 0.1.0
+
+There are some additions - as well as some changes - in version 0.1.0.
+
+ * Automatic parsing of [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) dates into Date - contributed by [thom-nic](https://github.com/thom-nic).
+ * Errors are thrown if validators are used out of context.
+ * ValidationError now contains the `validator` property - specifying which validator actually failed.
+ * You can now specify custom error messages using the `error` validator.
+ * `Object` now supports the `allowUnknownKeys` validator.
+
 # How to Use
 
 **isvalid.js** uses a simple schema modal to specify how the data should be formatted. It supports generic validators for all types and type specific validators.
@@ -120,7 +130,7 @@ These validators are supported by all types.
 #### Default Validator
 Defaults data to specific value if data is not present in input. It takes a specific value or it can call a custom function to retrieve the value.
 
-Values: Any value or a function.
+Type: Any value or a function.
 
 ##### Static Values
 
@@ -200,14 +210,47 @@ In the above example the data will validate if the object is not in the input. E
 
 *Remark:* `Object`s and `Array`s are by default `'implicit'` if `required` is not specified. All other are by default non-required.
 
+#### Errors Validator
+
+Type: `Object`
+
+Errors are not a validator - it allows you to customize the errors emitted by the validators. All validators have default error messages, but these can be customized in order to make more user friendly error messages.
+
+An example below:
+
+    {
+        'username': {
+            type: String,
+            required: true,
+            match: /^[^ @]+$/,
+            errors: {
+                type: 'Username must be a string.',
+                required: 'Username is required.',
+                match: 'Username cannot contain any white spaces.'
+            }
+        }
+    }
+
+Now in case any of the validators fail, they will emit the error message specified - instead of the default built-in error message. The `message` property of `ValidationError` will contain the message on validation failure.
+
 ### Type Specific Validators
+
+#### Object Validators
+
+##### AllowUnknownKeys Validator
+
+Type: `Boolean` - default is `false`
+
+This is to make sure that keys not intended in the data are passed through. If an object contains a key unspecified in the schema it will come back with an error - if the value of this validator is set to `false`.
+
+On the other hand - if this is set to `true` - any unknown keys are not validated.
 
 #### Array Validators
 
 Arrays has two validator besides the common validators.
 
 ##### Len Validator
-Values: `Number` or `String`
+Type: `Number` or `String`
 
 This ensures that an array has a specific number of items. This can be either a number or a range. The validator sends an error to the callback if the array length is outside the bounds of the specified range(s).
 
@@ -270,8 +313,13 @@ The `unique` validator does a deep comparison on `Object`s and `Array`s.
 
 Strings has one validator besides the common validators.
 
+##### Trim Validator
+Type: `Boolean`
+
+This does not do any actual validation. Instead it trims the input string in both ends - before any other validators are checked. Use this to make any unforeseen white spaces by the user be automatically removed before any other validation is done.
+
 ##### Match Validator
-Values: A `RegExp`
+Type: `RegExp`
 
 This ensures that a string can be matched against a regular expression. The validator sends an error to the callback if the string does not match the pattern.
 
@@ -284,7 +332,7 @@ This example shows a string that must contain a string of at least one character
 Numbers has one validator besides the common validators.
 
 ##### Range Validator
-Values: `Number`or `String`
+Type: `Number`or `String`
 
 This ensures that the number is within a certain range. If not the validator sends an error to the callback.
 
@@ -324,6 +372,26 @@ The custom function must take three parameters
      - *validObj* The finished and validated object.
 
 *Remark:* Errors are automatically converted into a ValidationError and sent to the the callback internally.
+
+### Options in Custom Validators
+
+If you need to pass any options you can supply them using the `options` property of the schema.
+
+An example below.
+
+    {
+        'myKey': {
+            options: {
+            	myCustomOptions: 'here'
+            },
+            custom: function(obj, schema, fn) {
+            	// schema.options will now contain whatever options you supplied in the schema.
+            	// In this example schema.options.myCustomOptions equals 'here'.
+            }
+        }
+    }
+
+Using any other key than `custom` and `options` in conjunction with a custom validator will throw an error.
 
 ## Automatic Type Conversion
 

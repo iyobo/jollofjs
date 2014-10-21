@@ -92,6 +92,47 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should come back with unknown keys intact if allowUnknownKeys are true.', function() {
+				validate({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					type: Object,
+					allowUnknownKeys: true,
+					schema: {
+						awesome: { type: Boolean }
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.have.property('why').equals('It just is!');
+				});
+			});
+			it ('should come back with error if there are unknown keys and allowUnknownKeys is not set.', function() {
+				validate({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					awesome: { type: Boolean }
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+				});
+			});
+			it ('should come back with error if there are unknown keys and allowUnknownKeys is set to false.', function() {
+				validate({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					type: Object,
+					allowUnknownKeys: false,
+					schema: {
+						awesome: { type: Boolean }
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+				});
+			});
 		});
 		describe('[Array validators]', function() {
 			it ('should come back with no error and an empty array when supplying empty array', function(done) {

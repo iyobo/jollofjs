@@ -4,8 +4,8 @@ var checkValidators = function(schema) {
 	
 	if (schema.custom) validators = [ 'custom', 'options' ];
 	if (schema.type) {
-		validators = [ 'type', 'required', 'default' ];
-		if ('Object' == schema.type.name) validators = validators.concat([ 'schema' ]);
+		validators = [ 'type', 'required', 'default', 'errors' ];
+		if ('Object' == schema.type.name) validators = validators.concat([ 'schema', 'allowUnknownKeys' ]);
 		if ('Array' == schema.type.name) validators = validators.concat([ 'schema', 'len', 'unique' ]);
 		if ('String' == schema.type.name) validators = validators.concat([ 'match', 'trim' ]);
 		if ('Number' == schema.type.name) validators = validators.concat([ 'range' ]);
