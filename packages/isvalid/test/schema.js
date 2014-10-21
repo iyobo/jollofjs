@@ -8,6 +8,11 @@ describe('schema', function() {
 				schema.formalize([]);
 			}).to.throw(Error);
 		});
+		it ('should throw an error if both type and custom is set', function() {
+			expect(function() {
+				schema.formalize({ type: String, custom: function() {} });
+			}).to.throw(Error);
+		});
 		it ('should come back with an object shortcut expanded', function() {
 			var s = schema.formalize({});
 			expect(s).to.have.property('type');

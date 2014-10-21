@@ -14,7 +14,7 @@ var formalizeObject = function(schema) {
 			}
 		}
 	}
-		
+	
 	return schema;
 	
 };
@@ -33,6 +33,10 @@ var formalizeArray = function(schema) {
 
 var formalize = function(schema) {
 		
+	if (schema.type && schema.custom) {
+		throw new Error('Schema cannot both have a \'type\' and a \'custom\' validator.')
+	}
+	
 	// Type Shortcuts
 	if (!schema.type && !schema.custom) {
 		if ('Object' == schema.constructor.name) return formalize({ type: Object, schema: schema });
@@ -46,7 +50,7 @@ var formalize = function(schema) {
 		if ('Object' == schema.type.name) return formalizeObject(schema);
 		if ('Array' == schema.type.name) return formalizeArray(schema);
 	}
-	
+		
 	return schema;
 	
 };
