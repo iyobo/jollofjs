@@ -32,10 +32,8 @@ describe('schema', function() {
 		it ('should come back with required set to true if any deep subschema is required.', function() {
 			var s = schema.formalize({
 				'a': {
-					type: Object,
-					required: 'implicit',
-					schema: {
-						'b': { type: String, required: true }
+					'b': {
+						'c': { type: String, required: true }
 					}
 				}
 			});
