@@ -18,7 +18,7 @@ describe('schema', function() {
 			expect(s).to.have.property('type');
 			expect(s).to.have.property('schema').to.be.an('Object')
 		});
-		it ('should come back with required set to true if object is has not specified required and a nested subschema is required.', function() {
+		it ('should come back with required set to true if object has not specified required and a nested subschema is required.', function() {
 			var s = schema.formalize({
 				'a': { type: String, required: true }
 			});
