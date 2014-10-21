@@ -290,12 +290,6 @@ This ensures that the number is within a certain range. If not the validator sen
 
 The `range` validator supports the same formatting as the array's `len` validator described above.
 
-#### Date Validators
-
-Date has no custom validators - though future validators are in the planning. Submit an [issue](https://github.com/trenskow/isvalid.js/issues) if you have any suggestions.
-
-Date does - though - have automatic conversion of ISO-8601 formatted strings. See below for more information.
-
 ## Custom Validators
 
 Custom validators are for usage when the possibilities of the validation schema falls short. Custom validators basically outsources validation to a custom function.
