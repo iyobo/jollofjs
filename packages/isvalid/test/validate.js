@@ -37,6 +37,7 @@ describe('Validate', function() {
 			it ('should come back with error if object is required and object is not set.', function(done) {
 				validate(undefined, { type: Object, required: true }, function(err, validObj) {
 					expect(err).to.have.property('keyPath');
+					expect(err).to.have.property('validator').equal('required');
 					done();
 				});
 			});
@@ -61,6 +62,7 @@ describe('Validate', function() {
 			it ('should come back with error if input is not an object', function(done) {
 				validate(123, {}, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
@@ -101,6 +103,7 @@ describe('Validate', function() {
 					schema: {}
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('len');
 					done();
 				});
 			});
@@ -115,6 +118,7 @@ describe('Validate', function() {
 					schema: { awesome: { type: Boolean } }
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('unique');
 					done();
 				});
 			});
@@ -138,6 +142,7 @@ describe('Validate', function() {
 			it ('should come back with error if string is not supplied.', function(done) {
 				validate(123, { type: String }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
@@ -156,6 +161,7 @@ describe('Validate', function() {
 			it ('should come back with an error if string does not match RegExp', function(done) {
 				validate('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('match');
 					done();
 				});
 			});
@@ -204,12 +210,14 @@ describe('Validate', function() {
 			it ('should come back with error if string is supplied - but not a number', function(done) {
 				validate('abc', { type: Number }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not within range', function(done) {
 				validate(1, { type: Number, range: '2-4' }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('range');
 					done();
 				});
 			});
@@ -225,6 +233,7 @@ describe('Validate', function() {
 			it ('should come back with error if input is not a Boolean', function(done) {
 				validate([], { type: Boolean }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
@@ -247,6 +256,7 @@ describe('Validate', function() {
 			it ('should come back with error if input is not a Date', function(done) {
 				validate([], { type: Date }, function(err, validObj) {
 					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});

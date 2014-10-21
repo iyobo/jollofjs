@@ -1,6 +1,6 @@
 var util = require('util');
 
-function ValidationError(keyPath, schema, message) {
+function ValidationError(keyPath, schema, validator, message) {
 	
 	Error.call(this);
 	Error.captureStackTrace(this, this.constructor);
@@ -9,9 +9,10 @@ function ValidationError(keyPath, schema, message) {
 	for (var key in schema) schemaCopy[key] = schema[key];
 	
 	delete schemaCopy.schema;
-		
+	
 	this.keyPath = keyPath;
 	this.schema = schemaCopy;
+	this.validator = validator;
 	this.message = message;
 	
 };

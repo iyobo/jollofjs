@@ -8,7 +8,7 @@ var validateObject = function(obj, schema, callback, keyPath) {
 	if (obj) {
 		
 		if ('Object' != obj.constructor.name) {
-			return callback(new ValidationError(keyPath, schema, 'Is not of type Object.'));
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not of type Object.'));
 		}
 		
 		// Copy schema
@@ -17,7 +17,7 @@ var validateObject = function(obj, schema, callback, keyPath) {
 		
 		// Find unknown keys
 		for (var key in obj) {
-			if (!schemaCopy[key]) return callback(new ValidationError(keyPath.concat([key]), schema, 'Unknown key.'));
+			if (!schemaCopy[key]) return callback(new ValidationError(keyPath.concat([key]), schema, undefined, 'Unknown key.'));
 		}
 		
 		// Put validated object here
@@ -57,7 +57,7 @@ var validateArray = function(arr, schema, callback, keyPath) {
 			if (idx == arr.length) {
 				
 				if (schema.len && !ranges.testIndex(schema.len, validArray.length)) {
-					return callback(new ValidationError(keyPath, schema, 'Array length is not within range of \'' + schema.len + '\''));
+					return callback(new ValidationError(keyPath, schema, 'len', 'Array length is not within range of \'' + schema.len + '\''));
 				}
 				
 				if (schema.unique && validArray.length > 1) {
@@ -65,7 +65,7 @@ var validateArray = function(arr, schema, callback, keyPath) {
 						for (var idx2 = idx1 + 1 ; idx2 < validArray.length ; idx2++ ) {
 							if (unique.equals(validArray[idx1], validArray[idx2])) {
 								keyPath = keyPath.concat([ idx1.toString() ]);
-								return callback(new ValidationError(keyPath, schema, 'Is not unique.'));
+								return callback(new ValidationError(keyPath, schema, 'unique', 'Is not unique.'));
 							}
 						}
 					}
@@ -98,7 +98,7 @@ var validateString = function(str, schema, callback, keyPath) {
 		var validStr = str;
 	
 		if ('String' != validStr.constructor.name) {
-			return callback(new ValidationError(keyPath, schema, 'Is not of type string.'));
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not of type string.'));
 		};
 		
 		if (schema.trim) {
@@ -110,7 +110,7 @@ var validateString = function(str, schema, callback, keyPath) {
 				throw new Error('Schema {type: String}: match is not a RegExp.');
 			}
 			if (!schema.match.test(validStr)) {
-				return callback(new ValidationError(keyPath, schema, 'Does not match expression ' + schema.match.source + '.'));
+				return callback(new ValidationError(keyPath, schema, 'match', 'Does not match expression ' + schema.match.source + '.'));
 			}
 		}
 		
@@ -131,12 +131,12 @@ var validateNumber = function(num, schema, callback, keyPath) {
 		if ('String' == validNum.constructor.name && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
 			validNum = parseFloat(validNum);
 		} else if ('Number' != validNum.constructor.name) {
-			return callback(new ValidationError(keyPath, schema, 'Is not of type number.'));
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not of type number.'));
 		}
 		
 		if (schema.range) {
 			if (!ranges.testIndex(schema.range, validNum)) {
-				return callback(new ValidationError(keyPath, schema, 'Not within range of ' + schema.range));
+				return callback(new ValidationError(keyPath, schema, 'range', 'Not within range of ' + schema.range));
 			}
 		}
 		
@@ -157,7 +157,7 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 		}
 		
 		if ('Boolean' != val.constructor.name) {
-			return callback(new ValidationError(keyPath, schema, 'Is not of type boolean.'));
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not of type boolean.'));
 		}
 		
 		return callback(null, val);
@@ -177,11 +177,11 @@ var validateDate = function(val, schema, callback, keyPath) {
 			if ( ! isNaN(date.getDate()) )
 	 			return callback(null,date);
 
-			return callback(new ValidationError(keyPath, schema, 'Is not a valid Date string.'));	
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not a valid Date string.'));	
 		}
 
 		if ('Date' != val.constructor.name) {
-			return callback(new ValidationError(keyPath, schema, 'Is not coerceable to a Date.'));
+			return callback(new ValidationError(keyPath, schema, 'type', 'Is not coerceable to a Date.'));
 		}
 		
 		return callback(null, val);
@@ -197,7 +197,7 @@ var validateCustom = function(obj, schema, callback, keyPath) {
 	return schema.custom(obj, schema, function(err, validObj) {
 		if (err) {
 			var stack = err.stack;
-			err = new ValidationError(keyPath, schema, err.message);
+			err = new ValidationError(keyPath, schema, 'custom', err.message);
 			err.stack = stack;
 		}
 		return callback(err, validObj);
@@ -217,7 +217,7 @@ var validateAny = function(obj, schema, callback, keyPath) {
 				return callback(null, schema.default);
 			}
 		}
-		if (schema.required) return callback(new ValidationError(keyPath, schema, 'Key is required.'));
+		if (schema.required) return callback(new ValidationError(keyPath, schema, 'required', 'Key is required.'));
 	}
 	
 	if (schema.custom) return validateCustom(obj, schema, callback, keyPath);
