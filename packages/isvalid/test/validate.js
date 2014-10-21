@@ -41,6 +41,11 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should throw an error if schema is not of supported type', function() {
+				expect(function() {
+					validate(undefined, { type: RegExp });
+				}).to.throw(Error);
+			});
 			it ('should call default if function is provided.', function(done) {
 				validate(undefined, { type: Object, default: function(cb) {
 					cb({ empty: true });
