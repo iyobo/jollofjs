@@ -55,7 +55,7 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should com back with true when default value \'true\' is provided', function(done) {
+			it ('should come back with true when default value \'true\' is provided', function(done) {
 				validate(undefined, { type: Object, default: { empty: true } }, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('empty').equals(true);
