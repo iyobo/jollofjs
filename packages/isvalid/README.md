@@ -98,6 +98,7 @@ These types are supported by the validator:
  * String
  * Number
  * Boolean
+ * Date
  * or custom validators.
 
 There are some validators that are common to all types, and then some types have specific validators.
