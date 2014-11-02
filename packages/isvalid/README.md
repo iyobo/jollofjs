@@ -44,10 +44,11 @@ Errors in function parameters or schemas are thrown - validation errors are pass
 
 ### ValidationError
 
-The `ValidationError` contains two fields besides the `message` field of `Error`.
+The `ValidationError` contains three properties besides the `message` field of `Error`.
 
   - `keyPath` is an array indicating the key path in the data where the error occured.
   - `schema` is the schema that failed to validate.
+  - `validator` is the name of the validator that failed.
 
 ## Type Shortcuts
 
