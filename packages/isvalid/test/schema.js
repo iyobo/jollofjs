@@ -14,33 +14,37 @@ describe('schema', function() {
 			}).to.throw(Error);
 		});
 		it ('should come back with an object shortcut expanded', function() {
-			var s = schema.formalize({});
-			expect(s).to.have.property('type');
-			expect(s).to.have.property('schema').to.be.an('Object')
+			schema.formalize({}, function(s) {
+				expect(s).to.have.property('type');
+				expect(s).to.have.property('schema').to.be.an('Object')
+			});
 		});
 		it ('should come back with an array shortcut expanded', function() {
-			var s = schema.formalize([{}]);
-			expect(s).to.have.property('type');
-			expect(s).to.have.property('schema').to.be.an('Object')
+			schema.formalize([{}], function(s) {
+				expect(s).to.have.property('type');
+				expect(s).to.have.property('schema').to.be.an('Object')
+			});
 		});
 		it ('should come back with required set to true if object has not specified required and a nested subschema is required.', function() {
-			var s = schema.formalize({
+			schema.formalize({
 				'a': { type: String, required: true }
+			}, function(s) {
+				expect(s).to.have.property('required').to.be.equal(true);
 			});
-			expect(s).to.have.property('required').to.be.equal(true);
 		});
 		it ('should come back with required set to true if any deep subschema is required.', function() {
-			var s = schema.formalize({
+			schema.formalize({
 				'a': {
 					'b': {
 						'c': { type: String, required: true }
 					}
 				}
+			}, function(s) {
+				expect(s).to.have.property('required').to.be.equal(true);
 			});
-			expect(s).to.have.property('required').to.be.equal(true);
 		});
 		it ('should come back with required set to false if root object required is false and deep subschema is required.', function() {
-			var s = schema.formalize({
+			schema.formalize({
 				type: Object,
 				required: false,
 				schema: {
@@ -52,22 +56,33 @@ describe('schema', function() {
 						}
 					}
 				}
+			}, function(s) {
+				expect(s).to.have.property('required').to.be.equal(false);
 			});
-			expect(s).to.have.property('required').to.be.equal(false);
 		});
 		it ('should come back with required set to true if array has deep nested required subschema', function() {
-			var s = schema.formalize([{ type: String, required: true }]);
-			expect(s).to.have.property('required').to.be.equal(true);
+			schema.formalize([{ type: String, required: true }], function(s) {
+				expect(s).to.have.property('required').to.be.equal(true);
+			});
 		});
 		it ('should come back with required set to false if array is non-required but has deep nested required subschema', function() {
-			var s = schema.formalize({
+			schema.formalize({
 				type: Array,
 				required: false,
 				schema: {
 					'a': { type: String, required: true }
 				}
+			}, function(s) {
+				expect(s).to.have.property('required').to.be.equal(false);
 			});
-			expect(s).to.have.property('required').to.be.equal(false);
+		});
+		it ('should come back with an object with both keys formalized', function() {
+			schema.formalize({
+				'a': { type: String, required: true },
+				'b': { type: String, required: true }
+			}, function(s) {
+				expect(s).to.have.property('schema');
+			});
 		});
 	});
 });

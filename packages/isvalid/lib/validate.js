@@ -290,6 +290,13 @@ var validateCustom = function(obj, schema, callback, keyPath) {
 
 var validateAny = function(obj, schema, callback, keyPath) {
 	
+	// If schema is not yet formalized - formalize it and come back.
+	if (schema._formalized !== true) {
+		return schemaTools.formalize(schema, function(formalizedSchema) {
+			return validateAny(obj, formalizedSchema, callback, keyPath);
+		});
+	}
+	
 	if (!obj) {
 		if (schema.default) {
 			if ('Function' == schema.default.constructor.name) {
@@ -325,14 +332,12 @@ var validateAny = function(obj, schema, callback, keyPath) {
 };
 
 module.exports = function(obj, schema, callback, keyPath) {
-
+	
 	if (!schema) throw new Error('Missing parameter schema');
 	if (!callback) throw new Error('Missing parameter callback');
 	
 	keyPath = keyPath || [];
 	
-	schema = schemaTools.formalize(schema);
-	
 	return validateAny(obj, schema, callback, keyPath);
-	
+		
 };

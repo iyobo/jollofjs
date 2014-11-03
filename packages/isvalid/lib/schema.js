@@ -17,59 +17,100 @@ var checkValidators = function(schema) {
 	
 };
 
-var formalizeObject = function(schema) {
+var finalize = function(schema, fn) {
 	
-	for (var key in schema.schema) {
-		schema.schema[key] = formalize(schema.schema[key]);
-	}
+	// We mark the schema as formalized. This way we only do things once.
+	// Also the validator is able to formalize schemas on demand,
+	// instead - as of with the old version - formalizing the entire
+	// schema before validation.
 	
-	// Resolve any 'implicit' require
-	// Because the subschema keys are already formalized (above) this works nestedly.
-	if (typeof(schema.required) === 'undefined' || schema.required === 'implicit') {
-		for (var key in schema.schema) {
-			if (schema.schema[key].required === true) {
-				schema.required = true;
-				break;
+	schema._formalized = true;
+	
+	// Set the property read-only and unenumerable.
+	Object.defineProperty(schema, '_formalized', {
+		enumerable: false,
+		writable: false
+	});
+	
+	if (fn) return fn(schema);
+	
+};
+
+var formalizeObject = function(schema, fn) {
+	
+	(function formalizeNextKey(fn, formalizedSchema) {
+		
+		formalizedSchema = formalizedSchema || {};
+		
+		for (var key in schema.schema) break;
+		if (key === undefined) return fn(formalizedSchema);
+				
+		formalizeAny(schema.schema[key], function(formalizedKeySchema) {
+			delete schema.schema[key];
+			formalizedSchema[key] = formalizedKeySchema;
+			formalizeNextKey(fn, formalizedSchema);
+		});
+		
+	})(function(formalizedSchema) {
+		
+		schema.schema = formalizedSchema;
+		
+		// Resolve any 'implicit' require
+		// Because the subschema keys are already formalized (above) this works nestedly.
+		if (typeof(schema.required) === 'undefined' || schema.required === 'implicit') {
+			for (var key in schema.schema) {
+				if (schema.schema[key].required === true) {
+					schema.required = true;
+					break;
+				}
 			}
 		}
-	}
+		
+		if (fn) return finalize(schema, fn);
+		
+	});
+		
+};
+
+var formalizeArray = function(schema, fn) {
 	
-	return schema;
+	formalizeAny(schema.schema, function(formalizedSchema) {
+		
+		schema.schema = formalizedSchema;
+		
+		if (typeof(schema.required) === 'undefined' || schema.required === 'implicit') {
+			if (schema.schema.required === true) schema.required = true;
+		}
+		
+		if (fn) return finalize(schema, fn);
+		
+	});
 	
 };
 
-var formalizeArray = function(schema) {
-		
-	schema.schema = formalize(schema.schema);
+var formalizeAny = function(schema, fn) {
 	
-	if (typeof(schema.required) === 'undefined' || schema.required === 'implicit') {
-		if (schema.schema.required === true) schema.required = true;
-	}
+	// If schema is already formalized we just callback immediately.
+	if (schema._formalized === true) return fn(schema);
 	
-	return schema;
-	
-};
-
-var formalize = function(schema) {
-		
 	// Type Shortcuts
 	if (!schema.type && !schema.custom) {
-		if ('Object' == schema.constructor.name) return formalize({ type: Object, schema: schema });
+		if ('Object' == schema.constructor.name) return formalizeObject({ type: Object, schema: schema }, fn);
 		if ('Array' == schema.constructor.name) {
 			if (schema.length == 0) throw new Error('Array shortcut must contain a schema object.');
-			return formalize({ type: Array, schema: schema[0] });
+			return formalizeArray({ type: Array, schema: schema[0] }, fn);
 		}
 	}
 	
 	checkValidators(schema);
 	
 	if (!schema.custom) {
-		if ('Object' == schema.type.name) return formalizeObject(schema);
-		if ('Array' == schema.type.name) return formalizeArray(schema);
+		if ('Object' == schema.type.name) return formalizeObject(schema, fn);
+		if ('Array' == schema.type.name) return formalizeArray(schema, fn);
 	}
 	
-	return schema;
-	
+	if (fn) return finalize(schema, fn);
+		
 };
 
-module.exports.formalize = formalize;
+module.exports.formalize = formalizeAny;
