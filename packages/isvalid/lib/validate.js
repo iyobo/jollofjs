@@ -3,12 +3,20 @@ var ValidationError = require('./error.js'),
 	unique = require('./unique.js'),
 	schemaTools = require('./schema.js');
 
-var validateObject = function(obj, schema, callback, keyPath) {
+var finalize = function(obj, fn) {
+	
+	if (fn) return process.nextTick(function() {
+		fn(null, obj);
+	});
+	
+};
+
+var validateObject = function(obj, schema, fn, keyPath) {
 	
 	if (obj) {
 		
 		if ('Object' != obj.constructor.name) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -31,7 +39,7 @@ var validateObject = function(obj, schema, callback, keyPath) {
 				if (schema.allowUnknownKeys == true) {
 					validObj[key] = obj[key];
 				} else {
-					return callback(
+					return fn(
 						new ValidationError(
 							keyPath.concat([key]),
 							schema,
@@ -45,13 +53,13 @@ var validateObject = function(obj, schema, callback, keyPath) {
 		
 		var validateNextKey = function() {
 			for (var key in schemaCopy) break;
-			if (!key) return callback(null, validObj);
+			if (!key) return finalize(validObj, fn);
 		
 			var keySchema = schemaCopy[key];
 			delete schemaCopy[key];
 			
 			validateAny(obj[key], keySchema, function(err, validatedObj) {
-				if (err) return callback(err);
+				if (err) return fn(err);
 				validObj[key] = validatedObj;
 				validateNextKey();
 			}, keyPath.concat([key]));
@@ -62,11 +70,11 @@ var validateObject = function(obj, schema, callback, keyPath) {
 		
 	}
 	
-	return callback(null, obj);
+	return finalize(obj, fn);
 	
 };
 
-var validateArray = function(arr, schema, callback, keyPath) {
+var validateArray = function(arr, schema, fn, keyPath) {
 	
 	if (arr) {
 		
@@ -77,7 +85,7 @@ var validateArray = function(arr, schema, callback, keyPath) {
 			if (idx == arr.length) {
 				
 				if (schema.len && !ranges.testIndex(schema.len, validArray.length)) {
-					return callback(
+					return fn(
 						new ValidationError(
 							keyPath,
 							schema,
@@ -92,7 +100,7 @@ var validateArray = function(arr, schema, callback, keyPath) {
 						for (var idx2 = idx1 + 1 ; idx2 < validArray.length ; idx2++ ) {
 							if (unique.equals(validArray[idx1], validArray[idx2])) {
 								keyPath = keyPath.concat([ idx1.toString() ]);
-								return callback(
+								return fn(
 									new ValidationError(
 										keyPath,
 										schema,
@@ -105,12 +113,12 @@ var validateArray = function(arr, schema, callback, keyPath) {
 					}
 				}
 				
-				return callback(null, validArray);
+				return finalize(validArray, fn);
 				
 			}
 			
 			validateAny(arr[idx], schema.schema, function(err, validObj) {
-				if (err) return callback(err);
+				if (err) return fn(err);
 				validArray.push(validObj);
 				validateNext(idx + 1);
 			}, keyPath.concat([ idx.toString() ]));
@@ -121,18 +129,18 @@ var validateArray = function(arr, schema, callback, keyPath) {
 				
 	}
 	
-	return callback(null, arr);
+	return finalize(arr, fn);
 	
 };
 
-var validateString = function(str, schema, callback, keyPath) {
+var validateString = function(str, schema, fn, keyPath) {
 	
 	if (str) {
 		
 		var validStr = str;
 	
 		if ('String' != validStr.constructor.name) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -151,7 +159,7 @@ var validateString = function(str, schema, callback, keyPath) {
 				throw new Error('Schema {type: String}: match is not a RegExp.');
 			}
 			if (!schema.match.test(validStr)) {
-				return callback(
+				return fn(
 					new ValidationError(
 						keyPath,
 						schema,
@@ -162,15 +170,15 @@ var validateString = function(str, schema, callback, keyPath) {
 			}
 		}
 		
-		return callback(null, validStr);
+		return finalize(validStr, fn);
 		
 	}
 	
-	return callback(null, str);
+	return finalize(str, fn);
 	
 };
 
-var validateNumber = function(num, schema, callback, keyPath) {
+var validateNumber = function(num, schema, fn, keyPath) {
 	
 	if (num) {
 		
@@ -179,7 +187,7 @@ var validateNumber = function(num, schema, callback, keyPath) {
 		if ('String' == validNum.constructor.name && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
 			validNum = parseFloat(validNum);
 		} else if ('Number' != validNum.constructor.name) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -191,7 +199,7 @@ var validateNumber = function(num, schema, callback, keyPath) {
 		
 		if (schema.range) {
 			if (!ranges.testIndex(schema.range, validNum)) {
-				return callback(
+				return fn(
 					new ValidationError(
 						keyPath,
 						schema,
@@ -202,15 +210,15 @@ var validateNumber = function(num, schema, callback, keyPath) {
 			}
 		}
 		
-		return callback(null, validNum);
+		return finalize(validNum, fn);
 		
 	}
 	
-	return callback(null, num);
+	return finalize(num, fn);
 	
 };
 
-var validateBoolean = function(val, schema, callback, keyPath) {
+var validateBoolean = function(val, schema, fn, keyPath) {
 	
 	if (val) {
 		
@@ -219,7 +227,7 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 		}
 		
 		if ('Boolean' != val.constructor.name) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -229,24 +237,24 @@ var validateBoolean = function(val, schema, callback, keyPath) {
 			);
 		}
 		
-		return callback(null, val);
+		return finalize(val, fn);
 		
 	}
 	
-	return callback(null, val);
+	return finalize(val, fn);
 	
 };
 
-var validateDate = function(val, schema, callback, keyPath) {
+var validateDate = function(val, schema, fn, keyPath) {
 	
 	if (val) {
 		
 		if ('String' == val.constructor.name ) {
 			var date = new Date(val);
 			if ( ! isNaN(date.getDate()) )
-	 			return callback(null,date);
+	 			return finalize(date, fn);
 
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -257,7 +265,7 @@ var validateDate = function(val, schema, callback, keyPath) {
 		}
 
 		if ('Date' != val.constructor.name) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -267,15 +275,15 @@ var validateDate = function(val, schema, callback, keyPath) {
 			);
 		}
 		
-		return callback(null, val);
+		return finalize(val, fn);
 		
 	}
 	
-	return callback(null, val);
+	return finalize(val, fn);
 	
 };
 
-var validateCustom = function(obj, schema, callback, keyPath) {
+var validateCustom = function(obj, schema, fn, keyPath) {
 	
 	return schema.custom(obj, schema, function(err, validObj) {
 		if (err) {
@@ -283,17 +291,17 @@ var validateCustom = function(obj, schema, callback, keyPath) {
 			err = new ValidationError(keyPath, schema, 'custom', err.message);
 			err.stack = stack;
 		}
-		return callback(err, validObj);
+		return fn(err, validObj);
 	});
 	
 };
 
-var validateAny = function(obj, schema, callback, keyPath) {
+var validateAny = function(obj, schema, fn, keyPath) {
 	
 	// If schema is not yet formalized - formalize it and come back.
 	if (schema._formalized !== true) {
 		return schemaTools.formalize(schema, function(formalizedSchema) {
-			return validateAny(obj, formalizedSchema, callback, keyPath);
+			return validateAny(obj, formalizedSchema, fn, keyPath);
 		});
 	}
 	
@@ -301,14 +309,14 @@ var validateAny = function(obj, schema, callback, keyPath) {
 		if (schema.default) {
 			if ('Function' == schema.default.constructor.name) {
 				return schema.default(function(defaultValue) {
-					callback(null, defaultValue);
+					finalize(defaultValue, fn);
 				});
 			} else {
-				return callback(null, schema.default);
+				return finalize(schema.default, fn);
 			}
 		}
 		if (schema.required) {
-			return callback(
+			return fn(
 				new ValidationError(
 					keyPath,
 					schema,
@@ -319,25 +327,25 @@ var validateAny = function(obj, schema, callback, keyPath) {
 		}
 	}
 	
-	if (schema.custom) return validateCustom(obj, schema, callback, keyPath);
-	if ('Object' == schema.type.name) return validateObject(obj, schema, callback, keyPath);
-	if ('Array' == schema.type.name) return validateArray(obj, schema, callback, keyPath);
-	if ('String' == schema.type.name) return validateString(obj, schema, callback, keyPath);
-	if ('Number' == schema.type.name) return validateNumber(obj, schema, callback, keyPath);
-	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, callback, keyPath);
-	if ('Date' == schema.type.name) return validateDate(obj, schema, callback, keyPath);
+	if (schema.custom) return validateCustom(obj, schema, fn, keyPath);
+	if ('Object' == schema.type.name) return validateObject(obj, schema, fn, keyPath);
+	if ('Array' == schema.type.name) return validateArray(obj, schema, fn, keyPath);
+	if ('String' == schema.type.name) return validateString(obj, schema, fn, keyPath);
+	if ('Number' == schema.type.name) return validateNumber(obj, schema, fn, keyPath);
+	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, fn, keyPath);
+	if ('Date' == schema.type.name) return validateDate(obj, schema, fn, keyPath);
 	
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 	
 };
 
-module.exports = function(obj, schema, callback, keyPath) {
+module.exports = function(obj, schema, fn, keyPath) {
 	
 	if (!schema) throw new Error('Missing parameter schema');
-	if (!callback) throw new Error('Missing parameter callback');
+	if (!fn) throw new Error('Missing parameter fn');
 	
 	keyPath = keyPath || [];
 	
-	return validateAny(obj, schema, callback, keyPath);
+	return validateAny(obj, schema, fn, keyPath);
 		
 };

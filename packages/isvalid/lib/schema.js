@@ -32,7 +32,9 @@ var finalize = function(schema, fn) {
 		writable: false
 	});
 	
-	if (fn) return fn(schema);
+	if (fn) return process.nextTick(function() {
+		return fn(schema);
+	})
 	
 };
 

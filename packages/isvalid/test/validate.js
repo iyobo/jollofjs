@@ -1,8 +1,9 @@
 var chai = require('chai'),
 	expect = chai.expect,
 	ValidationError = require('../lib/error.js'),
-	validate = require('../index.js');
-
+	validate = require('../index.js'),
+	throwError = require('./tools/throwError.js');
+	
 chai.use(function(_chai, utils) {
 	var Assertion = chai.Assertion;
 	utils.addProperty(Assertion.prototype, 'validationError', function() {
@@ -27,10 +28,10 @@ describe('Validate', function() {
 					validate({}, {}, undefined);
 				}).to.throw(Error);
 			});
-			it ('should throw an error if schema type is unknown', function() {
-				expect(function() {
+			it ('should throw an error if schema type is unknown', function(done) {
+				throwError(function() {
 					validate(null, { type: Error }, function() {});
-				}).to.throw(Error);
+				}, done);
 			});
 		});
 		describe('[common validators]', function() {
@@ -199,10 +200,10 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should throw an error if schema match is not a RegExp.', function() {
-				expect(function() {
+			it ('should throw an error if schema match is not a RegExp.', function(done) {
+				throwError(function() {
 					validate('123', { type: String, match: 'Not a RegExp' }, function() {});
-				}).to.throw(Error);
+				}, done);
 			});
 			it ('should come back with an error if string does not match RegExp', function(done) {
 				validate('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
