@@ -10,7 +10,6 @@ chai.use(function(_chai, utils) {
 		var err = utils.flag(this, 'object');
 		new Assertion(err).to.have.property('keyPath').to.be.an('Array');
 		new Assertion(err).to.have.property('schema').to.be.an('Object');
-		new Assertion(err).to.have.property('schema').to.be.an('Object');
 		new Assertion(err).to.have.property('message').to.be.a('String');
 	});
 });
