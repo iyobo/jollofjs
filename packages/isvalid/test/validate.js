@@ -183,6 +183,17 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should come back with error if string array is not unique', function(done) {
+				validate(['This', 'is', 'an', 'array', 'array'], {
+					type: Array,
+					unique: true,
+					schema: { type: String }
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('unique');
+					done();
+				});
+			});
 		});
 		describe('[String validators]', function() {
 			it ('should come back with error if string is not supplied.', function(done) {

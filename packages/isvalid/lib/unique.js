@@ -1,37 +1,76 @@
-var objectEquals = function(obj1, obj2) {
+var objectEquals = function(obj1, obj2, fn) {
 	
-	if (!arrayEquals(Object.keys(obj1).sort(), Object.keys(obj2).sort())) return false;
+	var keys = Object.keys(obj1);
 	
-	for (var key in obj1) {
-		if (!equals(obj1[key], obj2[key])) return false;
-	}
-	
-	return true;
+	arrayEquals(Object.keys(obj1), Object.keys(obj2), function(res) {
+		
+		if (!res) return fn(false);
+		
+		(function testNext(idx) {
+			if (idx == keys.length) return fn(true);
+			var key = keys[idx];
+			equals(obj1[key], obj2[key], function(res) {
+				if (!res) return fn(false);
+				process.nextTick(function () {
+					testNext(idx + 1);
+				});
+			});
+		})(0);
+		
+	});
 	
 };
 
-var arrayEquals = function(obj1, obj2) {
-		
-	if (obj1.length != obj2.length) return false;
+var arrayEquals = function(obj1, obj2, fn) {
 	
-	for (var idx = 0 ; idx < obj1.length ; idx ++) {
-		if (!equals(obj1[idx], obj2[idx])) return false;
-	}
-			
-	return true;
+	if (obj1.length != obj2.length) return fn(false);
+	
+	var o1 = obj1.sort();
+	var o2 = obj2.sort();
+	
+	(function testNext(idx) {
+		if (idx == o1.length) return fn(true);
+		equals(o1[idx], o2[idx], function(res) {
+			if (!res) return fn(false);
+			process.nextTick(function() {
+				testNext(idx+1);
+			});
+		});
+	})(0);
 	
 };
 
-var equals = function(obj1, obj2) {
+var equals = function(obj1, obj2, fn) {
 	
-	if ((obj1 && !obj2) || (!obj1 && obj2)) return false;
-	if (obj1.constructor.name != obj2.constructor.name) return false;
+	if ((obj1 && !obj2) || (!obj1 && obj2)) return fn(false);
+	if (obj1.constructor.name != obj2.constructor.name) return fn(false);
 	
-	if ('Object' == obj1.constructor.name) return objectEquals(obj1, obj2);
-	if ('Array' == obj1.constructor.name) return arrayEquals(obj1, obj2);
-		
-	return (obj1 == obj2);
-		
+	if ('Object' == obj1.constructor.name) return objectEquals(obj1, obj2, fn);
+	if ('Array' == obj1.constructor.name) return arrayEquals(obj1, obj2, fn);
+	
+	return fn(obj1 == obj2);
+	
 };
 
+module.exports = function(arr, fn) {
+	
+	if (arr.length <= 1) return fn(true);
+	
+	(function testNext(idx1, idx2) {
+		if (idx2 == arr.length) {
+			idx1++;
+			idx2 = idx1 + 1;
+		}
+		if (idx2 == arr.length) return fn(true);
+		equals(arr[idx1], arr[idx2], function(res) {
+			if (res) return fn(false);
+			process.nextTick(function() {
+				testNext(idx1, idx2 + 1);
+			});
+		});
+	})(0, 1);
+	
+}
+
+// We export equals so it can be unit tested.
 module.exports.equals = equals;

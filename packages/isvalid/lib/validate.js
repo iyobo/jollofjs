@@ -95,22 +95,20 @@ var validateArray = function(arr, schema, fn, keyPath) {
 					);
 				}
 				
-				if (schema.unique && validArray.length > 1) {
-					for (var idx1 = 0 ; idx1 < validArray.length - 1 ; idx1++) {
-						for (var idx2 = idx1 + 1 ; idx2 < validArray.length ; idx2++ ) {
-							if (unique.equals(validArray[idx1], validArray[idx2])) {
-								keyPath = keyPath.concat([ idx1.toString() ]);
-								return fn(
-									new ValidationError(
-										keyPath,
-										schema,
-										'unique',
-										(schema.errors || {}).unique || 'Is not unique.'
-									)
-								);
-							}
-						}
-					}
+				if (schema.unique) {
+					
+					return unique(validArray, function(res) {
+						if (res) return finalize(validArray, fn);
+						return fn(
+							new ValidationError(
+								keyPath,
+								schema,
+								'unique',
+								(schema.errors || {}).unique || 'Array is not unique.'
+							)
+						);
+					});
+					
 				}
 				
 				return finalize(validArray, fn);
