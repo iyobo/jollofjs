@@ -109,7 +109,8 @@ var formalizeAny = function(schema, fn) {
 	
 	var validators = {};
 	
-	// We determine the supported validators.
+	// We determine the supported validators and the types of values
+	// each validator accepts (true means anything).
 	if (schema.custom) validators = {
 		'custom': [ 'Function' ],
 		'options': true
@@ -161,7 +162,7 @@ var formalizeAny = function(schema, fn) {
 		if (validators[key] !== true && validators[key].indexOf(schema[key].constructor.name) == -1) {
 			throw new SchemaError(
 				schema,
-				'Validator \'' + key + '\' must be of type(s) ' + validators[key].join(', ')
+				'Validator \'' + key + '\' must be of type(s) ' + validators[key].join(', ') + '.'
 			);
 		}
 		
@@ -178,11 +179,4 @@ var formalizeAny = function(schema, fn) {
 	
 };
 
-module.exports.formalize = function(schema, fn) {
-	
-	return formalizeAny(schema, function(formalizedSchema) {
-		//console.log(formalizedSchema);
-		fn(formalizedSchema);
-	});
-	
-};
+module.exports.formalize = formalizeAny;
