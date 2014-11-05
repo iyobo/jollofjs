@@ -153,9 +153,7 @@ var validateString = function(str, schema, fn, keyPath) {
 		}
 	
 		if (schema.match) {
-			if ('RegExp' != schema.match.constructor.name) {
-				throw new Error('Schema {type: String}: match is not a RegExp.');
-			}
+			// We are garanteed that match is a RegExp because the finalizer has tested it.
 			if (!schema.match.test(validStr)) {
 				return fn(
 					new ValidationError(
@@ -333,6 +331,7 @@ var validateAny = function(obj, schema, fn, keyPath) {
 	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, fn, keyPath);
 	if ('Date' == schema.type.name) return validateDate(obj, schema, fn, keyPath);
 	
+	// This error should have been eliminate by the finalizer.
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 	
 };
