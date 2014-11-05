@@ -93,5 +93,26 @@ describe('schema', function() {
 				done();
 			});
 		});
+		it ('should throw error if type is String and match is non-RegExp.', function() {
+			expect(function() {
+				schema.formalize({ type: String, match: 'test' });
+			}).to.throw(SchemaError);
+		});
+		it ('should come back with no error and match set if match is RegExp', function(done) {
+			schema.formalize({ type: String, match: /test/ }, function(schema) {
+				expect(schema).to.have.property('match');
+				done();
+			});
+		});
+		it ('should throw an error if schema type is unknown', function() {
+			expect(function() {
+				schema.formalize({ type: Error });
+			}).to.throw(SchemaError);
+		});
+		it ('should throw an error if schema is not of supported type', function() {
+			expect(function() {
+				schema.formalize({ type: RegExp });
+			}).to.throw(Error);
+		});
 	});
 });

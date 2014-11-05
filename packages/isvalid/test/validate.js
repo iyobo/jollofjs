@@ -27,11 +27,6 @@ describe('Validate', function() {
 					validate({}, {}, undefined);
 				}).to.throw(Error);
 			});
-			it ('should throw an error if schema type is unknown', function() {
-				expect(function() {
-					validate(null, { type: Error }, function() {});
-				}).to.throw(SchemaError);
-			});
 		});
 		describe('[common validators]', function() {
 			it ('should come back with error if object is required and object is not set.', function(done) {
@@ -40,11 +35,6 @@ describe('Validate', function() {
 					expect(err).to.have.property('validator').equal('required');
 					done();
 				});
-			});
-			it ('should throw an error if schema is not of supported type', function() {
-				expect(function() {
-					validate(undefined, { type: RegExp });
-				}).to.throw(Error);
 			});
 			it ('should call default if function is provided.', function(done) {
 				validate(undefined, { type: Object, default: function(cb) {
@@ -209,11 +199,6 @@ describe('Validate', function() {
 					expect(validObj).to.equal('123abc');
 					done();
 				});
-			});
-			it ('should throw an error if schema match is not a RegExp.', function() {
-				expect(function() {
-					validate('123', { type: String, match: 'Not a RegExp' }, function() {});
-				}).to.throw(SchemaError);
 			});
 			it ('should come back with an error if string does not match RegExp', function(done) {
 				validate('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
