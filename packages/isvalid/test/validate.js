@@ -2,8 +2,7 @@ var chai = require('chai'),
 	expect = chai.expect,
 	ValidationError = require('../lib/errors/validationError.js'),
 	SchemaError = require('../lib/errors/schemaError.js'),
-	validate = require('../index.js'),
-	throwError = require('./tools/throwError.js');
+	validate = require('../index.js');
 	
 chai.use(function(_chai, utils) {
 	var Assertion = chai.Assertion;
