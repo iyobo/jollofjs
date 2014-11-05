@@ -1,6 +1,6 @@
 # isvalid.js
 
-**isvalid.js** is an asynchronous node.js library for validating and error correcting JSON. It uses a schema modal - inspired by Mongoose schemas.
+**isvalid.js** is an asynchronous node.js library for validating and error correcting JSON. In contrary to JSON Schema it uses a very simple schema model - inspired by the Mongoose schemas.
 
 Here's a simple example on how to use the validator:
 
@@ -20,13 +20,20 @@ The `isvalid` function takes three parameters.
 
     isvalid(dataToValidate, validationSchema, callback);
 
-## Usage with Express.js
+> There is a convenience library for connect.js and express.js middleware available through the [isvalid-express.js](https://github.com/trenskow/isvalid-express.js) project.
 
-For usage with express.js - validating body and query data - use the easier [isvalid-express.js](https://github.com/trenskow/isvalid-express.js) library.
+# What's New?
 
-# What's New in Version 0.1.0
+## In Version 0.1.5
 
-There are some additions - as well as some changes - in version 0.1.0.
+* It now catches more errors in schemas - such as wrong values on validators.
+* Schema errors are now thrown as a `SchemaError` which contains schema that failed through the `schema` property.
+* The library is works asynchronously thoughout the library - allowing for I/O while formalizing, validating and comparing.
+* Formalizer is publicly exposed in order to pre-formalize schemas manually.
+* Schemas are now formalized per demand. Large schemas are formalized by the validator as they are needed.
+* ValidationErrors now contain the pre-formalized schema - for better identification by developer.
+
+## In Version 0.1.0
 
  * Automatic parsing of [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) dates into Date - contributed by [thom-nic](https://github.com/thom-nic).
  * Errors are thrown if validators are used out of context.
@@ -40,7 +47,16 @@ There are some additions - as well as some changes - in version 0.1.0.
 
 ## Errors
 
-Errors in function parameters or schemas are thrown - validation errors are passed to the callback. Thrown errors are of type `Error`. Validation errors are of type `ValidationError`, which is a custom `Error` type.
+Errors in function parameters or schemas are thrown - as they are developer errors - and validation errors are passed to the 
+callback.
+
+* Wrong parameters throw `Error` instances.
+* Schema errors throw `SchemaError` instances.
+* Validation errors are passed to the callback as `ValidationError` instances.
+
+### SchemaError
+
+The `SchemaError` contains the `schema` property which contains the actual schema in which there is an error. It also has a `message` property with a description of the error.
 
 ### ValidationError
 
@@ -52,7 +68,7 @@ The `ValidationError` contains three properties besides the `message` field of `
 
 ## Type Shortcuts
 
-Some types can be made with shortcuts. Instead of specifying the type, you just use the type. This works with objects and arrays.
+Some types can be specified using shortcuts. Instead of specifying the type, you just use the type. This works with objects and arrays.
 
 In the above simple example we used the object shortcut and should have looked like this if we hadn't.
 
@@ -72,7 +88,7 @@ Object shortcuts are used like this:
         "user": { type: String }
     }
 
-and is in fact the as this:
+and is in fact the same as this:
 
     {
         type: Object,
@@ -112,23 +128,23 @@ These types are supported by the validator:
  * Date
  * or custom validators.
 
-There are some validators that are common to all types, and then some types have specific validators.
+There are some validators that are common to all types, and some types have specific validators.
 
 You specify the type like this:
 
     { type: String }
 
-In the above example the type must be a `String`.
+In the above example the input must be of type `String`.
 
-All schemas must have the `type` specified - or have a custom validator through a custom function. See more about custom validator in it's designated section below.
+All schemas must have the `type` specified or have a custom validator through a `custom` function - more about custom validators in it's designated section below.
 
-Object and array shortcuts apply their type automatically. In fact the library uses the absent of `type` to determine object shortcuts.
+> Object and array shortcuts apply their type automatically - as seen above.
 
 ### Common Validators
 
 These validators are supported by all types.
 
-#### Default Validator
+#### `default` Validator
 Defaults data to specific value if data is not present in input. It takes a specific value or it can call a custom function to retrieve the value.
 
 Type: Any value or a function.
@@ -146,14 +162,14 @@ This tells the validator, that an `email` field is expected, and if it is not fo
 This works with all supported types - below with a boolean type:
 
     {
-        "receive-newsletter": { type: Boolean, default: true }
+        "receive-newsletter": { type: Boolean, default: false }
     }
 
-Now if the `receive-newsletter` field has not been specified, the validator will default it to `true`.
+Now if the `receive-newsletter` field is absent in the data the validator will default it to `false`.
 
 ##### Functions
 
-`default` also supports custom functions.
+`default` also supports functions.
 
 Example:
 
@@ -170,16 +186,16 @@ In the above example the function is called whenever the input data does not hav
 
 The function *must* take one parameter which holds the callback function to call with the actual default data. The reason is the asynchronous nature of the library and allows for asynchronous work to be done before calling the callback.
 
-#### Required Validator
+#### `required` Validator
 Values: `true`, `false` or `'implicit'`.
 
-`required` works a little like default. Except if the value is absent an error is returned. `required` is ignored if `default` is also specified.
+`required` works a little like default. Except if the value is absent a validation error is send to the callback.
+    
+    { type: String, required: true }
 
-Example:
+The above specifies that the data must be present and be of type `String`.
 
-    "user": { type: String, required: true }
-
-##### Implicit Required
+##### Implicitly Required
 
 Example:
 
@@ -192,11 +208,11 @@ Example:
         }
     }
 
-The above example is to illustrate what `'implicit'` does. Because the `user` subschema is required, the parent object inherently also becomes required. If none of the subschemas is required, the parent object is also not required.
+The above example is to illustrate what `'implicit'` does. Because the `user` subschema is required, the parent object inherently also becomes required. If none of the subschemas are required, the parent object is also not required.
 
 This enables you to specify that some portion of the data is optional, but if it is present - it's content should have some required fields.
 
-Example:
+See the example below.
 
     {
         type: Object,
@@ -207,17 +223,17 @@ Example:
         }
     }
 
-In the above example the data will validate if the object is not in the input. Even though `user` is required. Because the object is explicitly not required.
+In the above example the data will validate if the object is not present the input, even though `user` is required - because the parent object is explicitly *not* required. If the object - on the other hand - *is* present it must have the `user` key and it must be of type `String`.
 
-*Remark:* `Object`s and `Array`s are by default `'implicit'` if `required` is not specified. All other are by default non-required.
+> *Remark:* If `required` is not specified, then `Object` and `Array` types are by default `'implicit'`. All other types are by default non-required. Also `required` is ignored if `default` is specified.
 
-#### Errors Validator
+#### `errors` Validator
 
 Type: `Object`
 
-Errors are not a validator - it allows you to customize the errors emitted by the validators. All validators have default error messages, but these can be customized in order to make more user friendly error messages.
+Errors are really not a validator - it allows you to customize the errors emitted by the validators. All validators have default error messages, but these can be customized in order to make user and context friendly error messages.
 
-An example below:
+An example below.
 
     {
         'username': {
@@ -236,21 +252,45 @@ Now in case any of the validators fail, they will emit the error message specifi
 
 ### Type Specific Validators
 
+#### Validators Common to Objects and Arrays.
+
+##### `schema` Validator
+
+The `schema` validator of object and array types specifies the schema of any children. Objects have keys and values - arrays only have a single schema - which can be an object, though.
+
+An example below of an object schema with a ´user´ key.
+
+    {
+         type: Object,
+         schema: {
+             'username': { type: String }
+         }
+     }
+ 
+ And example below of an array of strings.
+ 
+     {
+         type: Array,
+         schema: { type: String }
+     }
+
 #### Object Validators
 
-##### AllowUnknownKeys Validator
+##### `allowUnknownKeys` Validator
 
-Type: `Boolean` - default is `false`
+Type: `Boolean`
 
 This is to make sure that keys not intended in the data are passed through. If an object contains a key unspecified in the schema it will come back with an error - if the value of this validator is set to `false`.
 
-On the other hand - if this is set to `true` - any unknown keys are not validated.
+On the other hand - if this is set to `true` - any unknown keys are passed on unvalidated.
+
+> Objects do not allow unknown keys by default.
 
 #### Array Validators
 
 Arrays has two validator besides the common validators.
 
-##### Len Validator
+##### `len` Validator
 Type: `Number` or `String`
 
 This ensures that an array has a specific number of items. This can be either a number or a range. The validator sends an error to the callback if the array length is outside the bounds of the specified range(s).
@@ -295,7 +335,7 @@ An array that should have at two or less items, exactly 5 items or 8 or more ite
         schema: { … }
     }
 
-##### Unique Validator
+##### `unique` Validator
 Type: `Boolean`
 
 This ensures that all elements in the array are unique - basically ensuring the array is a set. If two or more elements are the same, the validator sends an error to the callback.
@@ -308,18 +348,18 @@ Example:
         schema: { … }
     }
 
-The `unique` validator does a deep comparison on `Object`s and `Array`s.
+> The `unique` validator does a deep comparison on objects and arrays.
 
 #### String Validators
 
 Strings has one validator besides the common validators.
 
-##### Trim Validator
+##### `trim` Validator
 Type: `Boolean`
 
-This does not do any actual validation. Instead it trims the input string in both ends - before any other validators are checked. Use this to make any unforeseen white spaces by the user be automatically removed before any other validation is done.
+This does not do any actual validation. Instead it trims the input string in both ends - before any other validators are checked. Use this to remove any unforeseen white spaces - added by the user - before any other validation is done.
 
-##### Match Validator
+##### `match` Validator
 Type: `RegExp`
 
 This ensures that a string can be matched against a regular expression. The validator sends an error to the callback if the string does not match the pattern.
@@ -332,12 +372,12 @@ This example shows a string that must contain a string of at least one character
 
 Numbers has one validator besides the common validators.
 
-##### Range Validator
+##### `range` Validator
 Type: `Number`or `String`
 
 This ensures that the number is within a certain range. If not the validator sends an error to the callback.
 
-The `range` validator supports the same formatting as the array's `len` validator described above.
+> The `range` validator uses the same formatting as the array's `len` validator described above.
 
 ## Custom Validators
 
@@ -367,16 +407,16 @@ The custom function must take three parameters
  - *obj* The Object that needs validation
  - *schema* The schema to validate against
    - This enables you to use the schema to pass in options.
- - *fn* The callback function to call when validation is either complete or failed.
+ - *fn* The callback function to call when validation either succeeds or fails.
    - The callback function takes to parameters
      - *err* An `Error` describing the validation error that occurred.
      - *validObj* The finished and validated object.
 
-*Remark:* Errors are automatically converted into a ValidationError and sent to the the callback internally.
+> *Remark:* Errors are automatically converted into a ValidationError and sent to the the callback internally.
 
 ### Options in Custom Validators
 
-If you need to pass any options you can supply them using the `options` property of the schema.
+If you need to pass any options to your custom validator, you can do so by using the `options` property of the schema.
 
 An example below.
 
@@ -393,6 +433,8 @@ An example below.
     }
 
 Using any other key than `custom` and `options` in conjunction with a custom validator will throw an error.
+
+> Schemas with both `custom` and `type` set will throw a `SchemaError`.
 
 ## Automatic Type Conversion
 
@@ -412,4 +454,4 @@ If the schema is of type `Date` and a `String` containing an [ISO-8601](http://e
 
 ### Object Shortcuts
 
-Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for those keys, then you must use explicitly formatted object schemas - hence the shortcut cannot be used.
+Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for keys with those names, you must use explicitly formatted object schemas - hence the shortcut cannot be used.
