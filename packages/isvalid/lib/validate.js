@@ -1,4 +1,4 @@
-var ValidationError = require('./error.js'),
+var ValidationError = require('./errors/validationError.js'),
 	ranges = require('./ranges.js'),
 	unique = require('./unique.js'),
 	schemaTools = require('./schema.js');
@@ -19,7 +19,7 @@ var validateObject = function(obj, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not of type Object.'
 				)
@@ -42,7 +42,7 @@ var validateObject = function(obj, schema, fn, keyPath) {
 					return fn(
 						new ValidationError(
 							keyPath.concat([key]),
-							schema,
+							schema._nonFormalizedSchema,
 							'allowUnknownKeys',
 							(schema.errors || {}).allowUnknownKeys || 'Unknown key.'
 						)
@@ -88,7 +88,7 @@ var validateArray = function(arr, schema, fn, keyPath) {
 					return fn(
 						new ValidationError(
 							keyPath,
-							schema,
+							schema._nonFormalizedSchema,
 							'len',
 							(schema.errors || {}).len || 'Array length is not within range of \'' + schema.len + '\''
 						)
@@ -102,7 +102,7 @@ var validateArray = function(arr, schema, fn, keyPath) {
 						return fn(
 							new ValidationError(
 								keyPath,
-								schema,
+								schema._nonFormalizedSchema,
 								'unique',
 								(schema.errors || {}).unique || 'Array is not unique.'
 							)
@@ -141,7 +141,7 @@ var validateString = function(str, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not of type string.'
 				)
@@ -160,7 +160,7 @@ var validateString = function(str, schema, fn, keyPath) {
 				return fn(
 					new ValidationError(
 						keyPath,
-						schema,
+						schema._nonFormalizedSchema,
 						'match',
 						(schema.errors || {}).match || 'Does not match expression ' + schema.match.source + '.'
 					)
@@ -188,7 +188,7 @@ var validateNumber = function(num, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not of type number.'
 				)
@@ -200,7 +200,7 @@ var validateNumber = function(num, schema, fn, keyPath) {
 				return fn(
 					new ValidationError(
 						keyPath,
-						schema,
+						schema._nonFormalizedSchema,
 						'range',
 						(schema.errors || {}).range || 'Not within range of ' + schema.range
 					)
@@ -228,7 +228,7 @@ var validateBoolean = function(val, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not of type boolean.'
 				)
@@ -255,7 +255,7 @@ var validateDate = function(val, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not a valid Date string.'
 				)
@@ -266,7 +266,7 @@ var validateDate = function(val, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'type',
 					(schema.errors || {}).type || 'Is not coerceable to a Date.'
 				)
@@ -286,7 +286,7 @@ var validateCustom = function(obj, schema, fn, keyPath) {
 	return schema.custom(obj, schema, function(err, validObj) {
 		if (err) {
 			var stack = err.stack;
-			err = new ValidationError(keyPath, schema, 'custom', err.message);
+			err = new ValidationError(keyPath, schema._nonFormalizedSchema, 'custom', err.message);
 			err.stack = stack;
 		}
 		return fn(err, validObj);
@@ -297,7 +297,7 @@ var validateCustom = function(obj, schema, fn, keyPath) {
 var validateAny = function(obj, schema, fn, keyPath) {
 	
 	// If schema is not yet formalized - formalize it and come back.
-	if (schema._formalized !== true) {
+	if (schema._nonFormalizedSchema === undefined) {
 		return schemaTools.formalize(schema, function(formalizedSchema) {
 			return validateAny(obj, formalizedSchema, fn, keyPath);
 		});
@@ -317,7 +317,7 @@ var validateAny = function(obj, schema, fn, keyPath) {
 			return fn(
 				new ValidationError(
 					keyPath,
-					schema,
+					schema._nonFormalizedSchema,
 					'required',
 					 (schema.errors || {}).required || 'Key is required.'
 				 )
