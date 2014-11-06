@@ -60,7 +60,7 @@ var validateObject = function(obj, schema, fn, keyPath) {
 			
 			validateAny(obj[key], keySchema, function(err, validatedObj) {
 				if (err) return fn(err);
-				validObj[key] = validatedObj;
+				if (validatedObj !== undefined) validObj[key] = validatedObj;
 				validateNextKey();
 			}, keyPath.concat([key]));
 			
