@@ -24,7 +24,7 @@ The `isvalid` function takes three parameters.
 
 # What's New?
 
-## In Version 0.1.5
+## In Version 0.2.0
 
 * It now catches more errors in schemas - such as wrong values on validators.
 * Schema errors are now thrown as a `SchemaError` which contains schema that failed through the `schema` property.
