@@ -28,7 +28,7 @@ The `isvalid` function takes three parameters.
 
 * It now catches more errors in schemas - such as wrong values on validators.
 * Schema errors are now thrown as a `SchemaError` which contains schema that failed through the `schema` property.
-* The library is works asynchronously thoughout the library - allowing for I/O while formalizing, validating and comparing.
+* The library is now completely asynchronous - allowing for I/O while formalizing, validating and comparing.
 * Formalizer is publicly exposed in order to pre-formalize schemas manually.
 * Schemas are now formalized per demand. Large schemas are formalized by the validator as they are needed.
 * ValidationErrors now contain the pre-formalized schema - for better identification by developer.
