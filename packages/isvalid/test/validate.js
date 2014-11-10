@@ -44,6 +44,13 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should come back with error if object is required through options', function(done) {
+				validate(undefined, { type: Object }, function(err, validObj) {
+					expect(err).to.have.property('keyPath');
+					expect(err).to.have.property('validator').equals('required');
+					done();
+				}, { required: true });
+			});
 			it ('should come back with true when default value \'true\' is provided', function(done) {
 				validate(undefined, { type: Object, default: { empty: true } }, function(err, validObj) {
 					expect(err).to.be.null;
@@ -95,6 +102,17 @@ describe('Validate', function() {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('why').equals('It just is!');
 				});
+			});
+			it ('should come back with unknown keys intact if allowUnknownKeys are provided as true in options', function() {
+				validate({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					awesome: { type: Boolean }
+				}, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.have.property('why').equals('It just is!');
+				}, { allowUnknownKeys: true });
 			});
 			it ('should come back with error if there are unknown keys and allowUnknownKeys is not set.', function() {
 				validate({
