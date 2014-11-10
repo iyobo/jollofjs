@@ -221,6 +221,13 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should come back with trimmed string when trim option is true', function(done) {
+				validate('  123abc  ', { type: String }, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.equal('123abc');
+					done();
+				}, { trim: true });
+			});
 			it ('should come back with an error if string does not match RegExp', function(done) {
 				validate('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
 					expect(err).to.be.validationError;

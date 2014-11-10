@@ -148,10 +148,10 @@ var validateString = function(str, schema, fn, keyPath, options) {
 			);
 		};
 		
-		if (schema.trim) {
+		if (schema.trim == true || (options || {}).trim == true) {
 			validStr = validStr.replace(/^\s+|\s+$/g,'');
 		}
-	
+		
 		if (schema.match) {
 			// We are garanteed that match is a RegExp because the finalizer has tested it.
 			if (!schema.match.test(validStr)) {
@@ -311,7 +311,7 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 				return finalize(schema.default, fn);
 			}
 		}
-		if (schema.required === true || (options || {}).required === true) {
+		if (schema.required == true || (options || {}).required == true) {
 			return fn(
 				new ValidationError(
 					keyPath,
