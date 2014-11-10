@@ -338,13 +338,13 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 
 module.exports = function(obj, schema, fn, keyPath, options) {
 	
+	if (!schema) throw new Error('Missing parameter schema');
+	if (!fn) throw new Error('Missing parameter fn');
+	
 	if (keyPath && keyPath.constructor.name == 'Object') {
 		options = keyPath;
 		keyPath = undefined;
 	}
-	
-	if (!schema) throw new Error('Missing parameter schema');
-	if (!fn) throw new Error('Missing parameter fn');
 	
 	keyPath = keyPath || [];
 	
