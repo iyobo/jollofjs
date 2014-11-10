@@ -30,7 +30,7 @@ describe('Validate', function() {
 		describe('[common validators]', function() {
 			it ('should come back with error if object is required and object is not set.', function(done) {
 				validate(undefined, { type: Object, required: true }, function(err, validObj) {
-					expect(err).to.have.property('keyPath');
+					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('required');
 					done();
 				});
@@ -46,7 +46,7 @@ describe('Validate', function() {
 			});
 			it ('should come back with error if object is required through options', function(done) {
 				validate(undefined, { type: Object }, function(err, validObj) {
-					expect(err).to.have.property('keyPath');
+					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equals('required');
 					done();
 				}, { required: true });
@@ -88,7 +88,7 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come back with unknown keys intact if allowUnknownKeys are true.', function() {
+			it ('should come back with unknown keys intact if allowUnknownKeys are true.', function(done) {
 				validate({
 					awesome: true,
 					why: 'It just is!'
@@ -101,9 +101,10 @@ describe('Validate', function() {
 				}, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('why').equals('It just is!');
+					done();
 				});
 			});
-			it ('should come back with unknown keys intact if allowUnknownKeys are provided as true in options', function() {
+			it ('should come back with unknown keys intact if allowUnknownKeys are provided as true in options', function(done) {
 				validate({
 					awesome: true,
 					why: 'It just is!'
@@ -112,9 +113,10 @@ describe('Validate', function() {
 				}, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('why').equals('It just is!');
+					done();
 				}, { allowUnknownKeys: true });
 			});
-			it ('should come back with error if there are unknown keys and allowUnknownKeys is not set.', function() {
+			it ('should come back with error if there are unknown keys and allowUnknownKeys is not set.', function(done) {
 				validate({
 					awesome: true,
 					why: 'It just is!'
@@ -123,9 +125,10 @@ describe('Validate', function() {
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+					done();
 				});
 			});
-			it ('should come back with error if there are unknown keys and allowUnknownKeys is set to false.', function() {
+			it ('should come back with error if there are unknown keys and allowUnknownKeys is set to false.', function(done) {
 				validate({
 					awesome: true,
 					why: 'It just is!'
@@ -138,6 +141,7 @@ describe('Validate', function() {
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+					done();
 				});
 			});
 		});
