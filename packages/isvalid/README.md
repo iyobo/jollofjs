@@ -1,7 +1,6 @@
 # isvalid.js
 
 [![npm version](https://badge.fury.io/js/isvalid.svg)](http://badge.fury.io/js/isvalid)
-[![Coverage Status](https://coveralls.io/repos/trenskow/isvalid.js/badge.svg)](https://coveralls.io/r/trenskow/isvalid.js)
 
 -
 
