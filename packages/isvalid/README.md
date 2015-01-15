@@ -1,6 +1,8 @@
 # isvalid.js
+
 [![npm version](https://badge.fury.io/js/isvalid.svg)](http://badge.fury.io/js/isvalid)
 [![Coverage Status](https://coveralls.io/repos/trenskow/isvalid.js/badge.svg)](https://coveralls.io/r/trenskow/isvalid.js)
+
 -
 
 **isvalid.js** is an asynchronous node.js library for validating and error correcting JSON. In contrary to JSON Schema it uses a very simple schema model - inspired by the Mongoose schemas.
