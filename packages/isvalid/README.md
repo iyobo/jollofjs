@@ -1,6 +1,6 @@
 # isvalid.js
 
-[![npm version](https://badge.fury.io/js/isvalid.svg)](http://badge.fury.io/js/isvalid)
+[![npm version](https://badge.fury.io/js/isvalid.svg)](https://www.npmjs.com/package/isvalid)
 
 -
 
