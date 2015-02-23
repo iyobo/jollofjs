@@ -370,7 +370,7 @@ This ensures that a string can be matched against a regular expression. The vali
 
 This example shows a string that must contain a string of at least one character of latin letters or decimal numbers:
 
-    { type: String, match /^[a-zA-Z0-9]+$/ }
+    { type: String, match: /^[a-zA-Z0-9]+$/ }
 
 #### Number Validators
 
