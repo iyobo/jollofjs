@@ -1,7 +1,6 @@
 # isvalid.js
 
-[![npm version](https://badge.fury.io/js/isvalid.svg)](https://www.npmjs.com/package/isvalid)
-
+[![npm version](https://badge.fury.io/js/isvalid.svg)](https://www.npmjs.com/package/isvalid) [![travis ci](https://travis-ci.org/trenskow/isvalid.js.svg?branch=master)](https://travis-ci.org/trenskow/isvalid.js)
 -
 
 **isvalid.js** is an asynchronous node.js library for validating and error correcting JSON. In contrary to JSON Schema it uses a very simple schema model - inspired by the Mongoose schemas.
@@ -9,7 +8,7 @@
 Here's a simple example on how to use the validator:
 
     var isvalid = require('isvalid');
-    
+
     isvalid(somedata, {
         'user': { type: String, required: true },
         'pass': { type: String, required: true }
@@ -51,7 +50,7 @@ The `isvalid` function takes three parameters.
 
 ## Errors
 
-Errors in function parameters or schemas are thrown - as they are developer errors - and validation errors are passed to the 
+Errors in function parameters or schemas are thrown - as they are developer errors - and validation errors are passed to the
 callback.
 
 * Wrong parameters throw `Error` instances.
@@ -194,7 +193,7 @@ The function *must* take one parameter which holds the callback function to call
 Values: `true`, `false` or `'implicit'`.
 
 `required` works a little like default. Except if the value is absent a validation error is send to the callback.
-    
+
     { type: String, required: true }
 
 The above specifies that the data must be present and be of type `String`.
@@ -270,9 +269,9 @@ An example below of an object schema with a ´user´ key.
              'username': { type: String }
          }
      }
- 
+
  And example below of an array of strings.
- 
+
      {
          type: Array,
          schema: { type: String }
