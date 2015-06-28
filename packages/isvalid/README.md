@@ -72,7 +72,7 @@
      * [Custom Validators](#custom-validators)
        * [Example](#example-2)
        * [The Callback Function](#the-callback-function)
-       * [Options with Custom Validators](#options-in-custom-validators)
+       * [Options with Custom Validators](#options-with-custom-validators)
      * [Automatic Type Conversion](#automatic-type-conversion)
        * [Numbers](#numbers)
        * [Booleans](#booleans)
