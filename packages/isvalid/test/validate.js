@@ -2,7 +2,7 @@ var chai = require('chai'),
 	expect = chai.expect,
 	ValidationError = require('../lib/errors/validationError.js'),
 	validate = require('../index.js');
-	
+
 chai.use(function(_chai, utils) {
 	var Assertion = chai.Assertion;
 	utils.addProperty(Assertion.prototype, 'validationError', function() {
@@ -35,9 +35,18 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should call default if function is provided.', function(done) {
+			it ('should call default if function with callback is provided.', function(done) {
 				validate(undefined, { type: Object, default: function(cb) {
 					cb({ empty: true });
+				} }, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.have.property('empty').equals(true);
+					done();
+				});
+			});
+			it ('should call default if function with no callback is provided', function(done) {
+				validate(undefined, { type: Object, default: function() {
+					return { empty: true }
 				} }, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('empty').equals(true);
