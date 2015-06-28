@@ -102,7 +102,7 @@ Usage: `isvalid.validate.body(schema)` or `isvalid.validate.query(schema)`.
 
     var validate = require('isvalid').validate;
     
-    app.get('/mypath',
+    app.post('/mypath',
     validate.query({
         'filter': { type: String }
     }),
