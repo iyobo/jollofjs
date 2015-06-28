@@ -536,8 +536,6 @@ An example below.
 
 Using any other key than `custom` and `options` in conjunction with a custom validator will throw an error.
 
-> Schemas with both `custom` and `type` set will throw a `SchemaError`.
-
 ## Automatic Type Conversion
 
 ### Numbers
