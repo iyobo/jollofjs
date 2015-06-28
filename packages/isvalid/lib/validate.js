@@ -15,7 +15,7 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 
 	if (obj) {
 
-		if ('Object' != obj.constructor.name) {
+		if (typeof obj !== 'object') {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -137,7 +137,7 @@ var validateString = function(str, schema, fn, keyPath, options) {
 
 		var validStr = str;
 
-		if ('String' != validStr.constructor.name) {
+		if (typeof validStr !== 'string') {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -180,9 +180,9 @@ var validateNumber = function(num, schema, fn, keyPath, options) {
 
 		var validNum = num;
 
-		if ('String' == validNum.constructor.name && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
+		if (typeof validNum === 'string' && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
 			validNum = parseFloat(validNum);
-		} else if ('Number' != validNum.constructor.name) {
+		} else if (typeof validNum !== 'number') {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -218,11 +218,11 @@ var validateBoolean = function(val, schema, fn, keyPath, options) {
 
 	if (val) {
 
-		if ('String' == val.constructor.name && /^true|false$/i.test(val)) {
+		if (typeof val === 'string' && /^true|false$/i.test(val)) {
 			val = /^true$/i.test(val);
 		}
 
-		if ('Boolean' != val.constructor.name) {
+		if (typeof val !== 'boolean') {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -245,9 +245,9 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 
 	if (val) {
 
-		if ('String' == val.constructor.name ) {
+		if (typeof val === 'string') {
 			var date = new Date(val);
-			if ( ! isNaN(date.getDate()) )
+			if (!isNaN(date.getDate()))
 	 			return finalize(date, fn);
 
 			return fn(
@@ -260,7 +260,7 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 			);
 		}
 
-		if ('Date' != val.constructor.name) {
+		if (!(val instanceof Date)) {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -301,9 +301,9 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 		});
 	}
 
-	if (!obj) {
-		if (schema.default !== undefined) {
-			if ('Function' == schema.default.constructor.name) {
+	if (typeof obj === 'undefined') {
+		if (typeof schema.default !== 'undefined') {
+			if (typeof schema.default === 'function') {
 				// If function has no arguments it is assumed sync.
 				if (schema.default.length == 0) {
 					return finalize(schema.default(), fn);
@@ -344,10 +344,10 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 
 module.exports = function(obj, schema, fn, keyPath, options) {
 
-	if (!schema) throw new Error('Missing parameter schema');
-	if (!fn) throw new Error('Missing parameter fn');
+	if (typeof schema === 'undefined') throw new Error('Missing parameter schema');
+	if (typeof fn === 'undefined') throw new Error('Missing parameter fn');
 
-	if (keyPath && keyPath.constructor.name == 'Object') {
+	if (keyPath && typeof keyPath == 'object') {
 		options = keyPath;
 		keyPath = undefined;
 	}
