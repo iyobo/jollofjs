@@ -257,7 +257,7 @@ Now if the `receive-newsletter` field is absent in the data the validator will d
 
 ###### Asynchronous Functions
 
-An asynchronous default functions works using a callback.
+An asynchronous default function works using a callback.
 
     {
         "created": {
