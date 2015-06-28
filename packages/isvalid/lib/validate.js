@@ -78,6 +78,17 @@ var validateArray = function(arr, schema, fn, keyPath, options) {
 
 	if (arr) {
 
+		if (!(arr instanceof Array)) {
+			return fn(
+				new ValidationError(
+					keyPath,
+					schema._nonFormalizedSchema,
+					'type',
+					(schema.errors || {}).type || 'Is not an array'
+				)
+			);
+		}
+
 		var validArray = [];
 
 		var validateNext = function(idx) {

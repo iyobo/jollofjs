@@ -155,6 +155,12 @@ describe('Validate', function() {
 			});
 		});
 		describe('[Array validators]', function() {
+			it ('should come back with error if input is not an array', function(done) {
+				isvalid(123, [{}], function(err, validObj) {
+					expect(err).to.be.validationError;
+					done();
+				});
+			});
 			it ('should come back with no error and an empty array when supplying empty array', function(done) {
 				isvalid([], [{}], function(err, validObj) {
 					expect(err).to.be.null;
