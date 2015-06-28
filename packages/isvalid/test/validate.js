@@ -381,6 +381,23 @@ describe('Validate', function() {
 					done();
 				});
 			});
+			it ('should first validate using validators and then custom', function(done) {
+				validate({
+					'low': 0
+				}, {
+					type: Object,
+					schema: {
+						'low': { type: Number },
+						'high': { type: Number, default: 10 },
+					},
+					custom: function(obj, schema, fn) {
+						expect(obj.high).to.equal(10);
+						fn(obj);
+					}
+				}, function(err, validObj) {
+					done();
+				});
+			});
 		});
 	});
 });

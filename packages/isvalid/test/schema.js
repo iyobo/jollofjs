@@ -6,12 +6,12 @@ describe('schema', function() {
 	describe('#formalize', function() {
 		it ('should throw an error if array shortcut contains no object', function() {
 			expect(function() {
-				schema.formalize([])
+				schema.formalize([]);
 			}).to.throw(SchemaError);
 		});
-		it ('should throw an error if both type and custom is set', function() {
+		it ('should throw an error if schema is garbage value', function() {
 			expect(function() {
-				schema.formalize({ type: String, custom: function() {} });
+				schema.formalize(123);
 			}).to.throw(SchemaError);
 		});
 		it ('should come back with an object shortcut expanded', function(done) {
