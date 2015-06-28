@@ -267,9 +267,9 @@ describe('Validate', function() {
 		});
 		describe('[Number validators]', function() {
 			it ('should convert string values into numbers if string contains a number', function(done) {
-				validate('123.0', { type: Number }, function(err, validObj) {
+				validate('123.123', { type: Number }, function(err, validObj) {
 					expect(err).to.be.null;
-					expect(validObj).to.equal(123.0);
+					expect(validObj).to.equal(123.123);
 					done();
 				});
 			});

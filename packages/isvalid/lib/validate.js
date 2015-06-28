@@ -180,7 +180,7 @@ var validateNumber = function(num, schema, fn, keyPath, options) {
 
 		var validNum = num;
 
-		if (typeof validNum === 'string' && /^[0-9]+(?:\.[0.9])?$/.test(num)) {
+		if (typeof validNum === 'string' && /^[0-9]+(?:\.[0-9]+)?$/.test(num)) {
 			validNum = parseFloat(validNum);
 		} else if (typeof validNum !== 'number') {
 			return fn(
