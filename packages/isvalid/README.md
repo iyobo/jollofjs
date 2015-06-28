@@ -510,7 +510,7 @@ The custom function must take three parameters
  - *schema* The schema to validate against
    - This enables you to use the schema to pass in options.
  - *fn* The callback function to call when validation either succeeds or fails.
-   - The callback function takes to parameters
+   - The callback function takes two parameters
      - *err* An `Error` describing the validation error that occurred.
      - *validObj* The finished and validated object.
 
