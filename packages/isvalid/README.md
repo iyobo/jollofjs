@@ -11,6 +11,7 @@
 
 * Bug fixes.
 * `type` and `custom` can now be used alongside each other.
+* Default functions now also works synchronously.
 * Migrated Connect/Express middleware to this package from *invalid-express*.
 
 ## In Version 0.2.0
@@ -48,6 +49,8 @@
          * [`default` Validator](#default-validator)
            * [Static Values](#static-values)
            * [Functions](#functions)
+             * [Asynchronous Functions](#asynchronous-functions)
+             * [Synchronous Functions](#synchronous-functions)
          * [`required` Validator](#required-validator)
            * [Implicitly Required](#implicitly-required)
          * [`errors` Validator](#errors-validator)
@@ -250,7 +253,9 @@ Now if the `receive-newsletter` field is absent in the data the validator will d
 
 `default` also supports functions.
 
-Example:
+###### Asynchronous Functions
+
+An asynchronous default functions works using a callback.
 
     {
         "created": {
@@ -260,10 +265,19 @@ Example:
             }
         }
     }
+    
+###### Synchronous Functions
 
-In the above example the function is called whenever the input data does not have a `created` field.
+A synchronous default function works the same way - except you leave out the callback.
 
-The function *must* take one parameter which holds the callback function to call with the actual default data. The reason is the asynchronous nature of the library and allows for asynchronous work to be done before calling the callback.
+    {
+        "created": {
+            type: String,
+            default: function() {
+                return 'This is my default value';
+            }
+        }
+    }
 
 #### `required` Validator
 Values: `true`, `false` or `'implicit'`.
