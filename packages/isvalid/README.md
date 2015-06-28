@@ -44,6 +44,46 @@ The `isvalid` function takes three parameters.
  * You can now specify custom error messages using the `error` validator.
  * `Object` now supports the `allowUnknownKeys` validator.
 
+# Table of Content
+
+   * [How to Use](#how-to-use)
+     * [Errors](#errors)
+       * [SchemaError](#schemaerror)
+       * [ValidationError](#validationerror)
+     * [Type Shortcuts](#type-shortcuts)
+       * [Object Shortcuts](#object-shortcuts)
+       * [Array Shortcuts](#array-shortcuts)
+     * [Supported Types](#supported-types)
+       * [Common Validators](#common-validators)
+         * [`default` Validator](#default-validator)
+           * [Static Values](#static-values)
+           * [Functions](#functions)
+         * [`required` Validator](#required-validator)
+           * [Implicitly Required](#implicitly-required)
+         * [`errors` Validator](#errors-validator)
+       * [Type Specific Validators](#type-specific-validators)
+         * [Validators Common to Objects and Arrays](#validators-common-to-objects-and-arrays)
+           * [`schema` Validator](#schema-validator)
+         * [Object Validators](#object-validators)
+           * [`allowUnknownKeys` Validator](#allowunknownkeys-validator)
+         * [Array Validators](#array-validators)
+           * [`len` Validator](#len-validator)
+           * [`unique` Validator](#unique-validator)
+         * [String Validators](#string-validators)
+           * [`trim` Validator](#trim-validator)
+           * [`match` Validator](#match-validator)
+         * [Number Validators](#number-validators)
+           * [`range` Validator](#range-validator)
+     * [Custom Validators](#custom-validators)
+       * [Options in Custom Validators](#options-in-custom-validators)
+     * [Automatic Type Conversion](#automatic-type-conversion)
+       * [Numbers](#numbers)
+       * [Booleans](#booleans)
+       * [Dates](#dates)
+     * [Be aware of...](#be-aware-of)
+       * [Object Shortcuts](#object-shortcuts-1)
+   * [License](#license)
+
 # How to Use
 
 **isvalid** uses a simple schema modal to specify how the data should be formatted. It supports generic validators for all types and type specific validators.
@@ -255,7 +295,7 @@ Now in case any of the validators fail, they will emit the error message specifi
 
 ### Type Specific Validators
 
-#### Validators Common to Objects and Arrays.
+#### Validators Common to Objects and Arrays
 
 ##### `schema` Validator
 
@@ -449,7 +489,7 @@ If the schema has type `Number` and the input holds a `String` containing number
 
 Likewise will schemas of type `Boolean` be automatically converted into a `Boolean` if a `String` with the value of `true` or `false` is in the data.
 
-### Date
+### Dates
 
 If the schema is of type `Date` and a `String` containing an [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) formatted date is supplied, it will automatically be parsed and converted into a `Date`.
 
