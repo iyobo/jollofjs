@@ -72,6 +72,8 @@
 
 **isvalid** uses a simple schema modal to specify how the data should be formatted. It supports generic validators for all types and type specific validators.
 
+Usage: `isvalid(dataToValidate, validationSchema, callback)`
+
 ## Example
 
 Here's a simple example on how to use the validator:
@@ -87,10 +89,6 @@ Here's a simple example on how to use the validator:
     	validObj: The validated data.
     	*/
     });
-
-The `isvalid` function takes three parameters.
-
-    isvalid(dataToValidate, validationSchema, callback);
 
 ## As Connect or Express Middleware
 
