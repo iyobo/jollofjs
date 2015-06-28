@@ -9,10 +9,12 @@
 
 ## In Version 0.3.0
 
-* Bug fixes.
+* Bug fixes and internal improvements.
 * `type` and `custom` can now be used alongside each other.
 * Default functions now also works synchronously.
-* Migrated Connect/Express middleware to this package from *invalid-express*.
+* Changed license to MIT
+* Improved this file with a TOC
+* Added middleware for Connect/Express (from [isvalid-express](https://github.com/trenskow/isvalid-express)).
 
 ## In Version 0.2.0
 
