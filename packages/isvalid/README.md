@@ -496,6 +496,8 @@ Custom validators are specified by the `custom` field of a schema.
 
 In the above example we have specified an object with two keys - `low` and `high`. The validator will first make sure, that the object validates to the schema. If it does it will then call the custom validator - which in this example calls the callback with an error if low is bigger than high.
 
+> `type` becomes optional when using `custom`. You can completely leave out any validation and just use a `custom` validator.
+
 ### The Callback Function
 
 The asynchronous nature of the library, allows for asynchronous operations in custom functions.
