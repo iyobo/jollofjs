@@ -5,26 +5,6 @@
 
 **isvalid** is an asynchronous node.js library for validating and error correcting JSON. In contrary to JSON Schema it uses a very simple schema model - inspired by the Mongoose schemas.
 
-Here's a simple example on how to use the validator:
-
-    var isvalid = require('isvalid');
-
-    isvalid(somedata, {
-        'user': { type: String, required: true },
-        'pass': { type: String, required: true }
-    }, function(err, validObj) {
-    	/*
-    	err:      Error describing invalid data.
-    	validObj: The validated data.
-    	*/
-    });
-
-The `isvalid` function takes three parameters.
-
-    isvalid(dataToValidate, validationSchema, callback);
-
-> There is a convenience library for connect.js and express.js middleware available through the [isvalid-express.js](https://github.com/trenskow/isvalid-express.js) project.
-
 # What's New?
 
 ## In Version 0.2.0
@@ -47,6 +27,10 @@ The `isvalid` function takes three parameters.
 # Table of Content
 
    * [How to Use](#how-to-use)
+     * [Example](#example)
+     * [As Connect or Express Middleware](#as-connect-or-express-middleware)
+       * [Example](#example-1)
+   * [How it Works](#how-it-works)
      * [Errors](#errors)
        * [SchemaError](#schemaerror)
        * [ValidationError](#validationerror)
@@ -87,6 +71,52 @@ The `isvalid` function takes three parameters.
 # How to Use
 
 **isvalid** uses a simple schema modal to specify how the data should be formatted. It supports generic validators for all types and type specific validators.
+
+## Example
+
+Here's a simple example on how to use the validator:
+
+    var isvalid = require('isvalid');
+
+    isvalid(somedata, {
+        'user': { type: String, required: true },
+        'pass': { type: String, required: true }
+    }, function(err, validObj) {
+    	/*
+    	err:      Error describing invalid data.
+    	validObj: The validated data.
+    	*/
+    });
+
+The `isvalid` function takes three parameters.
+
+    isvalid(dataToValidate, validationSchema, callback);
+
+## As Connect or Express Middleware
+
+Connect and express middleware is build in.
+
+Usage: `isvalid.validate.body(schema)` or `isvalid.validate.query(schema)`.
+
+### Example
+
+    var validate = require('isvalid').validate;
+    
+    app.get('/mypath',
+    validate.query({
+        'filter': { type: String }
+    }),
+    validate.body({
+        'mykey': { type: String, required: true }
+    }),
+    function(req, res) {
+        // req.body and req.query is now validated.
+        // - any default values - or type conversion - has been applied!
+    });
+
+# How it Works
+
+**isvalid** is a comprehensive validation library - build for ease of use. Both as Connect or Express middleware - where it comes in really handy - or as stand alone.
 
 ## Errors
 
