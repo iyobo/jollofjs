@@ -7,6 +7,12 @@
 
 # What's New?
 
+## In Version 0.3.0
+
+* Bug fixes.
+* `type` and `custom` can now be used alongside each other.
+* Migrated Connect/Express middleware to this package from *invalid-express*.
+
 ## In Version 0.2.0
 
 * It now catches more errors in schemas - such as wrong values on validators.
@@ -59,7 +65,9 @@
          * [Number Validators](#number-validators)
            * [`range` Validator](#range-validator)
      * [Custom Validators](#custom-validators)
-       * [Options in Custom Validators](#options-in-custom-validators)
+       * [Example](#example-2)
+       * [The Callback Function](#the-callback-function)
+       * [Options with Custom Validators](#options-in-custom-validators)
      * [Automatic Type Conversion](#automatic-type-conversion)
        * [Numbers](#numbers)
        * [Booleans](#booleans)
@@ -454,22 +462,27 @@ This ensures that the number is within a certain range. If not the validator sen
 
 Custom validators are for usage when the possibilities of the validation schema falls short. Custom validators basically outsources validation to a custom function.
 
-Custom validators are specified by the `custom` field of a schema - instead of `type`.
+Custom validators are specified by the `custom` field of a schema.
 
-Example (remark the absent of `type`):
+### Example
 
     {
-        'date': {
-            custom: function(obj, schema, fn) {
-                if (!(obj instanceof Date)) {
-                	return fn(new Error('Type is not a Date'));
-                }
-                fn(null, obj);
+        type: Object,
+        schema: {
+            'low': { type: Number }
+            'high': { type: Number }
+        }
+        'custom': function(obj, schema, fn) {
+            if (low > high) {
+                return fn(new Error('low must be lower than high'));
             }
+            fn(null, obj);
         }
     }
 
-In the above example we have specified a custom validator. In the specific case we test whether the data is of type `Date`. If not we pass an error to the callback. Otherwise we call the callback function with no error and the valid object.
+In the above example we have specified an object with two keys - `low` and `high`. The validator will first make sure, that the object validates to the schema. If it does it will then call the custom validator - which in this example calls the callback with an error if low is bigger than high.
+
+### The Callback Function
 
 The asynchronous nature of the library, allows for asynchronous operations in custom functions.
 
@@ -483,9 +496,9 @@ The custom function must take three parameters
      - *err* An `Error` describing the validation error that occurred.
      - *validObj* The finished and validated object.
 
-> *Remark:* Errors are automatically converted into a ValidationError and sent to the the callback internally.
+> *Remark:* Errors are automatically converted into a ValidationError internally.
 
-### Options in Custom Validators
+### Options with Custom Validators
 
 If you need to pass any options to your custom validator, you can do so by using the `options` property of the schema.
 
@@ -498,7 +511,7 @@ An example below.
             },
             custom: function(obj, schema, fn) {
             	// schema.options will now contain whatever options you supplied in the schema.
-            	// In this example schema.options.myCustomOptions equals 'here'.
+            	// In this example schema.options == { myCustomOptions: 'here'}.
             }
         }
     }
