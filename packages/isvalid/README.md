@@ -458,3 +458,7 @@ If the schema is of type `Date` and a `String` containing an [ISO-8601](http://e
 ### Object Shortcuts
 
 Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for keys with those names, you must use explicitly formatted object schemas - hence the shortcut cannot be used.
+
+# License
+
+MIT
