@@ -43,9 +43,6 @@
      * [Errors](#errors)
        * [SchemaError](#schemaerror)
        * [ValidationError](#validationerror)
-     * [Type Shortcuts](#type-shortcuts)
-       * [Object Shortcuts](#object-shortcuts)
-       * [Array Shortcuts](#array-shortcuts)
      * [Supported Types](#supported-types)
        * [Common Validators](#common-validators)
          * [`default` Validator](#default-validator)
@@ -73,6 +70,9 @@
        * [Example](#example-2)
        * [The Callback Function](#the-callback-function)
        * [Options with Custom Validators](#options-with-custom-validators)
+     * [Type Shortcuts](#type-shortcuts)
+       * [Object Shortcuts](#object-shortcuts)
+       * [Array Shortcuts](#array-shortcuts)
      * [Automatic Type Conversion](#automatic-type-conversion)
        * [Numbers](#numbers)
        * [Booleans](#booleans)
@@ -149,56 +149,6 @@ The `ValidationError` contains three properties besides the `message` field of `
   - `keyPath` is an array indicating the key path in the data where the error occured.
   - `schema` is the schema that failed to validate.
   - `validator` is the name of the validator that failed.
-
-## Type Shortcuts
-
-Some types can be specified using shortcuts. Instead of specifying the type, you just use the type. This works with objects and arrays.
-
-In the above simple example we used the object shortcut and should have looked like this if we hadn't.
-
-    isvalid(somedata, {
-        type: Object,
-        schema: {
-            'user': { type: String, required: true },
-            'pass': { type: String, required: true }
-        }
-    }, ...);
-
-### Object Shortcuts
-
-Object shortcuts are used like this:
-
-    {
-        "user": { type: String }
-    }
-
-and is in fact the same as this:
-
-    {
-        type: Object,
-        schema: {
-        	"user": { type: String }
-        }
-    }
-
-Which means that data should be an object with a `user` field of the type `String`.
-
-### Array Shortcuts
-
-The same goes for arrays:
-
-    [
-        { type: String }
-    ]
-
-is essentially the same as:
-
-    {
-        type: Array,
-        schema: { type: String }
-    }
-
-Which means the data must be an array of strings.
 
 ## Supported Types
 
@@ -535,6 +485,56 @@ An example below.
     }
 
 Using any other key than `custom` and `options` in conjunction with a custom validator will throw an error.
+
+## Type Shortcuts
+
+Some types can be specified using shortcuts. Instead of specifying the type, you just use the type. This works with objects and arrays.
+
+In the above simple example we used the object shortcut and should have looked like this if we hadn't.
+
+    isvalid(somedata, {
+        type: Object,
+        schema: {
+            'user': { type: String, required: true },
+            'pass': { type: String, required: true }
+        }
+    }, ...);
+
+### Object Shortcuts
+
+Object shortcuts are used like this:
+
+    {
+        "user": { type: String }
+    }
+
+and is in fact the same as this:
+
+    {
+        type: Object,
+        schema: {
+        	"user": { type: String }
+        }
+    }
+
+Which means that data should be an object with a `user` field of the type `String`.
+
+### Array Shortcuts
+
+The same goes for arrays:
+
+    [
+        { type: String }
+    ]
+
+is essentially the same as:
+
+    {
+        type: Array,
+        schema: { type: String }
+    }
+
+Which means the data must be an array of strings.
 
 ## Automatic Type Conversion
 
