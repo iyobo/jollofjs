@@ -77,8 +77,6 @@
        * [Numbers](#numbers)
        * [Booleans](#booleans)
        * [Dates](#dates)
-     * [Be aware of...](#be-aware-of)
-       * [Object Shortcuts](#object-shortcuts-1)
    * [License](#license)
 
 # How to Use
@@ -523,6 +521,8 @@ and is in fact the same as this:
 
 Which means that data should be an object with a `user` field of the type `String`.
 
+> Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for keys with those names, you must explicitly format the object using `type` and `schema` - hence the shortcut cannot be used.
+
 ### Array Shortcuts
 
 The same goes for arrays:
@@ -553,12 +553,6 @@ Likewise will schemas of type `Boolean` be automatically converted into a `Boole
 ### Dates
 
 If the schema is of type `Date` and a `String` containing an [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) formatted date is supplied, it will automatically be parsed and converted into a `Date`.
-
-## Be aware of...
-
-### Object Shortcuts
-
-Internally the library tests for object shortcuts by examining the absent of the `type` and `custom` keys. So if you need objects schemas with validators for keys with those names, you must use explicitly formatted object schemas - hence the shortcut cannot be used.
 
 # License
 
