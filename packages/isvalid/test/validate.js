@@ -355,14 +355,44 @@ describe('Validate', function() {
 		});
 		describe('[custom validators]', function() {
 			it ('should call function if custom is specified.', function(done) {
-				isvalid({}, {
+				isvalid('test', {
 					custom: function(obj, schema, fn) {
-						expect(obj).to.be.an('Object');
-						expect(schema).to.have.property('custom');
-						fn(null, obj);
+						expect(obj).to.be.a('String').equals('test');
+						fn(null, 'test2');
 					}
 				}, function(err, validObj) {
-					expect(validObj).to.be.an('Object');
+					expect(validObj).to.be.a('String').equals('test2');
+					done();
+				});
+			});
+			it ('should call function if synchronous custom is specified', function(done) {
+				isvalid(undefined, {
+					custom: function(obj, schema) {
+						return 'test';
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.be.a('String').equal('test');
+					done();
+				});
+			});
+			it ('should convert errors thrown in synchronous custom function', function(done) {
+				isvalid('test', {
+					custom: function(obj, schema) {
+						throw new Error('an error');
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					expect(err).to.have.property('message').equal('an error');
+					done();
+				});
+			});
+			it ('should return original object if synchronous function doesn\'t return', function(done) {
+				isvalid('test', {
+					custom: function(obj, schema) {}
+				}, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.be.a('String').equal('test');
 					done();
 				});
 			});

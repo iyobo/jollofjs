@@ -294,15 +294,22 @@ var validateCustom = function(obj, schema, fn, keyPath, options) {
 
 	if (schema.custom === undefined) return finalize(obj, fn);
 
-	return schema.custom(obj, schema, function(err, validObj) {
-		if (err) {
-			var stack = err.stack;
-			err = new ValidationError(keyPath, schema._nonFormalizedSchema, 'custom', err.message);
-			err.stack = stack;
-			return fn(err);
+	// Synchronous functions only have two parameters
+	if (schema.custom.length < 3) {
+		var res;
+		try {
+			res = schema.custom(obj, schema);
+		} catch (err) {
+			return fn(ValidationError.fromError(keyPath, schema._nonFormalizedSchema, 'custom', err));
 		}
-		return finalize(obj, fn);
-	});
+		if (typeof res === 'undefined') res = obj;
+		return finalize(res, fn);
+	} else {
+		return schema.custom(obj, schema, function(err, validObj) {
+			if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
+			return finalize(validObj, fn);
+		});
+	}
 
 }
 

@@ -11,7 +11,7 @@
 
 * Bug fixes and internal improvements.
 * `type` and `custom` can now be used alongside each other.
-* Default functions now also works synchronously.
+* Default functions and custom validators now also works synchronously.
 * Changed license to MIT
 * Improved this file with a TOC
 * Added middleware for Connect/Express (from [isvalid-express](https://github.com/trenskow/isvalid-express)).
@@ -67,8 +67,9 @@
          * [Number Validators](#number-validators)
            * [`range` Validator](#range-validator)
      * [Custom Validators](#custom-validators)
-       * [Example](#example-2)
-       * [The Callback Function](#the-callback-function)
+       * [Asynchronous Example](#asynchronous-example)
+         * [The Callback Function](#the-callback-function)
+       * [Synchronous Example](#synchronous-example)
        * [Options with Custom Validators](#options-with-custom-validators)
      * [Type Shortcuts](#type-shortcuts)
        * [Object Shortcuts](#object-shortcuts)
@@ -432,7 +433,9 @@ Custom validators are for usage when the possibilities of the validation schema 
 
 Custom validators are specified by the `custom` field of a schema.
 
-### Example
+> `type` becomes optional when using `custom`. You can completely leave out any validation and just use a `custom` validator.
+
+### Asynchronous Example
 
     {
         type: Object,
@@ -450,9 +453,7 @@ Custom validators are specified by the `custom` field of a schema.
 
 In the above example we have specified an object with two keys - `low` and `high`. The validator will first make sure, that the object validates to the schema. If it does it will then call the custom validator - which in this example calls the callback with an error if low is bigger than high.
 
-> `type` becomes optional when using `custom`. You can completely leave out any validation and just use a `custom` validator.
-
-### The Callback Function
+#### The Callback Function
 
 The asynchronous nature of the library, allows for asynchronous operations in custom functions.
 
@@ -467,6 +468,24 @@ The custom function must take three parameters
      - *validObj* The finished and validated object.
 
 > *Remark:* Errors are automatically converted into a ValidationError internally.
+
+### Synchronous Example
+
+The `custom` validator also supports synchronous functions, which is done by simple leaving out the callback parameter - and instead errors are thrown. They are caught and converted to a ValidationError internally.
+
+    {
+        type: Object,
+        schema: {
+            'low': { type: Number }
+            'high': { type: Number }
+        }
+        'custom': function(obj, schema) {
+            if (low > high) {
+                throw new Error('low must be lower than high');
+            }
+            return obj;
+        }
+    }
 
 ### Options with Custom Validators
 
