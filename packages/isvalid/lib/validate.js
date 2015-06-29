@@ -304,12 +304,13 @@ var validateCustom = function(obj, schema, fn, keyPath, options) {
 		}
 		if (typeof res === 'undefined') res = obj;
 		return finalize(res, fn);
-	} else {
-		return schema.custom(obj, schema, function(err, validObj) {
-			if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
-			return finalize(validObj, fn);
-		});
 	}
+
+	// Asynchronous function
+	return schema.custom(obj, schema, function(err, validObj) {
+		if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
+		return finalize(validObj, fn);
+	});
 
 }
 
