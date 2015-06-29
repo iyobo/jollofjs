@@ -346,7 +346,7 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 				new ValidationError(
 					keyPath,
 					schema._nonFormalizedSchema,
-					'noNull',
+					'allowNull',
 					(schema.errors || {}).allowNull || 'Cannot be null.'
 				)
 			);
