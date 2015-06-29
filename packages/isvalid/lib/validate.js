@@ -177,6 +177,22 @@ var validateString = function(str, schema, fn, keyPath, options) {
 			}
 		}
 
+		// Validate enums
+		if (schema.enum && schema.enum.indexOf(str) == -1) {
+			return fn(
+				new ValidationError(
+					keyPath,
+					schema._nonFormalizedSchema,
+					'enum',
+					(schema.errors || {}).enum || 'Possible values are ' + schema.enum.map(function(val) {
+						return '\"' + val + '\"';
+					}).reduce(function(prev, cur, idx, arr) {
+						return prev + (idx == arr.length - 1 ? ' and ' : ', ') + cur;
+					}) + '.'
+				)
+			)
+		}
+
 		return validateCustom(validStr, schema, fn, keyPath, options);
 
 	}

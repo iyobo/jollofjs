@@ -12,6 +12,7 @@
 * Bug fixes and internal improvements.
 * `type` and `custom` can now be used alongside each other.
 * Default functions and custom validators now also works synchronously.
+* Strings now has an `enum` validator.
 * Changed license to MIT
 * Improved this file with a TOC
 * Added middleware for Connect/Express (from [isvalid-express](https://github.com/trenskow/isvalid-express)).
@@ -64,6 +65,7 @@
          * [String Validators](#string-validators)
            * [`trim` Validator](#trim-validator)
            * [`match` Validator](#match-validator)
+           * [`enum` Validator](#enum-validator)
          * [Number Validators](#number-validators)
            * [`range` Validator](#range-validator)
      * [Custom Validators](#custom-validators)
@@ -415,6 +417,17 @@ This ensures that a string can be matched against a regular expression. The vali
 This example shows a string that must contain a string of at least one character of latin letters or decimal numbers:
 
     { type: String, match: /^[a-zA-Z0-9]+$/ }
+
+##### `enum` Validator
+Type: `Array`
+
+This is complimentary to `match^ - as this could easily be achieved with match - but it is simpler and easier to read. The validator ensures that the string can be matched against a set of values - an enum. If it does not, it sends an validation error to the callback.
+
+    { type: String, enum: ['none','some','all'] }
+
+In the above example the string can only have the values of `none`, `some` or `all`.
+
+> Remark that `enum` is case sensitive.
 
 #### Number Validators
 

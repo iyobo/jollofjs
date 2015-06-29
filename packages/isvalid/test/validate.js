@@ -7,6 +7,7 @@ chai.use(function(_chai, utils) {
 	var Assertion = chai.Assertion;
 	utils.addProperty(Assertion.prototype, 'validationError', function() {
 		var err = utils.flag(this, 'object');
+		new Assertion(err).to.be.instanceof(Error);
 		new Assertion(err).to.have.property('keyPath').to.be.an('Array');
 		new Assertion(err).to.have.property('schema').to.be.an('Object');
 		new Assertion(err).to.have.property('message').to.be.a('String');
@@ -267,6 +268,12 @@ describe('Validate', function() {
 				isvalid('123', { type: String }, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal('123');
+					done();
+				});
+			});
+			it ('should come back with an error if string is not in enum', function(done) {
+				isvalid('123', { type: String, enum: ['this','is','a','test'] }, function(err, validObj) {
+					expect(err).to.be.validationError;
 					done();
 				});
 			});

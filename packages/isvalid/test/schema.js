@@ -98,6 +98,21 @@ describe('schema', function() {
 				schema.formalize({ type: String, match: 'test' });
 			}).to.throw(SchemaError);
 		});
+		it ('should throw error if type is String and enum is not an array', function() {
+			expect(function() {
+				schema.formalize({ type: String, enum: 1 });
+			}).to.throw(SchemaError);
+		});
+		it ('should throw error if type is String and enum has zero valus', function() {
+			expect(function() {
+				schema.formalize({ type: String, enum: [] });
+			}).to.throw(SchemaError);
+		});
+		it ('should throw error if type is String and enum is not array of strings', function() {
+			expect(function() {
+				schema.formalize({ type: String, enum: ['this','is',1,'test'] });
+			}).to.throw(SchemaError);
+		});
 		it ('should come back with no error and match set if match is RegExp', function(done) {
 			schema.formalize({ type: String, match: /test/ }, function(schema) {
 				expect(schema).to.have.property('match');

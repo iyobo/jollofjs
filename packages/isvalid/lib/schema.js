@@ -131,7 +131,8 @@ var formalizeAny = function(schema, fn) {
     }
     if ('String' == schema.type.name) typeSpecific = {
       'match': [ 'RegExp' ],
-      'trim': [ 'Boolean' ]
+      'trim': [ 'Boolean' ],
+      'enum': [ 'Array' ]
     }
     if ('Number' == schema.type.name) typeSpecific = {
       'range': [ 'String', 'Number' ]
@@ -162,6 +163,24 @@ var formalizeAny = function(schema, fn) {
 
 		formalizedSchema[key] = schema[key];
 	}
+
+  // Check string enums
+  if (typeof formalizedSchema.enum !== 'undefined') {
+    if (formalizedSchema.enum.length < 1) {
+      throw new SchemaError(
+        schema,
+        'Validator \'' + key + '\': enums must have at least one item.'
+      );
+    }
+    for (var idx in formalizedSchema.enum) {
+      if (typeof formalizedSchema.enum[idx] !== 'string') {
+        throw new SchemaError(
+          schema,
+          'Validator \'' + key + '\': enums must be an array of strings.'
+        );
+      }
+    }
+  }
 
 	// Finalize objects and arrays if necessary.
 	if (formalizedSchema.type) {
