@@ -339,7 +339,18 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 		});
 	}
 
-	if (typeof obj === 'undefined') {
+	if (typeof obj === 'undefined' || obj === null) {
+		if (obj === null) {
+			if (schema.allowNull === true || (options || {}).allowNull === true) return finalize(obj, fn);
+			return fn(
+				new ValidationError(
+					keyPath,
+					schema._nonFormalizedSchema,
+					'noNull',
+					(schema.errors || {}).allowNull || 'Cannot be null.'
+				)
+			);
+		}
 		if (typeof schema.default !== 'undefined') {
 			if (typeof schema.default === 'function') {
 				// If function has no arguments it is assumed sync.

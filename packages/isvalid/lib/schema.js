@@ -114,6 +114,7 @@ var formalizeAny = function(schema, fn) {
     'type': ['Function'],
     'required': ['Boolean', 'String'],
     'default': true,
+    'allowNull': ['Boolean'],
     'errors': [ 'Object' ],
     'custom': [ 'Function' ]
   };

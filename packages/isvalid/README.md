@@ -7,6 +7,12 @@
 
 # What's New?
 
+## In Version 1.0.0
+
+> Because of breaking API-changes this version is 1.0.0. Prior to 1.0.0 `null` was always allowed, and there was really no way of controlling it. From this version and onwards you must opt-in to allow `null`.
+
+* Opt-in to `null` values using the `allowNull` validator.
+
 ## In Version 0.3.0
 
 * Bug fixes and internal improvements.
@@ -53,6 +59,7 @@
              * [Synchronous Functions](#synchronous-functions)
          * [`required` Validator](#required-validator)
            * [Implicitly Required](#implicitly-required)
+         * [`allowNull` Validator](#allownull-validator)
          * [`errors` Validator](#errors-validator)
        * [Type Specific Validators](#type-specific-validators)
          * [Validators Common to Objects and Arrays](#validators-common-to-objects-and-arrays)
@@ -276,6 +283,13 @@ See the example below.
 In the above example the data will validate if the object is not present the input, even though `user` is required - because the parent object is explicitly *not* required. If the object - on the other hand - *is* present it must have the `user` key and it must be of type `String`.
 
 > *Remark:* If `required` is not specified, then `Object` and `Array` types are by default `'implicit'`. All other types are by default non-required. Also `required` is ignored if `default` is specified.
+
+#### `allowNull` Validator
+Type: `Boolean`
+
+This validator allows for values to be `null` - regardless of requiredness.
+
+> *Remark:* This is `false` by default.
 
 #### `errors` Validator
 

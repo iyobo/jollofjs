@@ -67,7 +67,20 @@ describe('Validate', function() {
 					expect(validObj).to.have.property('empty').equals(true);
 					done();
 				});
-			})
+			});
+			it ('should come back with error if null and null is not allowed', function(done) {
+				isvalid(null, { type: String }, function(err, validObj) {
+					expect(err).to.be.validationError;
+					done();
+				});
+			});
+			it ('should come back with no error if null and null is allowed', function(done) {
+				isvalid(null, { type: String, allowNull: true, required: true }, function(err, validObj) {
+					expect(err).to.be.null;
+					expect(validObj).to.be.null;
+					done();
+				});
+			});
 		});
 		describe('[Object validators]', function() {
 			it ('should come back with error if input is not an object', function(done) {
@@ -257,10 +270,10 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come back with null and no error if input is not required and match is not defined', function(done) {
-				isvalid(null, { type: String }, function(err, validObj) {
+			it ('should come back with undefined and no error if input is not required and match is not defined', function(done) {
+				isvalid(undefined, { type: String }, function(err, validObj) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.null;
+					expect(validObj).to.be.undefined;
 					done();
 				});
 			});
