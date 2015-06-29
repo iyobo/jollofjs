@@ -93,15 +93,17 @@ Here's a simple example on how to use the validator:
 
     var isvalid = require('isvalid');
 
-    isvalid(somedata, {
+    isvalid(somedata, {        	    	
         'user': { type: String, required: true },
-        'pass': { type: String, required: true }
+        'pass': { type: String, required: true }            
     }, function(err, validObj) {
     	/*
     	err:      Error describing invalid data.
     	validObj: The validated data.
     	*/
     });
+
+> The above example uses a type shortcut for the root object. See section [Type Shortcuts](#type-shortcuts) for more information.
 
 ## As Connect or Express Middleware
 
@@ -124,6 +126,8 @@ Usage: `isvalid.validate.body(schema)` or `isvalid.validate.query(schema)`.
         // req.body and req.query is now validated.
         // - any default values - or type conversion - has been applied!
     });
+
+> As before, the above example uses a type shortcut both of the root objects. See section [Type Shortcuts](#type-shortcuts) for more information.
 
 # How it Works
 
@@ -170,7 +174,7 @@ You specify the type like this:
 
 In the above example the input must be of type `String`.
 
-All schemas must have the `type` specified or have a custom validator through a `custom` function - more about custom validators in it's designated section below.
+All schemas must have the `type` specified and/or have a custom validator through a `custom` function - more about custom validators in it's designated section below.
 
 > Object and array shortcuts apply their type automatically - as seen above.
 
