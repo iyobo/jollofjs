@@ -616,7 +616,7 @@ If the schema is of type `Date` and a `String` containing an [ISO-8601](http://e
 
 ISO-8601 is the date format that `JSON.stringify(...)` convert `Date` instances into, so this allows you to just serialize an object to JSON on - as an example - the client side, and then **isvalid** will automatically convert that into a `Date` instance when validating on the server side.
 
-No more needs for manual conversions!
+No longer any need for manual conversions!
 
 (Contributed by [thom-nic](https://github.com/thom-nic))
 
