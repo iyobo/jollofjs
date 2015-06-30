@@ -104,13 +104,13 @@ Here's a simple example on how to use the validator:
 
     var isvalid = require('isvalid');
 
-    isvalid(somedata, {        	    	
+    isvalid(inputData, {        	    	
         'user': { type: String, required: true },
         'pass': { type: String, required: true }            
-    }, function(err, validObj) {
+    }, function(err, validData) {
     	/*
-    	err:      Error describing invalid data.
-    	validObj: The validated data.
+    	err:       Error describing invalid data.
+    	validData: The validated data.
     	*/
     });
 
@@ -549,16 +549,16 @@ Some types can be specified using shortcuts. Instead of specifying the type, you
 
 In this document we've been using them extensively on `Object` examples, and the first example of this document should have looked like this, if it hadn't been used.
 
-    isvalid(somedata, {
+    isvalid(inputData, {
         type: Object,
         schema: {
             'user': { type: String, required: true },
             'pass': { type: String, required: true }
         }
-    }, function(err, validObj) {
+    }, function(err, validData) {
         /*
-        err:      Error describing invalid data.
-        validObj: The validated data.
+        err:       Error describing invalid data.
+        validData: The validated data.
         */
     });
 
