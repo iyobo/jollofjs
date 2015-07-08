@@ -13,7 +13,7 @@
 		"chai-as-promised": ">= 4.1.1"
 	},
 	"scripts": {
-		"test": "./node_modules/mocha/bin/mocha ./test/*.js"
+		"test": "ISVALID_SILENCE=1 ./node_modules/mocha/bin/mocha ./test/*.js"
 	},
 	"repository": {
 		"type": "git",
