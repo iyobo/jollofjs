@@ -36,7 +36,7 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 		// Find unknown keys
 		for (var key in obj) {
 			if (!schemaCopy[key]) {
-				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true;
+				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
 				switch (schema.unknownKeys || (options || {}).unknownKeys) {
 					case 'allow':
 						validObj[key] = obj[key];
@@ -410,6 +410,7 @@ module.exports = function(obj, schema, fn, keyPath, options) {
   // we change the allowUnknownKeys to unknownKeys
 	if (typeof (options || {}).allowUnknownKeys === 'boolean') {
 		options.unknownKeys = (options.allowUnknownKeys ? 'allow' : 'deny');
+		options.wasAllowUnknownKeys = true;
 		delete options.allowUnknownKeys;
 	}
 
