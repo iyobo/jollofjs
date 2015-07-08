@@ -5,7 +5,7 @@ var ValidationError = require('./errors/validationError.js'),
 
 var finalize = function(obj, fn) {
 
-	if (fn) return process.nextTick(function() {
+	if (fn) return setImmediate(function() {
 		fn(null, obj);
 	});
 
