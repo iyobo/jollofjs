@@ -93,6 +93,16 @@ describe('schema', function() {
 				done();
 			});
 		});
+		it ('should throw error if required is not a String or Boolean', function() {
+			expect(function() {
+				schema.formalize({ type: String, required: 123 });
+			}).to.throw(SchemaError);
+		});
+		it ('should throw error if required is a String but not \'implicit\'', function() {
+			expect(function() {
+				schema.formalize({ type: String, required: 'test' });
+			}).to.throw(SchemaError);
+		});
 		it ('should throw error if type is String and match is non-RegExp', function() {
 			expect(function() {
 				schema.formalize({ type: String, match: 'test' });

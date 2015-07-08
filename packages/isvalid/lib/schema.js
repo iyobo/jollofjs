@@ -165,6 +165,13 @@ var formalizeAny = function(schema, fn) {
 		formalizedSchema[key] = schema[key];
 	}
 
+  if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {
+    throw new SchemaError(
+      schema,
+      'Validator \'required\' must be a Boolean or String of value \'implicit\''
+    );
+  }
+
   // Check string enums
   if (typeof formalizedSchema.enum !== 'undefined') {
     if (formalizedSchema.enum.length < 1) {
