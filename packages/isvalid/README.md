@@ -12,7 +12,7 @@
 Because of breaking API-changes this version is 1.0.0.
 
 * Opt-in to `null` values using the `allowNull` validator.
-* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator (suggested by [bold](https://github.com/boldt)). 
+* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator (suggested by [boldt](https://github.com/boldt)).
 
 > Version >= 0.2.4 has a bug where `null` is sometimes validated even when input is non-required - or with required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
 
