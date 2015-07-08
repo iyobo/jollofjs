@@ -137,7 +137,7 @@ describe('schema', function() {
 		it ('should throw an error if schema is not of supported type', function() {
 			expect(function() {
 				schema.formalize({ type: RegExp });
-			}).to.throw(Error);
+			}).to.throw(SchemaError);
 		});
 	});
 });
