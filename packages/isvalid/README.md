@@ -118,9 +118,10 @@ Here's a simple example on how to use the validator:
 
 ## As Connect or Express Middleware
 
-Connect and express middleware is build in.
+Connect and Express middleware is build in.
 
-Usage: `isvalid.validate.body(schema)` or `isvalid.validate.query(schema)`.
+Usage: `isvalid.validate.body(schema)` validates `req.body`.  
+Usage: `isvalid.validate.query(schema)` validates `req.query`.
 
 ### Example
 
