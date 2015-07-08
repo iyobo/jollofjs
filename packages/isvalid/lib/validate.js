@@ -405,6 +405,9 @@ module.exports = function(obj, schema, fn, keyPath, options) {
 	// For backwards compatibility to before version 1.0.3
   // we change the allowUnknownKeys to unknownKeys
 	if (typeof (options || {}).allowUnknownKeys === 'boolean') {
+		if (!process.env['ISVALID_SILENCE']) {
+      console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.')
+    }
 		options.unknownKeys = (options.allowUnknownKeys ? 'allow' : 'deny');
 		options.wasAllowUnknownKeys = true;
 		delete options.allowUnknownKeys;
