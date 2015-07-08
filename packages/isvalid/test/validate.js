@@ -182,24 +182,26 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come back with old validator name in error if allowUnknownKeys was converted to unknownKeys', function(done) {
-				isvalid({
-					awesome: true,
-					why: 'It just is!'
-				}, {
-					type: Object,
-					allowUnknownKeys: false,
-					schema: {
-						awesome: { type: Boolean }
-					},
-					errors: {
-						'allowUnknownKeys': 'old value'
-					}
-				}, function(err, validObj) {
-					expect(err).to.be.validationError;
-					expect(err.validator).to.equal('allowUnknownKeys');
-					expect(err.message).to.equal('old value');
-					done();
+			describe('allowUnknownKeys backwards compatibility', function() {
+				it ('should come back with old validator name in error if allowUnknownKeys was converted to unknownKeys', function(done) {
+					isvalid({
+						awesome: true,
+						why: 'It just is!'
+					}, {
+						type: Object,
+						allowUnknownKeys: false,
+						schema: {
+							awesome: { type: Boolean }
+						},
+						errors: {
+							'allowUnknownKeys': 'old value'
+						}
+					}, function(err, validObj) {
+						expect(err).to.be.validationError;
+						expect(err.validator).to.equal('allowUnknownKeys');
+						expect(err.message).to.equal('old value');
+						done();
+					});
 				});
 			});
 		});
