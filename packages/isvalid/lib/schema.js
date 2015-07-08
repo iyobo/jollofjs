@@ -177,14 +177,14 @@ var formalizeAny = function(schema, fn) {
     if (formalizedSchema.enum.length < 1) {
       throw new SchemaError(
         schema,
-        'Validator \'' + key + '\': enums must have at least one item.'
+        'Validator \'enum\' must have at least one item.'
       );
     }
     for (var idx in formalizedSchema.enum) {
       if (typeof formalizedSchema.enum[idx] !== 'string') {
         throw new SchemaError(
           schema,
-          'Validator \'' + key + '\': enums must be an array of strings.'
+          'Validator \'enum\' must be an array of strings.'
         );
       }
     }
