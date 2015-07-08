@@ -12,7 +12,7 @@
 Because of breaking API-changes this version is 1.0.0.
 
 * Opt-in to `null` values using the `allowNull` validator.
-* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator.
+* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator (suggested by [bold](https://github.com/boldt)). 
 
 > Version >= 0.2.4 has a bug where `null` is sometimes validated even when input is non-required - or with required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
 
@@ -363,8 +363,24 @@ The validator has three options:
 * `deny` Come back with error if object has unknown key.
 * `remove` Remove the unknown key from the validated object.
 
-> Default is `deny`.
+An example below.
 
+    {
+        type: Object,
+        unknownKeys: 'remove',
+        schema: {
+            awesome: { type: Boolean }
+        }
+    }
+
+In the above example, if you validated the following object, the `why` key would be absent from the validated data.
+
+    {
+        awesome: true,
+        why: 'It is!'
+    }
+
+> Default is `deny`.
 
 ##### `allowUnknownKeys`
 
