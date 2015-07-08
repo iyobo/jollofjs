@@ -93,7 +93,7 @@ describe('schema', function() {
 				done();
 			});
 		});
-		it ('should throw error if type is String and match is non-RegExp.', function() {
+		it ('should throw error if type is String and match is non-RegExp', function() {
 			expect(function() {
 				schema.formalize({ type: String, match: 'test' });
 			}).to.throw(SchemaError);
