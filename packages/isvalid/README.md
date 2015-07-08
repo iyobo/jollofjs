@@ -70,7 +70,7 @@ Version `>= 0.2.4` has a bug where `null` is sometimes validated even when input
            * [`schema`](#schema)
          * [`Object` Validators](#object-validators)
            * [`unknownKeys`](#unknownkeys)
-           * [`allowUnknownKeys`](#allowunknownkeys)
+           * [`allowUnknownKeys`](#allowunknownkeys-deprecated) [deprecated]
          * [`Array` Validators](#array-validators)
            * [`len`](#len)
            * [`unique`](#unique)
@@ -382,7 +382,7 @@ In the above example, if you validated the following object, the `why` key would
 
 > Default is `deny`.
 
-##### `allowUnknownKeys`
+##### `allowUnknownKeys` [deprecated]
 
 Type: `Boolean`
 
