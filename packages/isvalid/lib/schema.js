@@ -169,7 +169,7 @@ var formalizeAny = function(schema, fn) {
   if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {
     throw new SchemaError(
       schema,
-      'Validator \'required\' must be a Boolean or String of value \'implicit\''
+      'Validator \'required\' must be a Boolean or String of value \'implicit\'.'
     );
   }
 
