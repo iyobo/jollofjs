@@ -139,5 +139,24 @@ describe('schema', function() {
 				schema.formalize({ type: RegExp });
 			}).to.throw(SchemaError);
 		});
+		it ('should throw an error if unknownKeys is not \'allow\', \'deny\' or \'remove\'', function() {
+			expect(function() {
+				schema.formalize({ type: Object, unknownKeys: 'test' });
+			}).to.throw(SchemaError);
+		});
+		describe('allowUnknownKeys backwards compatibility', function() {
+			it ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'', function(done) {
+				schema.formalize({ type: Object, allowUnknownKeys: true }, function(schema) {
+					expect(schema.unknownKeys).to.equal('allow');
+					done();
+				});
+			});
+			it ('should come back with unknownKeys set to \'deny\' if allowUnknownKeys is \'false\'', function(done) {
+				schema.formalize({ type: Object, allowUnknownKeys: false }, function(schema) {
+					expect(schema.unknownKeys).to.equal('deny');
+					done();
+				});
+			});
+		});
 	});
 });

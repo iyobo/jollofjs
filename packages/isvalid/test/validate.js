@@ -111,13 +111,13 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come back with unknown keys intact if allowUnknownKeys are true.', function(done) {
+			it ('should come back with unknown keys intact if unknownKeys is \'allow\'.', function(done) {
 				isvalid({
 					awesome: true,
 					why: 'It just is!'
 				}, {
 					type: Object,
-					allowUnknownKeys: true,
+					unknownKeys: 'allow',
 					schema: {
 						awesome: { type: Boolean }
 					}
@@ -127,7 +127,7 @@ describe('Validate', function() {
 					done();
 				});
 			});
-			it ('should come back with unknown keys intact if allowUnknownKeys are provided as true in options', function(done) {
+			it ('should come back with unknown keys intact if unknownKeys is provided as \'allow\' in options', function(done) {
 				isvalid({
 					awesome: true,
 					why: 'It just is!'
@@ -137,9 +137,9 @@ describe('Validate', function() {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('why').equals('It just is!');
 					done();
-				}, { allowUnknownKeys: true });
+				}, { unknownKeys: 'allow' });
 			});
-			it ('should come back with error if there are unknown keys and allowUnknownKeys is not set.', function(done) {
+			it ('should come back with error if there are unknown keys and unknownKeys is not set.', function(done) {
 				isvalid({
 					awesome: true,
 					why: 'It just is!'
@@ -147,11 +147,42 @@ describe('Validate', function() {
 					awesome: { type: Boolean }
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
-					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+					expect(err).to.have.property('validator').equal('unknownKeys');
 					done();
 				});
 			});
-			it ('should come back with error if there are unknown keys and allowUnknownKeys is set to false.', function(done) {
+			it ('should come back with error if there are unknown keys and unknownKeys is set to \'deny\'.', function(done) {
+				isvalid({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					type: Object,
+					unknownKeys: 'deny',
+					schema: {
+						awesome: { type: Boolean }
+					}
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
+					expect(err).to.have.property('validator').equal('unknownKeys');
+					done();
+				});
+			});
+			it ('should come back with keys removed if unknown keys and unknownKeys is set to \'remove\'', function(done) {
+				isvalid({
+					awesome: true,
+					why: 'It just is!'
+				}, {
+					type: Object,
+					unknownKeys: 'remove',
+					schema: {
+						awesome: { type: Boolean }
+					}
+				}, function(err, validObj) {
+					expect(validObj).to.not.have.property('why');
+					done();
+				});
+			});
+			it ('should come back with old validator name in error if allowUnknownKeys was converted to unknownKeys', function(done) {
 				isvalid({
 					awesome: true,
 					why: 'It just is!'
@@ -160,10 +191,14 @@ describe('Validate', function() {
 					allowUnknownKeys: false,
 					schema: {
 						awesome: { type: Boolean }
+					},
+					errors: {
+						'allowUnknownKeys': 'old value'
 					}
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
-					expect(err).to.have.property('validator').equal('allowUnknownKeys');
+					expect(err.validator).to.equal('allowUnknownKeys');
+					expect(err.message).to.equal('old value');
 					done();
 				});
 			});

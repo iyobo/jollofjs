@@ -25,8 +25,14 @@ var finalize = function(formalizedSchema, nonFormalizedSchema, fn) {
 
 var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn) {
 
-	// formalizedSchema has been pre-processed by formalizeAny, so
-	// we only need to formalize the sub-schema.
+  // For backwards compatibility be before version 1.0.3
+  // we change the allowUnknownKeys to unknownKeys
+  if (typeof formalizedSchema.allowUnknownKeys === 'boolean') {
+    console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favor of unknownKeys as of version 1.0.4. See README for more info.')
+    formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'deny');
+    formalizedSchema.wasAllowUnknownKeys = true;
+    delete formalizedSchema.allowUnknownKeys;
+  }
 
 	// Set an empty sub-schema if schema is not present.
 	formalizedSchema.schema = formalizedSchema.schema || {};
@@ -123,7 +129,8 @@ var formalizeAny = function(schema, fn) {
   if (schema.type !== undefined) {
     if ('Object' == schema.type.name) typeSpecific = {
       'schema': [ 'Object' ],
-      'allowUnknownKeys': [ 'Boolean' ]
+      'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
+      'unknownKeys': [ 'String' ]
     };
     if ('Array' == schema.type.name) typeSpecific = {
       'schema': ['Object'],
@@ -170,6 +177,15 @@ var formalizeAny = function(schema, fn) {
     throw new SchemaError(
       schema,
       'Validator \'required\' must be a Boolean or String of value \'implicit\'.'
+    );
+  }
+
+  // Check object unknownKeys
+  if (typeof formalizedSchema.unknownKeys === 'string' &&
+      ['allow','deny','remove'].indexOf(formalizedSchema.unknownKeys) == -1) {
+    throw new SchemaError(
+      schema,
+      'Validator \'unknownKeys\' must have value \'allow\', \'deny\' or \'remove\'.'
     );
   }
 

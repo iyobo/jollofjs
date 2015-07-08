@@ -36,15 +36,20 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 		// Find unknown keys
 		for (var key in obj) {
 			if (!schemaCopy[key]) {
-				if (schema.allowUnknownKeys == true || (options || {}).allowUnknownKeys == true) {
-					validObj[key] = obj[key];
-				} else {
-					return fn(
-						new ValidationError(
-							keyPath.concat([key]),
-							schema._nonFormalizedSchema,
-							'allowUnknownKeys',
-							(schema.errors || {}).allowUnknownKeys || 'Unknown key.'
+				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true;
+				switch (schema.unknownKeys || (options || {}).unknownKeys) {
+					case 'allow':
+						validObj[key] = obj[key];
+						break;
+					case 'remove':
+						break;
+					default:
+						return fn(
+							new ValidationError(
+								keyPath.concat([key]),
+								schema._nonFormalizedSchema,
+								(wasAllowUnknownKeys ? 'allowUnknownKeys' : 'unknownKeys'),
+								(wasAllowUnknownKeys ? (schema.errors || {}).allowUnknownKeys : (schema.errors || {}).unknownKeys) || 'Unknown key.'
 						)
 					);
 				}
@@ -399,6 +404,13 @@ module.exports = function(obj, schema, fn, keyPath, options) {
 	if (keyPath && typeof keyPath == 'object') {
 		options = keyPath;
 		keyPath = undefined;
+	}
+
+	// For backwards compatibility to before version 1.0.3
+  // we change the allowUnknownKeys to unknownKeys
+	if (typeof (options || {}).allowUnknownKeys === 'boolean') {
+		options.unknownKeys = (options.allowUnknownKeys ? 'allow' : 'deny');
+		delete options.allowUnknownKeys;
 	}
 
 	keyPath = keyPath || [];

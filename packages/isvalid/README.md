@@ -12,8 +12,9 @@
 Because of breaking API-changes this version is 1.0.0.
 
 * Opt-in to `null` values using the `allowNull` validator.
+* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator.
 
-> Version >= 0.2.4 has a bug where `null` is validated sometimes when input is non-required - or required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
+> Version >= 0.2.4 has a bug where `null` is sometimes validated even when input is non-required - or with required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
 
 ## In Version 0.3.0
 
@@ -68,6 +69,7 @@ Because of breaking API-changes this version is 1.0.0.
          * [Validators Common to `Object` and `Array`](#validators-common-to-object-and-array)
            * [`schema`](#schema)
          * [`Object` Validators](#object-validators)
+           * [`unknownKeys`](#unknownkeys)
            * [`allowUnknownKeys`](#allowunknownkeys)
          * [`Array` Validators](#array-validators)
            * [`len`](#len)
@@ -347,17 +349,27 @@ An example below of an object schema with a `user` key.
 
 #### `Object` Validators
 
-The `Object` type has only one specific validator - besides the common validators.
+The `Object` type has only one specific validator - besides the common validators (it has two, though, but the one is deprecated in favour of the other.)
+
+##### `unknownKeys`
+Type `String` of values: `'allow'`, `'deny'` or `'remove'`
+
+This validator is used to control how unknown keys in objects are handled.
+
+The validator has three options:
+
+* `allow` Pass any unknown key onto the validated object.
+* `deny` Come back with error if object has unknown key.
+* `remove` Remove the unknown key from the validated object.
+
+> The default behaviour is the *remove* unknown keys.
+
 
 ##### `allowUnknownKeys`
 
 Type: `Boolean`
 
-This is to make sure that keys not intended in the data are passed through. If an object contains a key unspecified in the schema it will come back with an error - if the value of this validator is set to `false`.
-
-On the other hand - if this is set to `true` - any unknown keys are passed on unvalidated.
-
-> *Remark:* Objects do not allow unknown keys by default.
+**This validator has been deprecated in favour of [`unknownKeys`](#unknownkeys), and will be removed in the next major version. Please update your schemas.**
 
 #### `Array` Validators
 
