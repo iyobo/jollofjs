@@ -165,6 +165,7 @@ var formalizeAny = function(schema, fn) {
 		formalizedSchema[key] = schema[key];
 	}
 
+  // Throw error if required is invalid value
   if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {
     throw new SchemaError(
       schema,
