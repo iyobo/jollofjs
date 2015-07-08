@@ -362,7 +362,7 @@ The validator has three options:
 * `deny` Come back with error if object has unknown key.
 * `remove` Remove the unknown key from the validated object.
 
-> The default behaviour is the *remove* unknown keys.
+> Default is `deny`.
 
 
 ##### `allowUnknownKeys`
