@@ -11,9 +11,7 @@ var objectEquals = function(obj1, obj2, fn) {
 			var key = keys[idx];
 			equals(obj1[key], obj2[key], function(res) {
 				if (!res) return fn(false);
-				setImmediate(function () {
-					testNext(idx + 1);
-				});
+				setImmediate(testNext, idx + 1);
 			});
 		})(0);
 
@@ -32,9 +30,7 @@ var arrayEquals = function(obj1, obj2, fn) {
 		if (idx == o1.length) return fn(true);
 		equals(o1[idx], o2[idx], function(res) {
 			if (!res) return fn(false);
-			setImmediate(function() {
-				testNext(idx+1);
-			});
+			setImmediate(testNext, idx + 1);
 		});
 	})(0);
 
@@ -64,9 +60,7 @@ module.exports = function(arr, fn) {
 		if (idx2 == arr.length) return fn(true);
 		equals(arr[idx1], arr[idx2], function(res) {
 			if (res) return fn(false);
-			setImmediate(function() {
-				testNext(idx1, idx2 + 1);
-			});
+			setImmediate(testNext, idx1, idx2 + 1);
 		});
 	})(0, 1);
 

@@ -17,9 +17,7 @@ var finalize = function(formalizedSchema, nonFormalizedSchema, fn) {
 	Object.seal(formalizedSchema);
 
 	// Call back on next tick.
-	if (fn) setImmediate(function() {
-		fn(formalizedSchema);
-	});
+	if (fn) setImmediate(fn, formalizedSchema);
 
 };
 
@@ -63,9 +61,7 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn) {
 
 			formalizedSubschema[key] = formalizedKey;
 
-			setImmediate(function() {
-				formalizeNextKey(idx + 1);
-			});
+			setImmediate(formalizeNextKey, idx + 1);
 
 		});
 

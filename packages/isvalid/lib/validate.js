@@ -4,11 +4,7 @@ var ValidationError = require('./errors/validationError.js'),
 	schemaTools = require('./schema.js');
 
 var finalize = function(obj, fn) {
-
-	if (fn) return setImmediate(function() {
-		fn(null, obj);
-	});
-
+	if (fn) return setImmediate(fn, null, obj);
 };
 
 var validateObject = function(obj, schema, fn, keyPath, options) {
