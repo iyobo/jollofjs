@@ -39,4 +39,29 @@ exports.body = module.exports.body = function(schema, options) {
 
 exports.query = module.exports.query = function(schema, options) {
 	return middleware('query', schema, options);
-}
+};
+
+exports.param = module.exports.param = function(schema, options) {
+
+	var finalSchema;
+
+	return function(req, res, next, val, id) {
+
+		function validate() {
+			isvalid(req.params[id], finalSchema, function(err, validData) {
+				req.params[id] = validData;
+				next(err);
+			}, [id], options);
+		};
+
+		if (finalSchema === undefined) {
+			isvalid.formalize(schema, function(formalizedSchema) {
+				finalSchema = formalizedSchema;
+				validate();
+			});
+		} else {
+			validate();
+		}
+
+	};
+};

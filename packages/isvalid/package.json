@@ -1,28 +1,41 @@
 {
-	"name": "isvalid",
-	"version": "1.0.6",
-	"description": "Async JSON validation library for node.js.",
-	"main": "./index.js",
-	"keywords": [ "schema", "validation", "JSON", "rest", "api", "blob", "validate", "express", "connect" ],
-	"dependencies": {
-		"object-assign": ">= 1.0.0"
-	},
-	"devDependencies": {
-		"mocha": ">= 1.20.0",
-		"chai": ">= 1.9.1",
-		"chai-as-promised": ">= 4.1.1"
-	},
-	"scripts": {
-		"test": "ISVALID_SILENCE=1 ./node_modules/mocha/bin/mocha ./test/*.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/trenskow/isvalid.git"
-	},
-	"license": "MIT",
-	"author": {
-		"name": "Kristian Trenskow",
-		"email": "trenskow@me.com",
-		"url": "https://github.com/trenskow"
-	}
+  "name": "isvalid",
+  "version": "1.0.7",
+  "description": "Async JSON validation library for node.js.",
+  "main": "./index.js",
+  "keywords": [
+    "schema",
+    "validation",
+    "JSON",
+    "rest",
+    "api",
+    "blob",
+    "validate",
+    "express",
+    "connect"
+  ],
+  "dependencies": {
+    "object-assign": ">= 1.0.0"
+  },
+  "devDependencies": {
+    "body-parser": "^1.13.3",
+    "chai": ">= 1.9.1",
+    "chai-as-promised": ">= 4.1.1",
+    "express": "^4.13.3",
+    "mocha": ">= 1.20.0",
+    "supertest": "^1.0.1"
+  },
+  "scripts": {
+    "test": "ISVALID_SILENCE=1 ./node_modules/mocha/bin/mocha ./test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trenskow/isvalid.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Kristian Trenskow",
+    "email": "trenskow@me.com",
+    "url": "https://github.com/trenskow"
+  }
 }
