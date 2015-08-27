@@ -153,6 +153,18 @@ describe('schema', function() {
 				done();
 			});
 		});
+		it ('should come back with custom wrapped in an array', function(done) {
+			schema.formalize({ custom: function() {} }, function(s) {
+				expect(s).to.have.property('custom').to.be.an('array');
+				done();
+			});
+		});
+		it ('should come back with custom as an array', function(done) {
+			schema.formalize({ custom: [ function() {} ] }, function(s) {
+				expect(s).to.have.property('custom').to.be.an('array');
+				done();
+			});
+		});
 		it ('should throw an error if schema type is unknown', function() {
 			expect(function() {
 				schema.formalize({ type: Error });

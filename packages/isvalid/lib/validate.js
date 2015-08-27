@@ -309,25 +309,37 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 
 var validateCustom = function(obj, schema, fn, keyPath, options) {
 
+	// All other validators always end with calling the custom validator.
+	// - therefore just finalize if there is none.
 	if (schema.custom === undefined) return finalize(obj, fn);
 
-	// Synchronous functions only have two parameters
-	if (schema.custom.length < 3) {
-		var res;
-		try {
-			res = schema.custom(obj, schema);
-		} catch (err) {
-			return fn(ValidationError.fromError(keyPath, schema._nonFormalizedSchema, 'custom', err));
-		}
-		if (typeof res === 'undefined') res = obj;
-		return finalize(res, fn);
-	}
+	var result = obj;
 
-	// Asynchronous function
-	return schema.custom(obj, schema, function(err, validObj) {
-		if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
-		return finalize(validObj, fn);
-	});
+	(function validateNext(idx) {
+		if (idx === schema.custom.length) return finalize(result, fn);
+
+		var custom = schema.custom[idx];
+
+		// Synchronous functions only have two parameters
+		if (custom.length < 3) {
+			var res;
+			try {
+				res = custom(result, schema);
+			} catch (err) {
+				return fn(ValidationError.fromError(keyPath, schema._nonFormalizedSchema, 'custom', err));
+			}
+			if (typeof res !== 'undefined') result = res;
+			return validateNext(idx + 1);
+		}
+
+		// Asynchronous function
+		return custom(result, schema, function(err, validObj) {
+			if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
+			result = validObj;
+			validateNext(idx + 1);
+		});
+
+	})(0);
 
 }
 
@@ -387,7 +399,7 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, fn, keyPath, options);
 	if ('Date' == schema.type.name) return validateDate(obj, schema, fn, keyPath, options);
 
-	// This error should have been eliminate by the finalizer.
+	// This error should have been eliminated by the finalizer.
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 
 };

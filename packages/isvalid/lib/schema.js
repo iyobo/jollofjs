@@ -123,7 +123,7 @@ var formalizeAny = function(schema, fn) {
     'default': true,
     'allowNull': ['Boolean'],
     'errors': [ 'Object' ],
-    'custom': [ 'Function' ]
+    'custom': [ 'Function', 'Array' ]
   };
   var typeSpecific = {};
 
@@ -149,8 +149,8 @@ var formalizeAny = function(schema, fn) {
   }
 
   // If custom validator is provided allow for options.
-  if (typeof schema.custom == 'function') {
-    common.options = true;
+  if (schema.custom !== undefined) {
+    common = objectAssign(common, { 'options': true })
   }
 
   validators = objectAssign(common, typeSpecific);
@@ -172,6 +172,11 @@ var formalizeAny = function(schema, fn) {
 
 		formalizedSchema[key] = schema[key];
 	}
+
+  // Convert custom function to array
+  if (typeof formalizedSchema.custom === 'function') {
+    formalizedSchema.custom = [formalizedSchema.custom];
+  }
 
   // Throw error if required is invalid value
   if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {

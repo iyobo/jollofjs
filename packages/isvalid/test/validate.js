@@ -1,5 +1,6 @@
 var chai = require('chai'),
 	expect = chai.expect,
+	assert = chai.assert,
 	ValidationError = require('../lib/errors/validationError.js'),
 	isvalid = require('../');
 
@@ -485,9 +486,55 @@ describe('Validate', function() {
 					},
 					custom: function(obj, schema, fn) {
 						expect(obj.high).to.equal(10);
-						fn(obj);
+						fn(null, obj);
 					}
 				}, function(err, validObj) {
+					expect(validObj).to.have.property('low').equal(0);
+					expect(validObj).to.have.property('high').equal(10);
+					done();
+				});
+			});
+			it ('should call all custom validators in array', function(done) {
+				isvalid(0, {
+					custom: [
+						function(data, schema, cb) {
+							cb(null, data + 1);
+						},
+						function(data, schema) {
+							return data + 2;
+						},
+						function(data, schema, cb) {
+							cb(null, data + 3);
+						},
+						function(data, schema) {
+							return data + 4;
+						}
+					]
+				}, function(err, validObj) {
+					expect(validObj).to.equal(10);
+					done();
+				});
+			});
+			it ('should come back with error if thrown underway', function(done) {
+				isvalid(0, {
+					custom: [
+						function(data, schema, cb) {
+							cb(null, data + 1);
+						},
+						function(data, schema) {
+							throw new Error('Stop here');
+						},
+						function(data, schema, cb) {
+							assert(false, 'This custom function should not have been called.');
+							cb(null, data + 3);
+						},
+						function(data, schema) {
+							assert(false, 'This custom function should not have been called.');
+							return data + 4;
+						}
+					]
+				}, function(err, validObj) {
+					expect(err).to.be.validationError;
 					done();
 				});
 			});
