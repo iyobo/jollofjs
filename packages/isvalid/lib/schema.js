@@ -129,12 +129,12 @@ var formalizeAny = function(schema, fn) {
 
   if (schema.type !== undefined) {
     if ('Object' == schema.type.name) typeSpecific = {
-      'schema': [ 'Object' ],
+      'schema': true,
       'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
       'unknownKeys': [ 'String' ]
     };
     if ('Array' == schema.type.name) typeSpecific = {
-      'schema': ['Object'],
+      'schema': true,
       'len': [ 'String', 'Number' ],
       'unique': [ 'Boolean' ]
     }

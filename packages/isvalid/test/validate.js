@@ -70,7 +70,7 @@ describe('Validate', function() {
 				});
 			});
 			it ('should come back with error if null and null is not allowed', function(done) {
-				isvalid(null, { type: String }, function(err, validObj) {
+				isvalid(null, String, function(err, validObj) {
 					expect(err).to.be.validationError;
 					done();
 				});
@@ -103,8 +103,8 @@ describe('Validate', function() {
 					awesome: true,
 					why: 'It just is!'
 				}, {
-					awesome: { type: Boolean },
-					why: { type: String }
+					awesome: Boolean,
+					why: String
 				}, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('awesome').equals(true);
@@ -120,7 +120,7 @@ describe('Validate', function() {
 					type: Object,
 					unknownKeys: 'allow',
 					schema: {
-						awesome: { type: Boolean }
+						awesome: Boolean
 					}
 				}, function(err, validObj) {
 					expect(err).to.be.null;
@@ -133,7 +133,7 @@ describe('Validate', function() {
 					awesome: true,
 					why: 'It just is!'
 				}, {
-					awesome: { type: Boolean }
+					awesome: Boolean
 				}, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.property('why').equals('It just is!');
@@ -145,7 +145,7 @@ describe('Validate', function() {
 					awesome: true,
 					why: 'It just is!'
 				}, {
-					awesome: { type: Boolean }
+					awesome: Boolean
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('unknownKeys');
@@ -160,7 +160,7 @@ describe('Validate', function() {
 					type: Object,
 					unknownKeys: 'deny',
 					schema: {
-						awesome: { type: Boolean }
+						awesome: Boolean
 					}
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
@@ -176,7 +176,7 @@ describe('Validate', function() {
 					type: Object,
 					unknownKeys: 'remove',
 					schema: {
-						awesome: { type: Boolean }
+						awesome: Boolean
 					}
 				}, function(err, validObj) {
 					expect(validObj).to.not.have.property('why');
@@ -192,7 +192,7 @@ describe('Validate', function() {
 						type: Object,
 						allowUnknownKeys: false,
 						schema: {
-							awesome: { type: Boolean }
+							awesome: Boolean
 						},
 						errors: {
 							'allowUnknownKeys': 'old value'
@@ -239,7 +239,7 @@ describe('Validate', function() {
 				}], {
 					type: Array,
 					unique: true,
-					schema: { awesome: { type: Boolean } }
+					schema: { awesome: Boolean }
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('unique');
@@ -254,7 +254,7 @@ describe('Validate', function() {
 				}], {
 					type: Array,
 					unique: true,
-					schema: { awesome: { type: Boolean } }
+					schema: { awesome: Boolean }
 				}, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.have.length(2);
@@ -265,7 +265,7 @@ describe('Validate', function() {
 				isvalid(['This', 'is', 'an', 'array', 'array'], {
 					type: Array,
 					unique: true,
-					schema: { type: String }
+					schema: String
 				}, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('unique');
@@ -275,7 +275,7 @@ describe('Validate', function() {
 		});
 		describe('[String validators]', function() {
 			it ('should come back with error if string is not supplied.', function(done) {
-				isvalid(123, { type: String }, function(err, validObj) {
+				isvalid(123, String, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('type');
 					done();
@@ -289,7 +289,7 @@ describe('Validate', function() {
 				});
 			});
 			it ('should come back with trimmed string when trim option is true', function(done) {
-				isvalid('  123abc  ', { type: String }, function(err, validObj) {
+				isvalid('  123abc  ', String, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal('123abc');
 					done();
@@ -309,14 +309,14 @@ describe('Validate', function() {
 				});
 			});
 			it ('should come back with undefined and no error if input is not required and match is not defined', function(done) {
-				isvalid(undefined, { type: String }, function(err, validObj) {
+				isvalid(undefined, String, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.be.undefined;
 					done();
 				});
 			});
 			it ('should come back with no error and output same as input if string is supplied', function(done) {
-				isvalid('123', { type: String }, function(err, validObj) {
+				isvalid('123', String, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal('123');
 					done();
@@ -331,27 +331,27 @@ describe('Validate', function() {
 		});
 		describe('[Number validators]', function() {
 			it ('should convert string values into numbers if string contains a number', function(done) {
-				isvalid('123.123', { type: Number }, function(err, validObj) {
+				isvalid('123.123', Number, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal(123.123);
 					done();
 				});
 			});
 			it ('should come back with error if input is not a number.', function(done) {
-				isvalid('abc', { type: Number }, function(err, validObj) {
+				isvalid('abc', Number, function(err, validObj) {
 					expect(err).to.be.validationError;
 					done();
 				});
 			});
 			it ('should come back with no error and input same as output if number is supplied', function(done) {
-				isvalid(123, { type: Number }, function(err, validObj) {
+				isvalid(123, Number, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal(123);
 					done();
 				});
 			});
 			it ('should come back with error if string is supplied - but not a number', function(done) {
-				isvalid('abc', { type: Number }, function(err, validObj) {
+				isvalid('abc', Number, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('type');
 					done();
@@ -374,21 +374,21 @@ describe('Validate', function() {
 		});
 		describe('[Boolean validators]', function() {
 			it ('should come back with error if input is not a Boolean', function(done) {
-				isvalid([], { type: Boolean }, function(err, validObj) {
+				isvalid([], Boolean, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with no error and validObj set to true if input is string with \'True\'', function(done) {
-				isvalid('True', { type: Boolean }, function(err, validObj) {
+				isvalid('True', Boolean, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal(true);
 					done();
 				});
 			});
 			it ('should come back with no error and validObj set to false if input is string with \'False\'', function(done) {
-				isvalid('False', { type: Boolean }, function(err, validObj) {
+				isvalid('False', Boolean, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj).to.equal(false);
 					done();
@@ -397,14 +397,14 @@ describe('Validate', function() {
 		});
 		describe('[Date validators]', function() {
 			it ('should come back with error if input is not a Date', function(done) {
-				isvalid([], { type: Date }, function(err, validObj) {
+				isvalid([], Date, function(err, validObj) {
 					expect(err).to.be.validationError;
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with no error and validObj set to a Date if input is string with an ISO date', function(done) {
-				isvalid('2014-10-19T02:24:42.395Z', { type: Date }, function(err, validObj) {
+				isvalid('2014-10-19T02:24:42.395Z', Date, function(err, validObj) {
 					expect(err).to.be.null;
 					expect(validObj.getTime()).to.equal(new Date("2014-10-19T02:24:42.395Z").getTime());
 					done();

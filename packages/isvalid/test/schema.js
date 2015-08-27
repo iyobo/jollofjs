@@ -180,6 +180,16 @@ describe('schema', function() {
 				schema.formalize({ type: Object, unknownKeys: 'test' });
 			}).to.throw(SchemaError);
 		});
+		it ('should throw an error if array schema is unknown type', function() {
+			expect(function() {
+				schema.formalize({ type: Array, schema: RegExp });
+			}).to.throw(SchemaError);
+		});
+		it ('should throw an error if object schema is unknown type', function() {
+			expect(function() {
+				schema.formalize({ type: Object, schema: RegExp });
+			}).to.throw(SchemaError);
+		});
 		describe('allowUnknownKeys backwards compatibility', function() {
 			it ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'', function(done) {
 				schema.formalize({ type: Object, allowUnknownKeys: true }, function(schema) {
