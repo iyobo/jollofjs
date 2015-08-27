@@ -215,8 +215,8 @@ var formalizeAny = function(schema, fn) {
 
 	// Finalize objects and arrays if necessary.
 	if (formalizedSchema.type) {
-		if ('Object' == formalizedSchema.type.name) return formalizeObject(schema, formalizedSchema, fn);
-		if ('Array' == formalizedSchema.type.name) return formalizeArray(schema, formalizedSchema, fn);
+		if ('Object' == formalizedSchema.type.name) return formalizeObject(formalizedSchema, schema, fn);
+		if ('Array' == formalizedSchema.type.name) return formalizeArray(formalizedSchema, schema, fn);
 	}
 
 	return finalize(formalizedSchema, schema, fn);
