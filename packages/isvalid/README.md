@@ -126,13 +126,14 @@ Here's a simple example on how to use the validator:
 Connect and Express middleware is build in.
 
 Usage: `isvalid.validate.body(schema)` validates `req.body`.  
-Usage: `isvalid.validate.query(schema)` validates `req.query`.
+Usage: `isvalid.validate.query(schema)` validates `req.query`.  
+Usage: `isvalid.validate.param(schema)` validates `req.param`.
 
 ### Example
 
     var validate = require('isvalid').validate;
 
-    app.param('myparam', validate.param(Number))
+    app.param('myparam', validate.param(Number));
 
     app.post('/mypath/:myparam',
     validate.query({
