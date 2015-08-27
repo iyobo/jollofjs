@@ -28,6 +28,30 @@ describe('schema', function() {
 				done();
 			});
 		});
+		it ('should come back with a String shortcut expanded', function(done) {
+			schema.formalize(String, function(s) {
+				expect(s).to.have.property('type').equal(String);
+				done();
+			});
+		});
+		it ('should come back with a Number shortcut expanded', function(done) {
+			schema.formalize(Number, function(s) {
+				expect(s).to.have.property('type').equal(Number);
+				done();
+			});
+		});
+		it ('should come back with a Boolean shortcut expanded', function(done) {
+			schema.formalize(Boolean, function(s) {
+				expect(s).to.have.property('type').equal(Boolean);
+				done();
+			});
+		});
+		it ('should come back with a Date shortcut expanded', function(done) {
+			schema.formalize(Date, function(s) {
+				expect(s).to.have.property('type').equal(Date);
+				done();
+			});
+		});
 		it ('should come back with required set to true if object has not specified required and a nested subschema is required.', function(done) {
 			schema.formalize({
 				'a': { type: String, required: true }

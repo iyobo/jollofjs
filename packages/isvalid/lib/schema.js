@@ -102,6 +102,9 @@ var formalizeAny = function(schema, fn) {
 			if (schema.length == 0) throw new SchemaError(schema, 'Array must have exactly one schema.');
 			return formalizeArray({ type: Array, schema: schema[0] }, schema, fn);
 		}
+    if (schema.name !== undefined && ['String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
+      return formalizeAny({ type: schema }, fn)
+    }
     throw new SchemaError(schema, 'Schema must be type Object or Array.');
 	}
 
