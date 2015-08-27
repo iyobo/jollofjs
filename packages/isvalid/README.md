@@ -14,6 +14,8 @@ Because of breaking API-changes this version is 1.0.0.
 * Opt-in to `null` values using the `allowNull` validator.
 * The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator (suggested by [boldt](https://github.com/boldt)).
 * Middleware can validate parameters.
+* Type shortcuts now also include `String`, `Number`, `Boolean` and `Date`.
+* The `custom` validator can now take an array of functions.
 
 Version `>= 0.2.4` has a bug where `null` is sometimes validated even when input is non-required - or with required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
 
@@ -86,9 +88,11 @@ Version `>= 0.2.4` has a bug where `null` is sometimes validated even when input
          * [The Callback Function](#the-callback-function)
        * [Synchronous Example](#synchronous-example)
        * [Options with Custom Validators](#options-with-custom-validators)
+       * [Multiple Custom Validators](#multiple-custom-validators)
      * [Type Shortcuts](#type-shortcuts)
        * [Object Shortcuts](#object-shortcuts)
        * [Array Shortcuts](#array-shortcuts)
+       * [Other Shortcuts](#other-shortcuts)
      * [Automatic Type Conversion](#automatic-type-conversion)
        * [Numbers](#numbers)
        * [Booleans](#booleans)
@@ -107,9 +111,9 @@ Here's a simple example on how to use the validator:
 
     var isvalid = require('isvalid');
 
-    isvalid(inputData, {        	    	
+    isvalid(inputData, {
         'user': { type: String, required: true },
-        'pass': { type: String, required: true }            
+        'pass': { type: String, required: true }
     }, function(err, validData) {
     	/*
     	err:       Error describing invalid data.
@@ -127,12 +131,12 @@ Usage: `isvalid.validate.query(schema)` validates `req.query`.
 ### Example
 
     var validate = require('isvalid').validate;
-    
-    app.param('myparam', validate.param({ type: Number }))
-    
+
+    app.param('myparam', validate.param(Number))
+
     app.post('/mypath/:myparam',
     validate.query({
-        'filter': { type: String }
+        'filter': String
     }),
     validate.body({
         'mykey': { type: String, required: true }
@@ -150,9 +154,9 @@ Usage: `isvalid.validate.query(schema)` validates `req.query`.
 
 ## A Note on the Examples in this Document
 
-In order to be a complete schema, schemas must have at least the `type` and/or `custom` validator. But, as you will notice throughout this document, many of the examples that show `Object` schemas has neither. Instead they just specify the available keys - as with the two examples above.
+In order to be a complete schema, schemas must have at least the `type` and/or `custom` validator. But, as you will notice throughout this document, many of the examples lots of validators with neither. Instead they just use the type shortcuts.
 
-This is because **isvalid** supports type shortcuts for objects and arrays, and you are - if you want to help yourself - going to use them a lot. You can read more about [type shortcuts](#type-shortcuts) in the designated section at the near-bottom of this document.
+This is because **isvalid** supports type shortcuts for all its supported types, and you are - if you want to help yourself - going to use them a lot. You can read more about [type shortcuts](#type-shortcuts) in the designated section at the near-bottom of this document.
 
 ## Errors
 
@@ -193,6 +197,10 @@ You specify the type like this:
 
     { type: String }
 
+or if `type` is your only validator, you can also do this:
+
+    String
+
 In the above example the input must be of type `String`.
 
 All schemas must have the `type` specified and/or have a custom validator through a `custom` function - more about [custom validators](#custom) in it's designated section below.
@@ -212,7 +220,7 @@ Example:
 
     {
         "email": { type: String, default: "email@not.set" }
-    }    
+    }
 
 This tells the validator, that an `email` key is expected, and if it is not found, it should just assign it with whatever is specified as `default`.
 
@@ -240,7 +248,7 @@ An asynchronous default function works using a callback.
             }
         }
     }
-    
+
 ###### Synchronous Functions
 
 A synchronous default function works the same way, except you leave out the callback - and return the value instead.
@@ -272,7 +280,7 @@ Example:
         required: 'implicit',
         schema: {
             'user': { type: String, required: true }
-            'email': { type: String }
+            'email': String
         }
     }
 
@@ -287,7 +295,7 @@ See the example below.
         required: false,
         schema: {
             'user': { type: String, required: true }
-            'email': { type: String }
+            'email': String
         }
     }
 
@@ -342,7 +350,7 @@ An example below of an object schema with a `user` key.
     {
          type: Object,
          schema: {
-             'username': { type: String }
+             'username': String
          }
      }
 
@@ -350,7 +358,7 @@ An example below of an object schema with a `user` key.
 
      {
          type: Array,
-         schema: { type: String }
+         schema: String
      }
 
 #### `Object` Validators
@@ -374,7 +382,7 @@ An example below.
         type: Object,
         unknownKeys: 'remove',
         schema: {
-            awesome: { type: Boolean }
+            awesome: Boolean
         }
     }
 
@@ -510,8 +518,8 @@ Custom validators are specified by the `custom` field of a schema.
     {
         type: Object,
         schema: {
-            'low': { type: Number }
-            'high': { type: Number }
+            'low': Number,
+            'high': Number
         }
         'custom': function(data, schema, fn) {
             if (data.low > data.high) {
@@ -546,8 +554,8 @@ The `custom` validator also supports synchronous functions, which is done by sim
     {
         type: Object,
         schema: {
-            'low': { type: Number }
-            'high': { type: Number }
+            'low': Number
+            'high': Number
         }
         'custom': function(data, schema) {
             if (data.low > data.high) {
@@ -556,7 +564,7 @@ The `custom` validator also supports synchronous functions, which is done by sim
             return data;
         }
     }
-    
+
 > Thrown errors are caught and converted to a `ValidationError` internally.
 
 ### Options with Custom Validators
@@ -576,6 +584,27 @@ An example below.
             }
         }
     }
+
+### Multiple Custom Validators
+
+The `custom` validator also support an array of validators. Instead of providing a function, provide an array of functions. Synchronous and asynchronous can be mixed and matched as necessary.
+
+An example.
+
+    {
+        custom: [
+            function(data, schema, fn) {
+                data(null, myValidatedData);
+            },
+            function(data, schema) {
+                return mySecondValidatedData
+            }
+        ]
+    }
+
+If, though, any of the custom validator functions returns an error (either using the callback in an asynchronous function, or by throwing an error in a synchronous one), none of the rest of the custom validators in the custom validator chain will get called, and isvalid will return an error.
+
+> The custom validator functions are called in order.
 
 ## Type Shortcuts
 
@@ -601,7 +630,7 @@ In this document we've been using them extensively on `Object` examples, and the
 Object shortcuts are used like this:
 
     {
-        "user": { type: String }
+        "user": String
     }
 
 and is in fact the same as this:
@@ -621,9 +650,7 @@ Which means that data should be an object with a `user` key of the type `String`
 
 The same goes for arrays:
 
-    [
-        { type: String }
-    ]
+    [String]
 
 is essentially the same as:
 
@@ -633,6 +660,25 @@ is essentially the same as:
     }
 
 Which means the data must be an array of strings.
+
+### Other Shortcuts
+
+The others are a bit different. They are - in essence - a shortcut for the validator `type`. Instead of writing `type` you just specify the type directly. Available types are all the supported types of isvalid, namely `String`, `Number`, `Boolean` and `Date`.
+
+An example below.
+
+    {
+        "favorite_number": Number
+    }
+
+The above example is really an example of two shortcuts in one - the object and the `Number` type shortcut. The above example would look like the one below, if shortcuts had not been used.
+
+    {
+        type: Object,
+        schema: {
+            "favorite_number": { type: Number }
+        }
+    }
 
 ## Automatic Type Conversion
 
