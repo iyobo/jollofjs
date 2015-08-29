@@ -633,7 +633,7 @@ An example below.
         "favorite_number": Number
     }
 
-The above example is really an example of two shortcuts in one - the object and the `Number` type shortcut. The above example would look like the one below, if shortcuts had not been used.
+The above example is really an example of two shortcuts in one - the `Object` and the `Number` type shortcut. The above example would look like the one below, if shortcuts had not been used.
 
     {
         type: Object,
