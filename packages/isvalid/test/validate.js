@@ -17,49 +17,49 @@ describe('validate', function() {
 	});
 	describe('type conversion', function() {
 		it ('should convert string values into numbers if string contains a number', function(done) {
-			isvalid('123.123', Number, function(err, validObj) {
+			isvalid('123.123', Number, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.equal(123.123);
+				expect(validData).to.equal(123.123);
 				done();
 			});
 		});
 		it ('should come back with error if string is supplied - but not a number', function(done) {
-			isvalid('abc', Number, function(err, validObj) {
+			isvalid('abc', Number, function(err, validData) {
 				expect(err).to.be.instanceof(ValidationError);
 				expect(err).to.have.property('validator').equal('type');
 				done();
 			});
 		});
-		it ('should come back with no error and validObj set to true if input is string with \'True\'', function(done) {
-			isvalid('True', Boolean, function(err, validObj) {
+		it ('should come back with no error and validData set to true if input is string with \'True\'', function(done) {
+			isvalid('True', Boolean, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.equal(true);
+				expect(validData).to.equal(true);
 				done();
 			});
 		});
-		it ('should come back with no error and validObj set to false if input is string with \'False\'', function(done) {
-			isvalid('False', Boolean, function(err, validObj) {
+		it ('should come back with no error and validData set to false if input is string with \'False\'', function(done) {
+			isvalid('False', Boolean, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.equal(false);
+				expect(validData).to.equal(false);
 				done();
 			});
 		});
 		it ('should come back with error and if string is supplied - but not \'true\' or \'false\'.', function(done) {
-			isvalid('123', Boolean, function(err, validObj) {
+			isvalid('123', Boolean, function(err, validData) {
 				expect(err).to.be.instanceof(ValidationError);
 				expect(err).to.have.property('validator').equal('type');
 				done();
 			});
 		});
-		it ('should come back with no error and validObj set to a Date if input is string with an ISO date', function(done) {
-			isvalid('2014-10-19T02:24:42.395Z', Date, function(err, validObj) {
+		it ('should come back with no error and validData set to a Date if input is string with an ISO date', function(done) {
+			isvalid('2014-10-19T02:24:42.395Z', Date, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj.getTime()).to.equal(new Date("2014-10-19T02:24:42.395Z").getTime());
+				expect(validData.getTime()).to.equal(new Date("2014-10-19T02:24:42.395Z").getTime());
 				done();
 			});
 		});
 		it ('should come back with error and if string is supplied - but not ISO date', function(done) {
-			isvalid('19/10/14 2:24:42', Date, function(err, validObj) {
+			isvalid('19/10/14 2:24:42', Date, function(err, validData) {
 				expect(err).to.be.instanceof(ValidationError);
 				expect(err).to.have.property('validator').equal('type');
 				done();
@@ -69,42 +69,42 @@ describe('validate', function() {
 	describe('common validator', function() {
 		describe('type', function() {
 			it ('should come back with error if input is not an Object', function(done) {
-				isvalid(123, {}, function(err, validObj) {
+				isvalid(123, {}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not an Array', function(done) {
-				isvalid(123, [{}], function(err, validObj) {
+				isvalid(123, [{}], function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not a String.', function(done) {
-				isvalid(123, String, function(err, validObj) {
+				isvalid(123, String, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not a Number.', function(done) {
-				isvalid('abc', Number, function(err, validObj) {
+				isvalid('abc', Number, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not a Boolean', function(done) {
-				isvalid([], Boolean, function(err, validObj) {
+				isvalid([], Boolean, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
 				});
 			});
 			it ('should come back with error if input is not a Date', function(done) {
-				isvalid([], Date, function(err, validObj) {
+				isvalid([], Date, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('type');
 					done();
@@ -113,23 +113,23 @@ describe('validate', function() {
 		});
 		describe('required', function() {
 			it ('should come back with error if object is required and object is not set.', function(done) {
-				isvalid(undefined, { type: Object, required: true }, function(err, validObj) {
+				isvalid(undefined, { type: Object, required: true }, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('required');
 					done();
 				});
 			});
 			it ('should come back with error if object is required through options', function(done) {
-				isvalid(undefined, { type: Object }, function(err, validObj) {
+				isvalid(undefined, { type: Object }, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equals('required');
 					done();
 				}, { required: true });
 			});
 			it ('should come back with no error if input is undefined and not required', function(done) {
-				isvalid(undefined, {}, function(err, validObj) {
+				isvalid(undefined, {}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.undefined;
+					expect(validData).to.be.undefined;
 					done();
 				});
 			});
@@ -138,41 +138,41 @@ describe('validate', function() {
 			it ('should call default if function with callback is provided.', function(done) {
 				isvalid(undefined, { type: Object, default: function(cb) {
 					cb({ empty: true });
-				} }, function(err, validObj) {
+				} }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.property('empty').equals(true);
+					expect(validData).to.have.property('empty').equals(true);
 					done();
 				});
 			});
 			it ('should call default if function with no callback is provided', function(done) {
 				isvalid(undefined, { type: Object, default: function() {
 					return { empty: true }
-				} }, function(err, validObj) {
+				} }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.property('empty').equals(true);
+					expect(validData).to.have.property('empty').equals(true);
 					done();
 				});
 			});
 			it ('should come back with true when default value \'true\' is provided', function(done) {
-				isvalid(undefined, { type: Object, default: { empty: true } }, function(err, validObj) {
+				isvalid(undefined, { type: Object, default: { empty: true } }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.property('empty').equals(true);
+					expect(validData).to.have.property('empty').equals(true);
 					done();
 				});
 			});
 		});
 		describe('allowNull', function() {
 			it ('should come back with error if null and null is not allowed', function(done) {
-				isvalid(null, String, function(err, validObj) {
+				isvalid(null, String, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('allowNull');
 					done();
 				});
 			});
 			it ('should come back with no error if null and null is allowed', function(done) {
-				isvalid(null, { type: String, allowNull: true, required: true }, function(err, validObj) {
+				isvalid(null, { type: String, allowNull: true, required: true }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.null;
+					expect(validData).to.be.null;
 					done();
 				});
 			});
@@ -184,8 +184,8 @@ describe('validate', function() {
 						expect(obj).to.be.a('String').equals('test');
 						fn(null, 'test2');
 					}
-				}, function(err, validObj) {
-					expect(validObj).to.be.a('String').equals('test2');
+				}, function(err, validData) {
+					expect(validData).to.be.a('String').equals('test2');
 					done();
 				});
 			});
@@ -194,9 +194,9 @@ describe('validate', function() {
 					custom: function(obj, schema) {
 						return 'test';
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.a('String').equal('test');
+					expect(validData).to.be.a('String').equal('test');
 					done();
 				});
 			});
@@ -205,7 +205,7 @@ describe('validate', function() {
 					custom: function(obj, schema) {
 						throw new Error('an error');
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('custom');
 					expect(err).to.have.property('message').equal('an error');
@@ -215,9 +215,9 @@ describe('validate', function() {
 			it ('should return original object if synchronous function doesn\'t return', function(done) {
 				isvalid('test', {
 					custom: function(obj, schema) {}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.a('String').equal('test');
+					expect(validData).to.be.a('String').equal('test');
 					done();
 				});
 			});
@@ -226,7 +226,7 @@ describe('validate', function() {
 					custom: function(obj, schema, fn) {
 						fn(new Error('This is an error'));
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('custom');
 					done();
@@ -239,7 +239,7 @@ describe('validate', function() {
 						fn();
 					},
 					options: 'test'
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					done();
 				});
 			});
@@ -256,9 +256,9 @@ describe('validate', function() {
 						expect(obj.high).to.equal(10);
 						fn(null, obj);
 					}
-				}, function(err, validObj) {
-					expect(validObj).to.have.property('low').equal(0);
-					expect(validObj).to.have.property('high').equal(10);
+				}, function(err, validData) {
+					expect(validData).to.have.property('low').equal(0);
+					expect(validData).to.have.property('high').equal(10);
 					done();
 				});
 			});
@@ -278,8 +278,8 @@ describe('validate', function() {
 							return data + 4;
 						}
 					]
-				}, function(err, validObj) {
-					expect(validObj).to.equal(10);
+				}, function(err, validData) {
+					expect(validData).to.equal(10);
 					done();
 				});
 			});
@@ -301,7 +301,7 @@ describe('validate', function() {
 							return data + 4;
 						}
 					]
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('custom');
 					done();
@@ -317,17 +317,17 @@ describe('validate', function() {
 			}, {
 				awesome: Boolean,
 				why: String
-			}, function(err, validObj) {
+			}, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.have.property('awesome').equals(true);
-				expect(validObj).to.have.property('why').equals('It just is!');
+				expect(validData).to.have.property('awesome').equals(true);
+				expect(validData).to.have.property('why').equals('It just is!');
 				done();
 			});
 		});
-		it ('should come back with no error and validObj if object shortcut is empty.', function(done) {
-			isvalid({}, {}, function(err, validObj) {
+		it ('should come back with no error and validData if object shortcut is empty.', function(done) {
+			isvalid({}, {}, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.be.a('Object');
+				expect(validData).to.be.a('Object');
 				done();
 			});
 		});
@@ -342,9 +342,9 @@ describe('validate', function() {
 					schema: {
 						awesome: Boolean
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.property('why').equals('It just is!');
+					expect(validData).to.have.property('why').equals('It just is!');
 					done();
 				});
 			});
@@ -354,9 +354,9 @@ describe('validate', function() {
 					why: 'It just is!'
 				}, {
 					awesome: Boolean
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.property('why').equals('It just is!');
+					expect(validData).to.have.property('why').equals('It just is!');
 					done();
 				}, { unknownKeys: 'allow' });
 			});
@@ -366,7 +366,7 @@ describe('validate', function() {
 					why: 'It just is!'
 				}, {
 					awesome: Boolean
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('unknownKeys');
 					done();
@@ -382,7 +382,7 @@ describe('validate', function() {
 					schema: {
 						awesome: Boolean
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('unknownKeys');
 					done();
@@ -398,8 +398,8 @@ describe('validate', function() {
 					schema: {
 						awesome: Boolean
 					}
-				}, function(err, validObj) {
-					expect(validObj).to.not.have.property('why');
+				}, function(err, validData) {
+					expect(validData).to.not.have.property('why');
 					done();
 				});
 			});
@@ -418,7 +418,7 @@ describe('validate', function() {
 					errors: {
 						'allowUnknownKeys': 'old value'
 					}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('allowUnknownKeys');
 					expect(err.message).to.equal('old value');
@@ -435,18 +435,18 @@ describe('validate', function() {
 			}], [{
 				awesome: Boolean,
 				why: String
-			}], function(err, validObj) {
+			}], function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.be.an('Array').of.length(1);
-				expect(validObj[0]).to.have.property('awesome').equals(true);
-				expect(validObj[0]).to.have.property('why').equals('It just is!');
+				expect(validData).to.be.an('Array').of.length(1);
+				expect(validData[0]).to.have.property('awesome').equals(true);
+				expect(validData[0]).to.have.property('why').equals('It just is!');
 				done();
 			});
 		});
 		it ('should come back with no error and an empty array when supplying empty array', function(done) {
-			isvalid([], [{}], function(err, validObj) {
+			isvalid([], [{}], function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.have.length(0);
+				expect(validData).to.have.length(0);
 				done();
 			});
 		});
@@ -456,7 +456,7 @@ describe('validate', function() {
 					type: Array,
 					len: '2-',
 					schema: {}
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('len');
 					done();
@@ -473,7 +473,7 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: { awesome: Boolean }
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('unique');
 					done();
@@ -488,9 +488,9 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: { awesome: Boolean }
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.length(2);
+					expect(validData).to.have.length(2);
 					done();
 				});
 			});
@@ -499,7 +499,7 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: String
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('unique');
 					done();
@@ -510,9 +510,9 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: String
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.length(4);
+					expect(validData).to.have.length(4);
 					done();
 				});
 			});
@@ -521,7 +521,7 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: Number
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('unique');
 					done();
@@ -532,9 +532,9 @@ describe('validate', function() {
 					type: Array,
 					unique: true,
 					schema: Number
-				}, function(err, validObj) {
+				}, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.have.length(4);
+					expect(validData).to.have.length(4);
 					done();
 				});
 			});
@@ -542,55 +542,55 @@ describe('validate', function() {
 	});
 	describe('string validator', function() {
 		it ('should come back with no error and input same as outout if string is supplied.', function(done) {
-			isvalid('123', String, function(err, validObj) {
+			isvalid('123', String, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.be.a('String').equals('123');
+				expect(validData).to.be.a('String').equals('123');
 				done();
 			});
 		});
 		describe('trim', function() {
 			it ('should come back with trimmed string when trim is set to true', function(done) {
-				isvalid('  123abc  ', { type: String, trim: true }, function(err, validObj) {
+				isvalid('  123abc  ', { type: String, trim: true }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.equal('123abc');
+					expect(validData).to.equal('123abc');
 					done();
 				});
 			});
 			it ('should come back with trimmed string when trim option is true', function(done) {
-				isvalid('  123abc  ', String, function(err, validObj) {
+				isvalid('  123abc  ', String, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.equal('123abc');
+					expect(validData).to.equal('123abc');
 					done();
 				}, { trim: true });
 			});
 		});
 		describe('match', function() {
 			it ('should come back with an error if string does not match RegExp', function(done) {
-				isvalid('123', { type: String, match: /^[a-z]+$/ }, function(err, validObj) {
+				isvalid('123', { type: String, match: /^[a-z]+$/ }, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('match');
 					done();
 				});
 			});
-			it ('should come back with no error and validObj should match input string when match is specified and input matches', function(done) {
-				isvalid('123', { type: String, match: /^[0-9]+$/ }, function(err, validObj) {
-					expect(validObj).to.equal('123');
+			it ('should come back with no error and validData should match input string when match is specified and input matches', function(done) {
+				isvalid('123', { type: String, match: /^[0-9]+$/ }, function(err, validData) {
+					expect(validData).to.equal('123');
 					done();
 				});
 			});
 		});
 		describe('enum', function() {
 			it ('should come back with an error if string is not in enum', function(done) {
-				isvalid('123', { type: String, enum: ['this','is','a','test'] }, function(err, validObj) {
+				isvalid('123', { type: String, enum: ['this','is','a','test'] }, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('enum');
 					done();
 				});
 			});
 			it ('should come back with no error if string is in enum', function(done) {
-				isvalid('test', { type: String, enum: ['this','is','a','test'] }, function(err, validObj) {
+				isvalid('test', { type: String, enum: ['this','is','a','test'] }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.be.a('String').equal('test');
+					expect(validData).to.be.a('String').equal('test');
 					done();
 				});
 			});
@@ -598,24 +598,24 @@ describe('validate', function() {
 	});
 	describe('number validator', function() {
 		it ('should come back with no error and input same as output if number is supplied', function(done) {
-			isvalid(123, Number, function(err, validObj) {
+			isvalid(123, Number, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validObj).to.equal(123);
+				expect(validData).to.equal(123);
 				done();
 			});
 		});
 		describe('range', function() {
 			it ('should come back with error if input is not within range', function(done) {
-				isvalid(1, { type: Number, range: '2-4' }, function(err, validObj) {
+				isvalid(1, { type: Number, range: '2-4' }, function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
 					expect(err).to.have.property('validator').equal('range');
 					done();
 				});
 			});
 			it ('should come back with no error and output same as input if within range', function(done) {
-				isvalid(3, { type: Number, range: '2-4' }, function(err, validObj) {
+				isvalid(3, { type: Number, range: '2-4' }, function(err, validData) {
 					expect(err).to.be.null;
-					expect(validObj).to.equal(3);
+					expect(validData).to.equal(3);
 					done();
 				});
 			});
