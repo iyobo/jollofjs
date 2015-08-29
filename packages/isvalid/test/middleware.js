@@ -29,7 +29,7 @@ app.get('/query',
 
 app.post('/post',
   validate.body({
-    'test': { type: String, match: /^.*?test$/i }
+    'test': [ { type: String, match: /^.*?test$/i } ]
   }),
   function(req, res) {
     res.status(200).json(req.body);
@@ -49,59 +49,72 @@ app.use(function(err, req, res, next) {
   res.status(500).json({error: 'internal-server-error'});
 });
 
-describe('middlewares', function() {
+describe('middleware', function() {
 
-  it ('should come back with 400 if param does not match schema', function(done) {
-    request(app)
-    .get('/param/test')
-    .expect(400, function(err, res) {
-      expect(res.body).to.have.property('error').equal('validation-error');
-      done(err);
+  describe('param validator', function() {
+
+    it ('should come back with 400 if param does not match schema', function(done) {
+      request(app)
+      .get('/param/test')
+      .expect(400, function(err, res) {
+        expect(res.body).to.have.property('error').equal('validation-error');
+        done(err);
+      });
     });
+
+    it ('should come back with 200 if param matches schema', function(done) {
+      request(app)
+      .get('/param/123')
+      .expect(200, done);
+    });
+
   });
 
-  it ('should come back with 200 if param matches schema', function(done) {
-    request(app)
-    .get('/param/123')
-    .expect(200, done);
+  describe('query validator', function() {
+
+    it ('should come back with 400 if query matches schema', function(done) {
+      request(app)
+      .get('/query?test=nonmatching')
+      .expect(400, function(err, req) {
+        expect(req.body).to.have.property('error').equal('validation-error');
+        done(err);
+      });
+    });
+
+    it ('should come back with 200 and correct body if query matches schema', function(done) {
+      request(app)
+      .get('/query?test=myTest')
+      .expect(200, function(err, res) {
+        expect(res.body).to.have.property('test').equal('myTest');
+        done(err);
+      });
+    });
+
   });
 
-  it ('should come back with 400 if query matches schema', function(done) {
-    request(app)
-    .get('/query?test=nonmatching')
-    .expect(400, function(err, req) {
-      expect(req.body).to.have.property('error').equal('validation-error');
-      done(err);
-    });
-  });
+  describe('body validator', function() {
 
-  it ('should come back with 200 and correct body if query matches schema', function(done) {
-    request(app)
-    .get('/query?test=myTest')
-    .expect(200, function(err, res) {
-      expect(res.body).to.have.property('test').equal('myTest');
-      done(err);
+    it ('should come back with 400 if post body does not match schema', function(done) {
+      request(app)
+      .post('/post')
+      .send({ test: 'nonmatching' })
+      .expect(400, function(err, res) {
+        expect(res.body).to.have.property('error').equal('validation-error');
+        done(err);
+      });
     });
-  });
 
-  it ('should come back with 400 if post body does not match schema', function(done) {
-    request(app)
-    .post('/post')
-    .send({ test: 'nonmatching' })
-    .expect(400, function(err, res) {
-      expect(res.body).to.have.property('error').equal('validation-error');
-      done(err);
+    it ('should come back with 200 and correct body set if post body matches schema', function(done) {
+      request(app)
+      .post('/post')
+      .send({ test: ['myTest'] })
+      .expect(200, function(err, res) {
+        expect(res.body).to.have.property('test').to.be.an('Array').of.length(1);
+        expect(res.body.test[0]).to.be.a('String').equal('myTest');
+        done(err);
+      });
     });
-  });
 
-  it ('should come back with 200 and correct body set if post body matches schema', function(done) {
-    request(app)
-    .post('/post')
-    .send({ test: 'myTest' })
-    .expect(200, function(err, res) {
-      expect(res.body).to.have.property('test').equal('myTest');
-      done(err);
-    });
   });
 
 });
