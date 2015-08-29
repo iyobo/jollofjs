@@ -5,47 +5,6 @@
 
 **isvalid** is an asynchronous node.js library for validating and error correcting JSON. In contrary to JSON Schema it uses a very simple schema model - inspired by the Mongoose schemas.
 
-# What's New?
-
-## In Version 1.0.0
-
-Because of breaking API-changes this version is 1.0.0.
-
-* Opt-in to `null` values using the `allowNull` validator.
-* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator (suggested by [boldt](https://github.com/boldt)).
-* Middleware can validate parameters.
-* Type shortcuts now also include `String`, `Number`, `Boolean` and `Date`.
-* The `custom` validator can now take an array of functions.
-
-Version `>= 0.2.4` has a bug where `null` is sometimes validated even when input is non-required - or with required objects. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
-
-## In Version 0.3.0
-
-* Bug fixes and internal improvements.
-* `type` and `custom` can now be used alongside each other.
-* Default functions and custom validators now also works synchronously.
-* Strings now has an `enum` validator.
-* Changed license to MIT
-* Improved this file with a TOC
-* Added middleware for Connect/Express (from [isvalid-express](https://github.com/trenskow/isvalid-express)).
-
-## In Version 0.2.0
-
-* It now catches more errors in schemas - such as wrong values on validators.
-* Schema errors are now thrown as a `SchemaError` which contains schema that failed through the `schema` property.
-* The library is now completely asynchronous - allowing for I/O while formalizing, validating and comparing.
-* Formalizer is publicly exposed in order to pre-formalize schemas manually.
-* Schemas are now formalized per demand. Large schemas are formalized by the validator as they are needed.
-* ValidationErrors now contain the pre-formalized schema - for better identification by developer.
-
-## In Version 0.1.0
-
- * Automatic parsing of [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) dates into Date - contributed by [thom-nic](https://github.com/thom-nic).
- * Errors are thrown if validators are used out of context.
- * ValidationError now contains the `validator` property - specifying which validator actually failed.
- * You can now specify custom error messages using the `error` validator.
- * `Object` now supports the `allowUnknownKeys` validator.
-
 # Table of Content
 
    * [How to Use](#how-to-use)
@@ -97,6 +56,7 @@ Version `>= 0.2.4` has a bug where `null` is sometimes validated even when input
        * [Numbers](#numbers)
        * [Booleans](#booleans)
        * [Dates](#dates)
+   * [Changelog](#changelog)
    * [License](#license)
 
 # How to Use
@@ -107,7 +67,7 @@ Usage: `isvalid(dataToValidate, validationSchema, callback)`
 
 ## Example
 
-Here's a simple example on how to use the validator:
+Here's a simple example on how to use the validator.
 
     var isvalid = require('isvalid');
 
@@ -136,16 +96,17 @@ Usage: `isvalid.validate.param(schema)` validates `req.param`.
     app.param('myparam', validate.param(Number));
 
     app.post('/mypath/:myparam',
-    validate.query({
-        'filter': String
-    }),
-    validate.body({
-        'mykey': { type: String, required: true }
-    }),
-    function(req, res) {
-        // req.param.myparam, req.body and req.query are now validated.
-        // - any default values - or type conversion - has been applied.
-    });
+      validate.query({
+          'filter': String
+      }),
+      validate.body({
+          'mykey': { type: String, required: true }
+      }),
+      function(req, res) {
+          // req.param.myparam, req.body and req.query are now validated.
+          // - any default values - or type conversion - has been applied.
+      }
+    );
 
 > Remark: If validation fails `isvalid` will unset the validated content (eg. `req.body` will become `null` if body validation fails). This is to ensure that routes does not get called with invalid data, in case a validation error isn't correctly handled.
 
@@ -696,10 +657,6 @@ Likewise will schemas of type `Boolean` be automatically converted into a `Boole
 If the schema is of type `Date` and a `String` containing an [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) formatted date is supplied, it will automatically be parsed and converted into a `Date`.
 
 ISO-8601 is the date format that `JSON.stringify(...)` convert `Date` instances into, so this allows you to just serialize an object to JSON on - as an example - the client side, and then **isvalid** will automatically convert that into a `Date` instance when validating on the server side.
-
-No longer any need for manual conversions!
-
-(Contributed by [thom-nic](https://github.com/thom-nic))
 
 # License
 
