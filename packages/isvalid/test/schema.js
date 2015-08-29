@@ -1,207 +1,141 @@
 var expect = require('chai').expect,
-	schema = require('../lib/schema.js'),
+	formalize = require('../lib/schema.js').formalize,
 	SchemaError = require('../lib/errors/schemaError.js');
 
 describe('schema', function() {
-	describe('#formalize', function() {
+	describe('formalizer', function() {
+
+		var testSyncAndAsync = function(desc, s, expects) {
+			it (desc + ' (async)', function(done) {
+				formalize(s, function(s) {
+					expects(s);
+					done();
+				});
+			});
+			it (desc + ' (sync)', function() {
+				s = formalize(s);
+				expects(s);
+			});
+		}
+
 		it ('should throw an error if array shortcut contains no object', function() {
 			expect(function() {
-				schema.formalize([]);
+				formalize([]);
 			}).to.throw(SchemaError);
 		});
 		it ('should throw an error if schema is garbage value', function() {
 			expect(function() {
-				schema.formalize(123);
+				formalize(123);
 			}).to.throw(SchemaError);
 		});
-		it ('should come back with an object shortcut expanded', function(done) {
-			schema.formalize({}, function(s) {
+		testSyncAndAsync ('should come back with an object shortcut expanded', {}, function(s) {
 				expect(s).to.have.property('type');
 				expect(s).to.have.property('schema').to.be.an('Object');
-				done();
-			});
 		});
-		it ('should come back with an array shortcut expanded', function(done) {
-			schema.formalize([{}], function(s) {
+		testSyncAndAsync ('should come back with an array shortcut expanded', [{}], function(s) {
 				expect(s).to.have.property('type');
 				expect(s).to.have.property('schema').to.be.an('Object');
-				done();
-			});
 		});
-		it ('should come back with a String shortcut expanded', function(done) {
-			schema.formalize(String, function(s) {
+		testSyncAndAsync ('should come back with a String shortcut expanded', String, function(s) {
 				expect(s).to.have.property('type').equal(String);
-				done();
-			});
 		});
-		it ('should come back with a Number shortcut expanded', function(done) {
-			schema.formalize(Number, function(s) {
+		testSyncAndAsync ('should come back with a Number shortcut expanded', Number, function(s) {
 				expect(s).to.have.property('type').equal(Number);
-				done();
-			});
 		});
-		it ('should come back with a Boolean shortcut expanded', function(done) {
-			schema.formalize(Boolean, function(s) {
+		testSyncAndAsync ('should come back with a Boolean shortcut expanded', Boolean, function(s) {
 				expect(s).to.have.property('type').equal(Boolean);
-				done();
-			});
 		});
-		it ('should come back with a Date shortcut expanded', function(done) {
-			schema.formalize(Date, function(s) {
+		testSyncAndAsync ('should come back with a Date shortcut expanded', Date, function(s) {
 				expect(s).to.have.property('type').equal(Date);
-				done();
-			});
 		});
-		it ('should come back with required set to true if object has not specified required and a nested subschema is required.', function(done) {
-			schema.formalize({
-				'a': { type: String, required: true }
-			}, function(s) {
+		testSyncAndAsync ('should come back with required set to true if object has not specified required and a nested subschema is required.', {'a': { type: String, required: true } }, function(s) {
 				expect(s).to.have.property('required').to.be.equal(true);
-				done();
-			});
 		});
-		it ('should come back with required set to true if any deep subschema is required.', function(done) {
-			schema.formalize({
-				'a': {
-					'b': {
-						'c': { type: String, required: true }
-					}
-				}
-			}, function(s) {
+		testSyncAndAsync ('should come back with required set to true if any deep subschema is required.', { 'a': {	'b': { 'c': { type: String, required: true } } } }, function(s) {
 				expect(s).to.have.property('required').to.be.equal(true);
-				done();
-			});
 		});
-		it ('should come back with required set to false if root object required is false and deep subschema is required.', function(done) {
-			schema.formalize({
-				type: Object,
-				required: false,
-				schema: {
-					'a': {
-						type: Object,
-						required: 'implicit',
-						schema: {
-							'a': { type: String, required: true }
-						}
-					}
-				}
-			}, function(s) {
+		testSyncAndAsync ('should come back with required set to false if root object required is false and deep subschema is required.', { type: Object, required: false,	schema: { 'a': { type: Object, required: 'implicit', schema: { 'a': { type: String, required: true } } } } }, function(s) {
 				expect(s).to.have.property('required').to.be.equal(false);
-				done();
-			});
 		});
-		it ('should come back with required set to true if array has deep nested required subschema', function(done) {
-			schema.formalize([{ type: String, required: true }], function(s) {
+		testSyncAndAsync ('should come back with required set to true if array has deep nested required subschema', [{ type: String, required: true }], function(s) {
 				expect(s).to.have.property('required').to.be.equal(true);
-				done();
-			});
 		});
-		it ('should come back with required set to false if array is non-required but has deep nested required subschema', function(done) {
-			schema.formalize({
-				type: Array,
-				required: false,
-				schema: {
-					'a': { type: String, required: true }
-				}
-			}, function(s) {
+		testSyncAndAsync ('should come back with required set to false if array is non-required but has deep nested required subschema', { type: Array, required: false, schema: { 'a': { type: String, required: true } } }, function(s) {
 				expect(s).to.have.property('required').to.be.equal(false);
-				done();
-			});
 		});
-		it ('should come back with an object with both keys formalized', function(done) {
-			schema.formalize({
-				'a': { type: String, required: true },
-				'b': { type: String, required: true }
-			}, function(s) {
+		testSyncAndAsync ('should come back with an object with both keys formalized', { 'a': { type: String, required: true }, 'b': { type: String, required: true } }, function(s) {
 				expect(s).to.have.property('schema');
-				done();
-			});
+		});
+		testSyncAndAsync ('should come back with no error and match set if match is RegExp', { type: String, match: /test/ }, function(s) {
+				expect(s).to.have.property('match');
+		});
+		testSyncAndAsync ('should come back with custom wrapped in an array', { custom: function() {} }, function(s) {
+				expect(s).to.have.property('custom').to.be.an('array');
+		});
+		testSyncAndAsync ('should come back with custom as an array', { custom: [ function() {} ] }, function(s) {
+				expect(s).to.have.property('custom').to.be.an('array');
 		});
 		it ('should throw error if required is not a String or Boolean', function() {
 			expect(function() {
-				schema.formalize({ type: String, required: 123 });
+				formalize({ type: String, required: 123 });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw error if required is a String but not \'implicit\'', function() {
 			expect(function() {
-				schema.formalize({ type: String, required: 'test' });
+				formalize({ type: String, required: 'test' });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw error if type is String and match is non-RegExp', function() {
 			expect(function() {
-				schema.formalize({ type: String, match: 'test' });
+				formalize({ type: String, match: 'test' });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw error if type is String and enum is not an array', function() {
 			expect(function() {
-				schema.formalize({ type: String, enum: 1 });
+				formalize({ type: String, enum: 1 });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw error if type is String and enum has zero valus', function() {
 			expect(function() {
-				schema.formalize({ type: String, enum: [] });
+				formalize({ type: String, enum: [] });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw error if type is String and enum is not array of strings', function() {
 			expect(function() {
-				schema.formalize({ type: String, enum: ['this','is',1,'test'] });
+				formalize({ type: String, enum: ['this','is',1,'test'] });
 			}).to.throw(SchemaError);
-		});
-		it ('should come back with no error and match set if match is RegExp', function(done) {
-			schema.formalize({ type: String, match: /test/ }, function(schema) {
-				expect(schema).to.have.property('match');
-				done();
-			});
-		});
-		it ('should come back with custom wrapped in an array', function(done) {
-			schema.formalize({ custom: function() {} }, function(s) {
-				expect(s).to.have.property('custom').to.be.an('array');
-				done();
-			});
-		});
-		it ('should come back with custom as an array', function(done) {
-			schema.formalize({ custom: [ function() {} ] }, function(s) {
-				expect(s).to.have.property('custom').to.be.an('array');
-				done();
-			});
 		});
 		it ('should throw an error if schema type is unknown', function() {
 			expect(function() {
-				schema.formalize({ type: Error });
+				formalize({ type: Error });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw an error if schema is not of supported type', function() {
 			expect(function() {
-				schema.formalize({ type: RegExp });
+				formalize({ type: RegExp });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw an error if unknownKeys is not \'allow\', \'deny\' or \'remove\'', function() {
 			expect(function() {
-				schema.formalize({ type: Object, unknownKeys: 'test' });
+				formalize({ type: Object, unknownKeys: 'test' });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw an error if array schema is unknown type', function() {
 			expect(function() {
-				schema.formalize({ type: Array, schema: RegExp });
+				formalize({ type: Array, schema: RegExp });
 			}).to.throw(SchemaError);
 		});
 		it ('should throw an error if object schema is unknown type', function() {
 			expect(function() {
-				schema.formalize({ type: Object, schema: RegExp });
+				formalize({ type: Object, schema: RegExp });
 			}).to.throw(SchemaError);
 		});
 		describe('allowUnknownKeys backwards compatibility', function() {
-			it ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'', function(done) {
-				schema.formalize({ type: Object, allowUnknownKeys: true }, function(schema) {
-					expect(schema.unknownKeys).to.equal('allow');
-					done();
-				});
+			testSyncAndAsync ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'', { type: Object, allowUnknownKeys: true }, function(s) {
+					expect(s.unknownKeys).to.equal('allow');
 			});
-			it ('should come back with unknownKeys set to \'deny\' if allowUnknownKeys is \'false\'', function(done) {
-				schema.formalize({ type: Object, allowUnknownKeys: false }, function(schema) {
-					expect(schema.unknownKeys).to.equal('deny');
-					done();
-				});
+			testSyncAndAsync ('should come back with unknownKeys set to \'deny\' if allowUnknownKeys is \'false\'', { type: Object, allowUnknownKeys: false }, function(s) {
+					expect(s.unknownKeys).to.equal('deny');
 			});
 		});
 	});
