@@ -130,7 +130,7 @@ describe('schema', function() {
 				formalize({ type: Object, schema: RegExp });
 			}).to.throw(SchemaError);
 		});
-		describe('allowUnknownKeys backwards compatibility', function() {
+		describe('allowUnknownKeys [deprecated]', function() {
 			testSyncAndAsync ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'', { type: Object, allowUnknownKeys: true }, function(s) {
 					expect(s.unknownKeys).to.equal('allow');
 			});
