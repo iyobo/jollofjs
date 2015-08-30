@@ -3,15 +3,15 @@ var ValidationError = require('./errors/validationError.js'),
 	unique = require('./unique.js'),
 	schemaTools = require('./schema.js');
 
-var finalize = function(obj, fn) {
-	if (fn) return setImmediate(fn, null, obj);
+var finalize = function(data, fn) {
+	if (fn) return setImmediate(fn, null, data);
 };
 
-var validateObject = function(obj, schema, fn, keyPath, options) {
+var validateObject = function(data, schema, fn, keyPath, options) {
 
-	if (obj) {
+	if (data) {
 
-		if (typeof obj !== 'object') {
+		if (typeof data !== 'object') {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -27,7 +27,7 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 		for (var key in schema.schema) schemaCopy[key] = schema.schema[key];
 
 		// Put validated object here
-		var validObj = {};
+		var validObject = {};
 
 		// Find unknown keys
 		for (var key in obj) {
@@ -35,7 +35,7 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
 				switch (schema.unknownKeys || (options || {}).unknownKeys) {
 					case 'allow':
-						validObj[key] = obj[key];
+						validObject[key] = data[key];
 						break;
 					case 'remove':
 						break;
@@ -54,14 +54,14 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 
 		var validateNextKey = function() {
 			for (var key in schemaCopy) break;
-			if (!key) return validateCustom(validObj, schema, fn, keyPath, options);
+			if (!key) return validateCustom(validObject, schema, fn, keyPath, options);
 
 			var keySchema = schemaCopy[key];
 			delete schemaCopy[key];
 
-			validateAny(obj[key], keySchema, function(err, validatedObj) {
+			validateAny(data[key], keySchema, function(err, validData) {
 				if (err) return fn(err);
-				if (validatedObj !== undefined) validObj[key] = validatedObj;
+				if (validData !== undefined) validObject[key] = validData;
 				validateNextKey();
 			}, keyPath.concat([key]), options);
 
@@ -71,15 +71,15 @@ var validateObject = function(obj, schema, fn, keyPath, options) {
 
 	}
 
-	return validateCustom(obj, schema, fn, keyPath, options);
+	return validateCustom(data, schema, fn, keyPath, options);
 
 };
 
-var validateArray = function(arr, schema, fn, keyPath, options) {
+var validateArray = function(data, schema, fn, keyPath, options) {
 
-	if (arr) {
+	if (data) {
 
-		if (!(arr instanceof Array)) {
+		if (!(data instanceof Array)) {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -94,7 +94,7 @@ var validateArray = function(arr, schema, fn, keyPath, options) {
 
 		var validateNext = function(idx) {
 
-			if (idx == arr.length) {
+			if (idx == data.length) {
 
 				if (schema.len && !ranges.testIndex(schema.len, validArray.length)) {
 					return fn(
@@ -127,9 +127,9 @@ var validateArray = function(arr, schema, fn, keyPath, options) {
 
 			}
 
-			validateAny(arr[idx], schema.schema, function(err, validObj) {
+			validateAny(data[idx], schema.schema, function(err, validData) {
 				if (err) return fn(err);
-				validArray.push(validObj);
+				validArray.push(validData);
 				validateNext(idx + 1);
 			}, keyPath.concat([ idx.toString() ]), options);
 
@@ -139,7 +139,7 @@ var validateArray = function(arr, schema, fn, keyPath, options) {
 
 	}
 
-	return validateCustom(arr, schema, fn, keyPath, options);
+	return validateCustom(data, schema, fn, keyPath, options);
 
 };
 
@@ -307,13 +307,13 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 
 };
 
-var validateCustom = function(obj, schema, fn, keyPath, options) {
+var validateCustom = function(data, schema, fn, keyPath, options) {
 
 	// All other validators always end with calling the custom validator.
 	// - therefore just finalize if there is none.
-	if (schema.custom === undefined) return finalize(obj, fn);
+	if (schema.custom === undefined) return finalize(data, fn);
 
-	var result = obj;
+	var result = data;
 
 	(function validateNext(idx) {
 		if (idx === schema.custom.length) return finalize(result, fn);
@@ -333,9 +333,9 @@ var validateCustom = function(obj, schema, fn, keyPath, options) {
 		}
 
 		// Asynchronous function
-		return custom(result, schema, function(err, validObj) {
+		return custom(result, schema, function(err, validData) {
 			if (err) return fn(ValidationError.fromError(keyPath,	schema._nonFormalizedSchema, 'custom', err));
-			result = validObj;
+			result = validData;
 			validateNext(idx + 1);
 		});
 
@@ -343,18 +343,18 @@ var validateCustom = function(obj, schema, fn, keyPath, options) {
 
 }
 
-var validateAny = function(obj, schema, fn, keyPath, options) {
+var validateAny = function(data, schema, fn, keyPath, options) {
 
 	// If schema is not yet formalized - formalize it and come back.
 	if (schema._nonFormalizedSchema === undefined) {
 		return schemaTools.formalize(schema, function(formalizedSchema) {
-			return validateAny(obj, formalizedSchema, fn, keyPath, options);
+			return validateAny(data, formalizedSchema, fn, keyPath, options);
 		});
 	}
 
-	if (typeof obj === 'undefined' || obj === null) {
-		if (obj === null) {
-			if (schema.allowNull === true || (options || {}).allowNull === true) return finalize(obj, fn);
+	if (typeof data === 'undefined' || data === null) {
+		if (data === null) {
+			if (schema.allowNull === true || (options || {}).allowNull === true) return finalize(data, fn);
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -391,20 +391,20 @@ var validateAny = function(obj, schema, fn, keyPath, options) {
 		}
 	}
 
-	if (schema.type === undefined) return validateCustom(obj, schema, fn, keyPath, options);
-	if ('Object' == schema.type.name) return validateObject(obj, schema, fn, keyPath, options);
-	if ('Array' == schema.type.name) return validateArray(obj, schema, fn, keyPath, options);
-	if ('String' == schema.type.name) return validateString(obj, schema, fn, keyPath, options);
-	if ('Number' == schema.type.name) return validateNumber(obj, schema, fn, keyPath, options);
-	if ('Boolean' == schema.type.name) return validateBoolean(obj, schema, fn, keyPath, options);
-	if ('Date' == schema.type.name) return validateDate(obj, schema, fn, keyPath, options);
+	if (schema.type === undefined) return validateCustom(data, schema, fn, keyPath, options);
+	if ('Object' == schema.type.name) return validateObject(data, schema, fn, keyPath, options);
+	if ('Array' == schema.type.name) return validateArray(data, schema, fn, keyPath, options);
+	if ('String' == schema.type.name) return validateString(data, schema, fn, keyPath, options);
+	if ('Number' == schema.type.name) return validateNumber(data, schema, fn, keyPath, options);
+	if ('Boolean' == schema.type.name) return validateBoolean(data, schema, fn, keyPath, options);
+	if ('Date' == schema.type.name) return validateDate(data, schema, fn, keyPath, options);
 
 	// This error should have been eliminated by the finalizer.
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 
 };
 
-module.exports = function(obj, schema, fn, keyPath, options) {
+module.exports = function(data, schema, fn, keyPath, options) {
 
 	if (typeof schema === 'undefined') throw new Error('Missing parameter schema');
 	if (typeof fn === 'undefined') throw new Error('Missing parameter fn');
@@ -427,6 +427,6 @@ module.exports = function(obj, schema, fn, keyPath, options) {
 
 	keyPath = keyPath || [];
 
-	return validateAny(obj, schema, fn, keyPath, options);
+	return validateAny(data, schema, fn, keyPath, options);
 
 };
