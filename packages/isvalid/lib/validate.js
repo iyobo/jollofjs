@@ -30,8 +30,8 @@ var validateObject = function(data, schema, fn, keyPath, options) {
 		var validObject = {};
 
 		// Find unknown keys
-		for (var key in obj) {
-			if (!schemaCopy[key]) {
+		for (var key in data) {
+			if (schemaCopy[key] === undefined) {
 				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
 				switch (schema.unknownKeys || (options || {}).unknownKeys) {
 					case 'allow':
