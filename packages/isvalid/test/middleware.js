@@ -53,7 +53,7 @@ describe('middleware', function() {
 
   describe('param validator', function() {
 
-    it ('should come back with 400 if param does not match schema', function(done) {
+    it ('should come back with 400 if param does not match schema.', function(done) {
       request(app)
       .get('/param/test')
       .expect(400, function(err, res) {
@@ -62,7 +62,7 @@ describe('middleware', function() {
       });
     });
 
-    it ('should come back with 200 if param matches schema', function(done) {
+    it ('should come back with 200 if param matches schema.', function(done) {
       request(app)
       .get('/param/123')
       .expect(200, done);
@@ -72,7 +72,7 @@ describe('middleware', function() {
 
   describe('query validator', function() {
 
-    it ('should come back with 400 if query matches schema', function(done) {
+    it ('should come back with 400 if query matches schema.', function(done) {
       request(app)
       .get('/query?test=nonmatching')
       .expect(400, function(err, req) {
@@ -81,7 +81,7 @@ describe('middleware', function() {
       });
     });
 
-    it ('should come back with 200 and correct body if query matches schema', function(done) {
+    it ('should come back with 200 and correct body if query matches schema.', function(done) {
       request(app)
       .get('/query?test=myTest')
       .expect(200, function(err, res) {
@@ -94,7 +94,7 @@ describe('middleware', function() {
 
   describe('body validator', function() {
 
-    it ('should come back with 400 if post body does not match schema', function(done) {
+    it ('should come back with 400 if post body does not match schema.', function(done) {
       request(app)
       .post('/post')
       .send({ test: 'nonmatching' })
@@ -104,7 +104,7 @@ describe('middleware', function() {
       });
     });
 
-    it ('should come back with 200 and correct body set if post body matches schema', function(done) {
+    it ('should come back with 200 and correct body set if post body matches schema.', function(done) {
       request(app)
       .post('/post')
       .send({ test: ['myTest'] })

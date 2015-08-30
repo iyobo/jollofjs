@@ -41,8 +41,10 @@ var equals = function(obj1, obj2, fn) {
 	if ((obj1 && !obj2) || (!obj1 && obj2)) return fn(false);
 	if (typeof obj1 !== typeof obj2) return fn(false);
 
-	if (typeof obj1 === 'object') return objectEquals(obj1, obj2, fn);
-	if (typeof obj1 === 'array') return arrayEquals(obj1, obj2, fn);
+	if (typeof obj1 === 'object') {
+		if (obj1.constructor.name === 'Object') return objectEquals(obj1, obj2, fn);
+		if (obj1.constructor.name === 'Array') return arrayEquals(obj1, obj2, fn);
+	}
 
 	return fn(obj1 == obj2);
 

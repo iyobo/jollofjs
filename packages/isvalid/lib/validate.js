@@ -85,7 +85,7 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'type',
-					(schema.errors || {}).type || 'Is not an array'
+					(schema.errors || {}).type || 'Is not of type Array.'
 				)
 			);
 		}
@@ -102,7 +102,7 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 							keyPath,
 							schema._nonFormalizedSchema,
 							'len',
-							(schema.errors || {}).len || 'Array length is not within range of \'' + schema.len + '\''
+							(schema.errors || {}).len || 'Array length is not within range of \'' + schema.len + '\'.'
 						)
 					);
 				}
@@ -155,7 +155,7 @@ var validateString = function(str, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'type',
-					(schema.errors || {}).type || 'Is not of type string.'
+					(schema.errors || {}).type || 'Is not of type String.'
 				)
 			);
 		};
@@ -216,7 +216,7 @@ var validateNumber = function(num, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'type',
-					(schema.errors || {}).type || 'Is not of type number.'
+					(schema.errors || {}).type || 'Is not of type Number.'
 				)
 			);
 		}
@@ -256,7 +256,7 @@ var validateBoolean = function(val, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'type',
-					(schema.errors || {}).type || 'Is not of type boolean.'
+					(schema.errors || {}).type || 'Is not of type Boolean.'
 				)
 			);
 		}
@@ -294,7 +294,7 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'type',
-					(schema.errors || {}).type || 'Is not coerceable to a Date.'
+					(schema.errors || {}).type || 'Is not of type Date.'
 				)
 			);
 		}
@@ -385,7 +385,7 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 					keyPath,
 					schema._nonFormalizedSchema,
 					'required',
-					 (schema.errors || {}).required || 'Key is required.'
+					 (schema.errors || {}).required || 'Data is required.'
 				 )
 			 );
 		}
@@ -406,8 +406,8 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 
 module.exports = function(data, schema, fn, keyPath, options) {
 
-	if (typeof schema === 'undefined') throw new Error('Missing parameter schema');
-	if (typeof fn === 'undefined') throw new Error('Missing parameter fn');
+	if (typeof schema === 'undefined') throw new Error('Missing parameter schema.');
+	if (typeof fn === 'undefined') throw new Error('Missing parameter fn.');
 
 	if (keyPath && typeof keyPath == 'object') {
 		options = keyPath;
