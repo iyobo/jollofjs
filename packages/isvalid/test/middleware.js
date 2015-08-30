@@ -1,8 +1,8 @@
-var validate = require('../lib/middleware.js');
-var express = require('express');
-var bodyParser = require('body-parser');
-var request = require('supertest');
-var expect = require('chai').expect;
+var validate = require('../lib/middleware.js'),
+  express = require('express'),
+  bodyParser = require('body-parser')
+  request = require('supertest'),
+  expect = require('chai').expect;
 
 // We build a simple express test in order to test the middleware
 //

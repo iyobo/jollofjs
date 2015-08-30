@@ -1,5 +1,5 @@
-var formalize = require('./schema.js').formalize;
-var isvalid = require('./validate.js');
+var formalize = require('./schema.js').formalize,
+	isvalid = require('./validate.js');
 
 exports.body = module.exports.body = function(schema, options) {
 
