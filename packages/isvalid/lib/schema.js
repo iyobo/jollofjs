@@ -1,5 +1,5 @@
 var objectAssign = require('object-assign'),
-    SchemaError = require('./errors/schemaError.js');
+    SchemaError = require('./errors/SchemaError.js');
 
 var finalize = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 

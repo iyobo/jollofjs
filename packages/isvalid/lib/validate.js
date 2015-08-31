@@ -1,4 +1,4 @@
-var ValidationError = require('./errors/validationError.js'),
+var ValidationError = require('./errors/ValidationError.js'),
 	ranges = require('./ranges.js'),
 	unique = require('./unique.js'),
 	schemaTools = require('./schema.js');
