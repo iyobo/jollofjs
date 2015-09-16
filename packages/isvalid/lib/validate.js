@@ -430,3 +430,9 @@ module.exports = function(data, schema, fn, keyPath, options) {
 	return validateAny(data, schema, fn, keyPath, options);
 
 };
+
+module.exports.co = function (data, schema, keyPath, options) {
+	return function (fn) {
+		return module.exports(data, schema, fn, keyPath, options);
+	};
+}

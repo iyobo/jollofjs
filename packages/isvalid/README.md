@@ -110,6 +110,27 @@ Usage: `isvalid.validate.param(schema)` validates `req.param`.
 
 > Remark: If validation fails `isvalid` will unset the validated content (eg. `req.body` will become `null` if body validation fails). This is to ensure that routes does not get called with invalid data, in case a validation error isn't correctly handled.
 
+## As a Co or Koa yieldable
+
+Just use the `co` exported property instead of the whole exported object.
+
+### Example
+
+    var isvalid = require('isvalid').co;
+
+    var queryValidator = {
+        k: {
+            type: String,
+            required: true,
+            match: /[A-Za-z0-9_ ]+/
+        }
+    };
+
+    app.use(function* (next) {
+        this.query = yield isvalid(this.query, queryValidator);
+        yield next;
+    });
+
 # How it Works
 
 **isvalid** is a comprehensive validation library - build for ease of use. Both as Connect or Express middleware - where it comes in really handy - or as stand alone.
