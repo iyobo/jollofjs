@@ -12,6 +12,7 @@
      * [As Connect or Express Middleware](#as-connect-or-express-middleware)
        * [Example](#example-1)
      * [As a Co or Koa yieldable](#as-a-co-or-koa-yieldable)
+       * [Example](#example-2) 
    * [How it Works](#how-it-works)
      * [Errors](#errors)
        * [SchemaError](#schemaerror)
