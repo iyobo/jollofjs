@@ -145,100 +145,88 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 
 var validateString = function(str, schema, fn, keyPath, options) {
 
-	if (str) {
+	var validStr = str;
 
-		var validStr = str;
-
-		if (typeof validStr !== 'string') {
-			return fn(
-				new ValidationError(
-					keyPath,
-					schema._nonFormalizedSchema,
-					'type',
-					(schema.errors || {}).type || 'Is not of type String.'
-				)
-			);
-		};
-
-		if (schema.trim == true || (options || {}).trim == true) {
-			validStr = validStr.replace(/^\s+|\s+$/g,'');
-		}
-
-		if (schema.match) {
-			// We are garanteed that match is a RegExp because the finalizer has tested it.
-			if (!schema.match.test(validStr)) {
-				return fn(
-					new ValidationError(
-						keyPath,
-						schema._nonFormalizedSchema,
-						'match',
-						(schema.errors || {}).match || 'Does not match expression ' + schema.match.source + '.'
-					)
-				);
-			}
-		}
-
-		// Validate enums
-		if (schema.enum && schema.enum.indexOf(str) == -1) {
-			return fn(
-				new ValidationError(
-					keyPath,
-					schema._nonFormalizedSchema,
-					'enum',
-					(schema.errors || {}).enum || 'Possible values are ' + schema.enum.map(function(val) {
-						return '\"' + val + '\"';
-					}).reduce(function(prev, cur, idx, arr) {
-						return prev + (idx == arr.length - 1 ? ' and ' : ', ') + cur;
-					}) + '.'
-				)
+	if (typeof validStr !== 'string') {
+		return fn(
+			new ValidationError(
+				keyPath,
+				schema._nonFormalizedSchema,
+				'type',
+				(schema.errors || {}).type || 'Is not of type String.'
 			)
-		}
+		);
+	};
 
-		return validateCustom(validStr, schema, fn, keyPath, options);
-
+	if (schema.trim == true || (options || {}).trim == true) {
+		validStr = validStr.replace(/^\s+|\s+$/g,'');
 	}
 
-	return validateCustom(str, schema, fn, keyPath, options);
+	if (schema.match) {
+		// We are garanteed that match is a RegExp because the finalizer has tested it.
+		if (!schema.match.test(validStr)) {
+			return fn(
+				new ValidationError(
+					keyPath,
+					schema._nonFormalizedSchema,
+					'match',
+					(schema.errors || {}).match || 'Does not match expression ' + schema.match.source + '.'
+				)
+			);
+		}
+	}
+
+	// Validate enums
+	if (schema.enum && schema.enum.indexOf(str) == -1) {
+		return fn(
+			new ValidationError(
+				keyPath,
+				schema._nonFormalizedSchema,
+				'enum',
+				(schema.errors || {}).enum || 'Possible values are ' + schema.enum.map(function(val) {
+					return '\"' + val + '\"';
+				}).reduce(function(prev, cur, idx, arr) {
+					return prev + (idx == arr.length - 1 ? ' and ' : ', ') + cur;
+				}) + '.'
+			)
+		)
+	}
+
+	return validateCustom(validStr, schema, fn, keyPath, options);
 
 };
 
 var validateNumber = function(num, schema, fn, keyPath, options) {
 
-	if (num) {
+	var validNum = num;
 
-		var validNum = num;
+	if (typeof validNum === 'string' && /^[0-9]+(?:\.[0-9]+)?$/.test(num)) {
+		validNum = parseFloat(validNum);
+	} else if (typeof validNum !== 'number') {
+		return fn(
+			new ValidationError(
+				keyPath,
+				schema._nonFormalizedSchema,
+				'type',
+				(schema.errors || {}).type || 'Is not of type Number.'
+			)
+		);
+	}
 
-		if (typeof validNum === 'string' && /^[0-9]+(?:\.[0-9]+)?$/.test(num)) {
-			validNum = parseFloat(validNum);
-		} else if (typeof validNum !== 'number') {
+	if (schema.range) {
+		if (!ranges.testIndex(schema.range, validNum)) {
 			return fn(
 				new ValidationError(
 					keyPath,
 					schema._nonFormalizedSchema,
-					'type',
-					(schema.errors || {}).type || 'Is not of type Number.'
+					'range',
+					(schema.errors || {}).range || 'Not within range of ' + schema.range
 				)
 			);
 		}
-
-		if (schema.range) {
-			if (!ranges.testIndex(schema.range, validNum)) {
-				return fn(
-					new ValidationError(
-						keyPath,
-						schema._nonFormalizedSchema,
-						'range',
-						(schema.errors || {}).range || 'Not within range of ' + schema.range
-					)
-				);
-			}
-		}
-
-		return validateCustom(validNum, schema, fn, keyPath, options);
-
 	}
 
-	return validateCustom(num, schema, fn, keyPath, options);
+	return validateCustom(validNum, schema, fn, keyPath, options);
 
 };
 
