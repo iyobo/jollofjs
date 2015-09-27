@@ -32,8 +32,9 @@ describe('middleware', function() {
     it ('should come back with 400 if query matches schema.', function(done) {
       request(app)
       .get('/query?test=nonmatching')
-      .expect(400, function(err, req) {
-        expect(req.body).to.have.property('error').equal('validation-error');
+      .expect(400, function(err, res) {
+        expect(res.body).to.have.property('error').equal('validation-error');
+				expect(res.body).to.have.property('keyPath').equal('query.test');
         done(err);
       });
     });
@@ -57,6 +58,7 @@ describe('middleware', function() {
       .send({ test: 'nonmatching' })
       .expect(400, function(err, res) {
         expect(res.body).to.have.property('error').equal('validation-error');
+				expect(res.body).to.have.property('keyPath').equal('body.test');
         done(err);
       });
     });

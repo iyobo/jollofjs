@@ -409,7 +409,7 @@ module.exports = function(data, schema, fn, keyPath, options) {
 	if (typeof schema === 'undefined') throw new Error('Missing parameter schema.');
 	if (typeof fn === 'undefined') throw new Error('Missing parameter fn.');
 
-	if (keyPath && typeof keyPath == 'object') {
+	if (options === undefined && typeof keyPath == 'object' && keyPath.constructor.name == 'Object') {
 		options = keyPath;
 		keyPath = undefined;
 	}
