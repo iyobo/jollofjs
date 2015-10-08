@@ -342,7 +342,9 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 
 	if (typeof data === 'undefined' || data === null) {
 		if (data === null) {
-			if (schema.allowNull === true || (options || {}).allowNull === true) return finalize(data, fn);
+			if (schema.allowNull === true || (options || {}).allowNull === true) {
+				return validateCustom(data, schema, fn, keyPath, options);
+			}
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -367,7 +369,7 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 				return validateCustom(schema.default, schema, fn, keyPath, options);
 			}
 		}
-		if (schema.required == true || (options || {}).required == true) {
+		if (schema.required === true || (options || {}).required === true) {
 			return fn(
 				new ValidationError(
 					keyPath,
@@ -376,6 +378,8 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 					 (schema.errors || {}).required || 'Data is required.'
 				 )
 			 );
+		} else {
+			return validateCustom(data, schema, fn, keyPath, options);
 		}
 	}
 
