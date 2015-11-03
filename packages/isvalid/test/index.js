@@ -4,4 +4,3 @@ require('./unique.js');
 require('./schema.js');
 require('./validate.js');
 require('./middleware.js');
-require('./co.js');
