@@ -1,8 +1,8 @@
 var chai = require('chai'),
 	expect = chai.expect,
 	assert = chai.assert,
-	ValidationError = require('../../lib/errors/ValidationError.js'),
-	isvalid = require('../../');
+	ValidationError = require('../lib/errors/ValidationError.js'),
+	isvalid = require('../');
 
 var testSyncAndAsync = function(desc, s, expects) {
 	it (desc + ' (async).', function(done) {
@@ -14,6 +14,28 @@ var testSyncAndAsync = function(desc, s, expects) {
 	it (desc + ' (sync).', function() {
 		s = formalize(s);
 		expects(s);
+	});
+};
+
+var testType = function(type, validData, invalidData) {
+	it ('should come back with an error if input is not a(n) ' + type.name + '.', function(done) {
+		console.log(type, validData, invalidData);
+		isvalid(invalidData, type, function(err, validData) {
+			expect(err).to.be.instanceof(ValidationError);
+			expect(err).to.have.property('validator').equal('type');
+			expect(err).to.have.property('message').equal('Is not of type ' + type.name + '.');
+			expect(err).to.have.property('keyPath').of.length(0);
+			done();
+		});
+	});
+	it ('should come back with no error if input is a(n) ' + type.name + '.', function(done) {
+		isvalid(validData, {
+			type: type
+		}, function(err, v) {
+			expect(err).to.be.null;
+			expect(v).to.be.an(type.name);
+			done();
+		});
 	});
 };
 
@@ -30,9 +52,9 @@ describe('validate', function() {
 	});
 	describe('type conversion', function() {
 		it ('should convert string values into numbers if string contains a number.', function(done) {
-			isvalid('123.123', Number, function(err, validData) {
+			isvalid('123.987', Number, function(err, validData) {
 				expect(err).to.be.null;
-				expect(validData).to.equal(123.123);
+				expect(validData).to.equal(123.987);
 				done();
 			});
 		});
@@ -81,15 +103,6 @@ describe('validate', function() {
 	});
 	describe('common validator', function() {
 		describe('type', function() {
-			it ('should come back with error if input is not an Object.', function(done) {
-				isvalid(123, {}, function(err, validData) {
-					expect(err).to.be.instanceof(ValidationError);
-					expect(err).to.have.property('validator').equal('type');
-					expect(err).to.have.property('message').equal('Is not of type Object.');
-					expect(err).to.have.property('keyPath').of.length(0);
-					done();
-				});
-			});
 			it ('should come back with error if input is not an Array.', function(done) {
 				isvalid(123, [{}], function(err, validData) {
 					expect(err).to.be.instanceof(ValidationError);
@@ -475,6 +488,7 @@ describe('validate', function() {
 		});
 	});
 	describe('object validator', function() {
+		testType(Object, {}, 123);
 		it ('should come out with same input as output if keys can validate.', function(done) {
 			isvalid({
 				awesome: true,
@@ -641,6 +655,7 @@ describe('validate', function() {
 		});
 	});
 	describe('array validator', function() {
+		testType(Array, [], 123);
 		it ('should come out with same input as output if array can validate.', function(done) {
 			isvalid([{
 				awesome: true,
