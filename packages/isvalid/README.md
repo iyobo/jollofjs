@@ -625,7 +625,7 @@ Which means the data must be an array of strings.
 
 ### Other Shortcuts
 
-The others are a bit different. They are - in essence - a shortcut for the validator `type`. Instead of writing `type` you just specify the type directly. Available types are all the supported types of isvalid, namely `String`, `Number`, `Boolean` and `Date`.
+The others are a bit different. They are - in essence - a shortcut for the validator `type`. Instead of writing `type` you just specify the type directly. Available types are all the supported types of isvalid, namely `Object`, `Array`, `String`, `Number`, `Boolean` and `Date`.
 
 An example below.
 
