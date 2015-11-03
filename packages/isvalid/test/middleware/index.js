@@ -5,7 +5,7 @@ describe('middleware', function() {
 
   var app;
   before(function() {
-    app = require('./helpers/http.js');
+    app = require('./tools/server.js');
   });
 
   describe('param validator', function() {

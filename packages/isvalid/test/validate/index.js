@@ -1,8 +1,8 @@
 var chai = require('chai'),
 	expect = chai.expect,
 	assert = chai.assert,
-	ValidationError = require('../lib/errors/ValidationError.js'),
-	isvalid = require('../');
+	ValidationError = require('../../lib/errors/ValidationError.js'),
+	isvalid = require('../../');
 
 var testSyncAndAsync = function(desc, s, expects) {
 	it (desc + ' (async).', function(done) {
