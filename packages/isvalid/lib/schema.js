@@ -118,7 +118,7 @@ var formalizeAny = function(schema, fn, sync) {
 			if (schema.length == 0) throw new SchemaError(schema, 'Array must have exactly one schema.');
 			return formalizeArray({ type: Array, schema: schema[0] }, schema, fn, sync);
 		}
-    if (typeof schema === 'function' && ['String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
+		if (typeof schema === 'function' && ['Object', 'Array', 'String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
 			return formalizeAny({ type: schema }, fn, sync)
 		}
 		throw new SchemaError(schema, 'Supported shortcuts are Object, Array, String, Number, Boolean, Date.');

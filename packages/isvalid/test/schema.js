@@ -90,6 +90,12 @@ describe('schema', function() {
 			expect(s).to.have.property('type');
 			expect(s).to.have.property('schema').to.be.an('Object');
 		});
+		testSyncAndAsync ('should come back with an Object shortcut expanded.', Object, function(s) {
+			expect(s).to.have.property('type').equal(Object);
+		});
+		testSyncAndAsync ('should come back with an Array shortcut expanded.', Array, function(s) {
+			expect(s).to.have.property('type').equal(Array);
+		});
 		testSyncAndAsync ('should come back with a String shortcut expanded.', String, function(s) {
 			expect(s).to.have.property('type').equal(String);
 		});
