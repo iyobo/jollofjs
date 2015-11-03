@@ -37,8 +37,8 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) 
 		delete formalizedSchema.allowUnknownKeys;
 	}
 
-	// Set an empty sub-schema if schema is not present.
-	formalizedSchema.schema = formalizedSchema.schema || {};
+	// If no sub-schema is provided we consider the schema final.
+	if (typeof formalizedSchema.schema === 'undefined') return finalize(formalizedSchema, nonFormalizedSchema, fn, sync);
 
 	// Build new formalized schema into this.
 	var formalizedSubschema = {};
@@ -80,6 +80,9 @@ var formalizeArray = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 
 	// formalizedSchema has been pre-processed by formalizeAny, so
 	// we only need to formalize the sub-schema.
+
+	// If no sub-schema is provided we consider the schema final.
+	if (typeof formalizedSchema.schema === 'undefined') return finalize(formalizedSchema, nonFormalizedSchema, fn, sync);
 
 	return formalizeAny(formalizedSchema.schema, function(formalizedSubschema) {
 
