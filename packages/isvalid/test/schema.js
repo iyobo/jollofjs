@@ -122,6 +122,11 @@ describe('schema', function() {
 		}, function(s) {
 			expect(s).to.have.property('required').to.be.equal(true);
 		});
+		testSyncAndAsync ('should come back with required set to true if root object has required in sub-schema.', {
+			'a': { type: String, required: true }
+		}, function(s) {
+			expect(s).to.have.property('required').to.be.equal(true);
+		});
 		testSyncAndAsync ('should come back with required set to false if root object required is false and deep subschema is required.', {
 			type: Object,
 			required: false,
