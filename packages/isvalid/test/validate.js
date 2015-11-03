@@ -19,7 +19,6 @@ var testSyncAndAsync = function(desc, s, expects) {
 
 var testType = function(type, validData, invalidData) {
 	it ('should come back with an error if input is not a(n) ' + type.name + '.', function(done) {
-		console.log(type, validData, invalidData);
 		isvalid(invalidData, type, function(err, validData) {
 			expect(err).to.be.instanceof(ValidationError);
 			expect(err).to.have.property('validator').equal('type');
