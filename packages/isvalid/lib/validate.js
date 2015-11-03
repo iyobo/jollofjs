@@ -3,10 +3,6 @@ var ValidationError = require('./errors/ValidationError.js'),
 	unique = require('./unique.js'),
 	schemaTools = require('./schema.js');
 
-var finalize = function(data, fn) {
-	if (fn) return setImmediate(fn, null, data);
-};
-
 var validateObject = function(data, schema, fn, keyPath, options) {
 
 	if (data) {
@@ -163,7 +159,7 @@ var validateString = function(str, schema, fn, keyPath, options) {
 	}
 
 	if (schema.match) {
-		// We are garanteed that match is a RegExp because the finalizer has tested it.
+		// We are garanteed that match is a RegExp because the formalizer has tested it.
 		if (!schema.match.test(validStr)) {
 			return fn(
 				new ValidationError(
@@ -297,6 +293,10 @@ var validateDate = function(val, schema, fn, keyPath, options) {
 
 var validateCustom = function(data, schema, fn, keyPath, options) {
 
+	var finalize = function(data, fn) {
+		if (fn) return setImmediate(fn, null, data);
+	};
+
 	// All other validators always end with calling the custom validator.
 	// - therefore just finalize if there is none.
 	if (schema.custom === undefined) return finalize(data, fn);
@@ -391,7 +391,7 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 	if ('Boolean' == schema.type.name) return validateBoolean(data, schema, fn, keyPath, options);
 	if ('Date' == schema.type.name) return validateDate(data, schema, fn, keyPath, options);
 
-	// This error should have been eliminated by the finalizer.
+	// This error should have been eliminated by the formalizer.
 	throw new Error('Cannot validate schema of type ' + schema.type.name + '.');
 
 };
