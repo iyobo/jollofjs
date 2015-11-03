@@ -16,26 +16,26 @@ var finalize = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 	// We seal the schema so no futher editing can take place.
 	Object.seal(formalizedSchema);
 
-  // Allow for I/O if running async.
-  if (fn) {
-    if (sync) return fn(formalizedSchema);
-    else setImmediate(fn, formalizedSchema);
-  }
+	// Allow for I/O if running async.
+	if (fn) {
+		if (sync) return fn(formalizedSchema);
+		else setImmediate(fn, formalizedSchema);
+	}
 
 };
 
 var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 
-  // For backwards compatibility be before version 1.0.3
-  // we change the allowUnknownKeys to unknownKeys
-  if (typeof formalizedSchema.allowUnknownKeys === 'boolean') {
-    if (!process.env['ISVALID_SILENCE']) {
-      console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.')
-    }
-    formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'deny');
-    formalizedSchema.wasAllowUnknownKeys = true;
-    delete formalizedSchema.allowUnknownKeys;
-  }
+	// For backwards compatibility be before version 1.0.3
+	// we change the allowUnknownKeys to unknownKeys
+	if (typeof formalizedSchema.allowUnknownKeys === 'boolean') {
+		if (!process.env['ISVALID_SILENCE']) {
+			console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.')
+		}
+		formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'deny');
+		formalizedSchema.wasAllowUnknownKeys = true;
+		delete formalizedSchema.allowUnknownKeys;
+	}
 
 	// Set an empty sub-schema if schema is not present.
 	formalizedSchema.schema = formalizedSchema.schema || {};
@@ -51,7 +51,7 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) 
 		if (idx == keys.length) {
 			formalizedSchema.schema = formalizedSubschema;
 			formalizedSchema = finalize(formalizedSchema, nonFormalizedSchema, fn, sync);
-      return;
+			return;
 		}
 
 		var key = keys[idx];
@@ -65,14 +65,14 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) 
 
 			formalizedSubschema[key] = formalizedKey;
 
-      if (sync) return formalizeNextKey(idx + 1);
-      else setImmediate(formalizeNextKey, idx + 1);
+			if (sync) return formalizeNextKey(idx + 1);
+			else setImmediate(formalizeNextKey, idx + 1);
 
 		}, sync);
 
 	})(0);
 
-  return formalizedSchema;
+	return formalizedSchema;
 
 };
 
@@ -98,11 +98,11 @@ var formalizeArray = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 
 var formalizeAny = function(schema, fn, sync) {
 
-  // If no fn we operate sync.
-  if (fn === undefined) {
-    fn = function(s) { return s; };
-    sync = true;
-  }
+	// If no fn we operate sync.
+	if (fn === undefined) {
+		fn = function(s) { return s; };
+		sync = true;
+	}
 
 	// If schema is already formalized we just call back.
 	if (schema._nonFormalizedSchema !== undefined) return fn(schema);
@@ -116,58 +116,58 @@ var formalizeAny = function(schema, fn, sync) {
 			return formalizeArray({ type: Array, schema: schema[0] }, schema, fn, sync);
 		}
     if (typeof schema === 'function' && ['String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
-      return formalizeAny({ type: schema }, fn, sync)
-    }
-    throw new SchemaError(schema, 'Supported shortcuts are Object, Array, String, Number, Boolean, Date.');
+			return formalizeAny({ type: schema }, fn, sync)
+		}
+		throw new SchemaError(schema, 'Supported shortcuts are Object, Array, String, Number, Boolean, Date.');
 	}
 
 	var formalizedSchema = {};
 
 	var validators = {};
 
-  // Ensure type is supported.
-  if (typeof schema.type !== 'undefined' && [ 'Object', 'Array', 'String', 'Number', 'Boolean', 'Date' ].indexOf(schema.type.name) == -1) {
-    throw new SchemaError(schema, 'Cannot validate schema of type ' + schema.type.name + '.');
-  }
+	// Ensure type is supported.
+	if (typeof schema.type !== 'undefined' && [ 'Object', 'Array', 'String', 'Number', 'Boolean', 'Date' ].indexOf(schema.type.name) == -1) {
+		throw new SchemaError(schema, 'Cannot validate schema of type ' + schema.type.name + '.');
+	}
 
-  var common = {
-    'type': ['Function'],
-    'required': ['Boolean', 'String'],
-    'default': true,
-    'allowNull': ['Boolean'],
-    'errors': [ 'Object' ],
-    'custom': [ 'Function', 'Array' ]
-  };
+	var common = {
+		'type': ['Function'],
+		'required': ['Boolean', 'String'],
+		'default': true,
+		'allowNull': ['Boolean'],
+		'errors': [ 'Object' ],
+		'custom': [ 'Function', 'Array' ]
+	};
 
-  var typeSpecific = {};
+	var typeSpecific = {};
 
-  if (schema.type !== undefined) {
-    if ('Object' == schema.type.name) typeSpecific = {
-      'schema': true,
-      'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
-      'unknownKeys': [ 'String' ]
-    };
-    if ('Array' == schema.type.name) typeSpecific = {
-      'schema': true,
-      'len': [ 'String', 'Number' ],
-      'unique': [ 'Boolean' ]
-    }
-    if ('String' == schema.type.name) typeSpecific = {
-      'match': [ 'RegExp' ],
-      'trim': [ 'Boolean' ],
-      'enum': [ 'Array' ]
-    }
-    if ('Number' == schema.type.name) typeSpecific = {
-      'range': [ 'String', 'Number' ]
-    }
-  }
+	if (schema.type !== undefined) {
+		if ('Object' == schema.type.name) typeSpecific = {
+			'schema': true,
+			'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
+			'unknownKeys': [ 'String' ]
+		};
+		if ('Array' == schema.type.name) typeSpecific = {
+			'schema': true,
+			'len': [ 'String', 'Number' ],
+			'unique': [ 'Boolean' ]
+		}
+		if ('String' == schema.type.name) typeSpecific = {
+			'match': [ 'RegExp' ],
+			'trim': [ 'Boolean' ],
+			'enum': [ 'Array' ]
+		}
+		if ('Number' == schema.type.name) typeSpecific = {
+			'range': [ 'String', 'Number' ]
+		}
+	}
 
-  // If custom validator is provided allow for options.
-  if (schema.custom !== undefined) {
-    common = objectAssign(common, { 'options': true })
-  }
+	// If custom validator is provided allow for options.
+	if (schema.custom !== undefined) {
+		common = objectAssign(common, { 'options': true })
+	}
 
-  validators = objectAssign(common, typeSpecific);
+	validators = objectAssign(common, typeSpecific);
 
 	// Copy validators to formalizedSchema - checking
 	// for non-supported validators at the same time.
@@ -187,45 +187,45 @@ var formalizeAny = function(schema, fn, sync) {
 		formalizedSchema[key] = schema[key];
 	}
 
-  // Convert custom function to array
-  if (typeof formalizedSchema.custom === 'function') {
-    formalizedSchema.custom = [formalizedSchema.custom];
-  }
+	// Convert custom function to array
+	if (typeof formalizedSchema.custom === 'function') {
+		formalizedSchema.custom = [formalizedSchema.custom];
+	}
 
-  // Throw error if required is invalid value
-  if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {
-    throw new SchemaError(
-      schema,
-      'Validator \'required\' must be a Boolean or String of value \'implicit\'.'
-    );
-  }
+	// Throw error if required is invalid value
+	if (typeof formalizedSchema.required === 'string' && formalizedSchema.required != 'implicit') {
+		throw new SchemaError(
+			schema,
+			'Validator \'required\' must be a Boolean or String of value \'implicit\'.'
+		);
+	}
 
-  // Check object unknownKeys
-  if (typeof formalizedSchema.unknownKeys === 'string' &&
-      ['allow','deny','remove'].indexOf(formalizedSchema.unknownKeys) == -1) {
-    throw new SchemaError(
-      schema,
-      'Validator \'unknownKeys\' must have value \'allow\', \'deny\' or \'remove\'.'
-    );
-  }
+	// Check object unknownKeys
+	if (typeof formalizedSchema.unknownKeys === 'string' &&
+			['allow','deny','remove'].indexOf(formalizedSchema.unknownKeys) == -1) {
+		throw new SchemaError(
+			schema,
+			'Validator \'unknownKeys\' must have value \'allow\', \'deny\' or \'remove\'.'
+		);
+	}
 
-  // Check string enums
-  if (typeof formalizedSchema.enum !== 'undefined') {
-    if (formalizedSchema.enum.length < 1) {
-      throw new SchemaError(
-        schema,
-        'Validator \'enum\' must have at least one item.'
-      );
-    }
-    for (var idx in formalizedSchema.enum) {
-      if (typeof formalizedSchema.enum[idx] !== 'string') {
-        throw new SchemaError(
-          schema,
-          'Validator \'enum\' must be an array of strings.'
-        );
-      }
-    }
-  }
+	// Check string enums
+	if (typeof formalizedSchema.enum !== 'undefined') {
+		if (formalizedSchema.enum.length < 1) {
+			throw new SchemaError(
+				schema,
+				'Validator \'enum\' must have at least one item.'
+			);
+		}
+		for (var idx in formalizedSchema.enum) {
+			if (typeof formalizedSchema.enum[idx] !== 'string') {
+				throw new SchemaError(
+					schema,
+					'Validator \'enum\' must be an array of strings.'
+				);
+			}
+		}
+	}
 
 	// Finalize objects and arrays if necessary.
 	if (formalizedSchema.type) {

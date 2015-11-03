@@ -83,29 +83,29 @@ describe('schema', function() {
 			}).to.throw(SchemaError);
 		});
 		testSyncAndAsync ('should come back with an object shortcut expanded.', {}, function(s) {
-				expect(s).to.have.property('type');
-				expect(s).to.have.property('schema').to.be.an('Object');
+			expect(s).to.have.property('type');
+			expect(s).to.have.property('schema').to.be.an('Object');
 		});
 		testSyncAndAsync ('should come back with an array shortcut expanded.', [{}], function(s) {
-				expect(s).to.have.property('type');
-				expect(s).to.have.property('schema').to.be.an('Object');
+			expect(s).to.have.property('type');
+			expect(s).to.have.property('schema').to.be.an('Object');
 		});
 		testSyncAndAsync ('should come back with a String shortcut expanded.', String, function(s) {
-				expect(s).to.have.property('type').equal(String);
+			expect(s).to.have.property('type').equal(String);
 		});
 		testSyncAndAsync ('should come back with a Number shortcut expanded.', Number, function(s) {
-				expect(s).to.have.property('type').equal(Number);
+			expect(s).to.have.property('type').equal(Number);
 		});
 		testSyncAndAsync ('should come back with a Boolean shortcut expanded.', Boolean, function(s) {
-				expect(s).to.have.property('type').equal(Boolean);
+			expect(s).to.have.property('type').equal(Boolean);
 		});
 		testSyncAndAsync ('should come back with a Date shortcut expanded.', Date, function(s) {
-				expect(s).to.have.property('type').equal(Date);
+			expect(s).to.have.property('type').equal(Date);
 		});
 		testSyncAndAsync ('should come back with required set to true if object has not specified required and a nested subschema is required.', {
 			'a': { type: String, required: true }
 		}, function(s) {
-				expect(s).to.have.property('required').to.be.equal(true);
+			expect(s).to.have.property('required').to.be.equal(true);
 		});
 		testSyncAndAsync ('should come back with required set to true if any deep subschema is required.', {
 			'a': {
@@ -114,7 +114,7 @@ describe('schema', function() {
 				}
 			}
 		}, function(s) {
-				expect(s).to.have.property('required').to.be.equal(true);
+			expect(s).to.have.property('required').to.be.equal(true);
 		});
 		testSyncAndAsync ('should come back with required set to false if root object required is false and deep subschema is required.', {
 			type: Object,
@@ -129,12 +129,12 @@ describe('schema', function() {
 				}
 			}
 		}, function(s) {
-				expect(s).to.have.property('required').to.be.equal(false);
+			expect(s).to.have.property('required').to.be.equal(false);
 		});
 		testSyncAndAsync ('should come back with required set to true if array has deep nested required subschema.', [
 			{ type: String, required: true }
 		], function(s) {
-				expect(s).to.have.property('required').to.be.equal(true);
+			expect(s).to.have.property('required').to.be.equal(true);
 		});
 		testSyncAndAsync ('should come back with required set to false if array is non-required but has deep nested required subschema.', {
 			type: Array,
@@ -143,35 +143,35 @@ describe('schema', function() {
 				'a': { type: String, required: true }
 			}
 		}, function(s) {
-				expect(s).to.have.property('required').to.be.equal(false);
+			expect(s).to.have.property('required').to.be.equal(false);
 		});
 		testSyncAndAsync ('should come back with an object with both keys formalized.', {
 			'a': { type: String, required: true },
 			'b': { type: String, required: true }
 		}, function(s) {
-				expect(s).to.have.property('schema');
+			expect(s).to.have.property('schema');
 		});
 		testSyncAndAsync ('should come back with no error and match set if match is RegExp.', { type: String, match: /test/ }, function(s) {
-				expect(s).to.have.property('match');
+			expect(s).to.have.property('match');
 		});
 		testSyncAndAsync ('should come back with custom wrapped in an array.', { custom: function() {} }, function(s) {
-				expect(s).to.have.property('custom').to.be.an('array');
+			expect(s).to.have.property('custom').to.be.an('array');
 		});
 		testSyncAndAsync ('should come back with custom as an array.', { custom: [ function() {} ] }, function(s) {
-				expect(s).to.have.property('custom').to.be.an('array');
+			expect(s).to.have.property('custom').to.be.an('array');
 		});
 		describe('allowUnknownKeys [deprecated]', function() {
 			testSyncAndAsync ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'.', {
 				type: Object,
 				allowUnknownKeys: true
 			}, function(s) {
-					expect(s.unknownKeys).to.equal('allow');
+				expect(s.unknownKeys).to.equal('allow');
 			});
 			testSyncAndAsync ('should come back with unknownKeys set to \'deny\' if allowUnknownKeys is \'false\'.', {
 				type: Object,
 				allowUnknownKeys: false
 			}, function(s) {
-					expect(s.unknownKeys).to.equal('deny');
+				expect(s.unknownKeys).to.equal('deny');
 			});
 		});
 	});
