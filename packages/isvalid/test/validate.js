@@ -316,6 +316,13 @@ describe('validate', function() {
 				done();
 			});
 		});
+		it ('should convert string values into numbers if string contains a negative number.', function(done) {
+			isvalid('-123.987', Number, function(err, validData) {
+				expect(err).to.be.null;
+				expect(validData).to.equal(-123.987);
+				done();
+			});
+		});
 		it ('should come back with error if string is supplied - but not a number.', function(done) {
 			isvalid('abc', Number, function(err, validData) {
 				expect(err).to.be.instanceof(ValidationError);
