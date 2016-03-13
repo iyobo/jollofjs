@@ -24,6 +24,12 @@ describe('middleware', function() {
       .get('/param/123')
       .expect(200, done);
     });
+	
+	it ('should call route and come back with 201 if param matches schema.', function(done) {
+		request(app)
+		.get('/cbParam/test')
+		.expect(201, done);
+	});
 
   });
 

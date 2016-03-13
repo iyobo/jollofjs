@@ -12,8 +12,18 @@ app.param('testParam', validate.param({
   type: Number, required: true
 }));
 
+app.param('cbTestParam', validate.param({
+	type: String, required: true
+}, function(req, res, next) {
+	res.sendStatus(201);
+}));
+
 app.get('/param/:testParam', function(req, res) {
   res.sendStatus(200);
+});
+
+app.get('/cbParam/:cbTestParam', function(req, res) {
+	res.sendStatus(200);
 });
 
 app.get('/query',

@@ -27,14 +27,23 @@ exports.query = module.exports.query = function(schema, options) {
 
 };
 
-exports.param = module.exports.param = function(schema, options) {
-
+exports.param = module.exports.param = function(schema, options, cb) {
+	
+	if (typeof(cb) === 'undefined' && typeof(options) === 'function') {
+		cb = options;
+		options = undefined;
+	}
+	
 	var formalizedSchema = formalize(schema);
 
 	return function(req, res, next, val, id) {
 		isvalid(req.params[id], formalizedSchema, function(err, validData) {
 			req.params[id] = validData;
-			next(err);
+			if (!err && cb) {
+				return cb(req, res, next);
+			} else {
+				next(err);
+			}
 		}, [id], options);
 	};
 
