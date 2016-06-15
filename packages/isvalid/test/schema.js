@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect,
 	formalize = require('../lib/schema.js').formalize,
 	SchemaError = require('../lib/errors/SchemaError.js');
@@ -9,7 +11,7 @@ var testSyncAndAsync = function(desc, s, expects) {
 			done();
 		});
 	});
-	it ('[sync]  ' + desc, function() {
+	it ('[sync]	' + desc, function() {
 		s = formalize(s);
 		expects(s);
 	});

@@ -1,3 +1,5 @@
+'use strict';
+
 var formalize = require('./schema.js').formalize,
 	isvalid = require('./validate.js');
 
@@ -28,12 +30,12 @@ exports.query = module.exports.query = function(schema, options) {
 };
 
 exports.param = module.exports.param = function(schema, options, cb) {
-	
+
 	if (typeof(cb) === 'undefined' && typeof(options) === 'function') {
 		cb = options;
 		options = undefined;
 	}
-	
+
 	var formalizedSchema = formalize(schema);
 
 	return function(req, res, next, val, id) {

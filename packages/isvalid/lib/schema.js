@@ -1,3 +1,5 @@
+'use strict';
+
 var objectAssign = require('object-assign'),
     SchemaError = require('./errors/SchemaError.js');
 
@@ -29,8 +31,8 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) 
 	// For backwards compatibility be before version 1.0.3
 	// we change the allowUnknownKeys to unknownKeys
 	if (typeof formalizedSchema.allowUnknownKeys === 'boolean') {
-		if (!process.env['ISVALID_SILENCE']) {
-			console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.')
+		if (!process.env.ISVALID_SILENCE) {
+			console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.');
 		}
 		formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'deny');
 		formalizedSchema.wasAllowUnknownKeys = true;
@@ -115,11 +117,11 @@ var formalizeAny = function(schema, fn, sync) {
 			return formalizeObject({ type: Object, schema: schema }, schema, fn, sync);
 		}
 		if ('Array' == schema.constructor.name) {
-			if (schema.length == 0) throw new SchemaError(schema, 'Array must have exactly one schema.');
+			if (schema.length === 0) throw new SchemaError(schema, 'Array must have exactly one schema.');
 			return formalizeArray({ type: Array, schema: schema[0] }, schema, fn, sync);
 		}
 		if (typeof schema === 'function' && ['Object', 'Array', 'String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
-			return formalizeAny({ type: schema }, fn, sync)
+			return formalizeAny({ type: schema }, fn, sync);
 		}
 		throw new SchemaError(schema, 'Supported shortcuts are Object, Array, String, Number, Boolean, Date.');
 	}
@@ -154,20 +156,20 @@ var formalizeAny = function(schema, fn, sync) {
 			'schema': true,
 			'len': [ 'String', 'Number' ],
 			'unique': [ 'Boolean' ]
-		}
+		};
 		if ('String' == schema.type.name) typeSpecific = {
 			'match': [ 'RegExp' ],
 			'trim': [ 'Boolean' ],
 			'enum': [ 'Array' ]
-		}
+		};
 		if ('Number' == schema.type.name) typeSpecific = {
 			'range': [ 'String', 'Number' ]
-		}
+		};
 	}
 
 	// If custom validator is provided allow for options.
 	if (schema.custom !== undefined) {
-		common = objectAssign(common, { 'options': true })
+		common = objectAssign(common, { 'options': true });
 	}
 
 	validators = objectAssign(common, typeSpecific);

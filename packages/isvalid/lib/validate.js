@@ -1,3 +1,5 @@
+'use strict';
+
 var ValidationError = require('./errors/ValidationError.js'),
 	ranges = require('./ranges.js'),
 	unique = require('./unique.js'),
@@ -20,13 +22,14 @@ var validateObject = function(data, schema, fn, keyPath, options) {
 
 		// Copy schema
 		var schemaCopy = {};
-		for (var key in schema.schema) schemaCopy[key] = schema.schema[key];
+		var key;
+		for (key in schema.schema) schemaCopy[key] = schema.schema[key];
 
 		// Put validated object here
 		var validObject = {};
 
 		// Find unknown keys
-		for (var key in data) {
+		for (key in data) {
 			if (schemaCopy[key] === undefined) {
 				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
 				switch (schema.unknownKeys || (options || {}).unknownKeys) {
@@ -152,9 +155,9 @@ var validateString = function(str, schema, fn, keyPath, options) {
 				(schema.errors || {}).type || 'Is not of type String.'
 			)
 		);
-	};
+	}
 
-	if (schema.trim == true || (options || {}).trim == true) {
+	if (schema.trim === true || (options || {}).trim === true) {
 		validStr = validStr.replace(/^\s+|\s+$/g,'');
 	}
 
@@ -185,7 +188,7 @@ var validateString = function(str, schema, fn, keyPath, options) {
 					return prev + (idx == arr.length - 1 ? ' and ' : ', ') + cur;
 				}) + '.'
 			)
-		)
+		);
 	}
 
 	return validateCustom(validStr, schema, fn, keyPath, options);
@@ -329,7 +332,7 @@ var validateCustom = function(data, schema, fn, keyPath, options) {
 
 	})(0);
 
-}
+};
 
 var validateAny = function(data, schema, fn, keyPath, options) {
 
@@ -357,7 +360,7 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 		if (typeof schema.default !== 'undefined') {
 			if (typeof schema.default === 'function') {
 				// If function has no arguments it is assumed sync.
-				if (schema.default.length == 0) {
+				if (schema.default.length === 0) {
 					return validateCustom(schema.default(), schema, fn, keyPath, options);
 				} else {
 					return schema.default(function(defaultValue) {
@@ -407,11 +410,11 @@ module.exports = function(data, schema, fn, keyPath, options) {
 	}
 
 	// For backwards compatibility to before version 1.0.3
-  // we change the allowUnknownKeys to unknownKeys
+	// we change the allowUnknownKeys to unknownKeys
 	if (typeof (options || {}).allowUnknownKeys === 'boolean') {
-		if (!process.env['ISVALID_SILENCE']) {
-      console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.')
-    }
+		if (!process.env.ISVALID_SILENCE) {
+			console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.');
+		}
 		options.unknownKeys = (options.allowUnknownKeys ? 'allow' : 'deny');
 		options.wasAllowUnknownKeys = true;
 		delete options.allowUnknownKeys;

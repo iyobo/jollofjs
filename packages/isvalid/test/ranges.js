@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect,
 	should = require('chai').should(),
 	ranges = require('../lib/ranges.js');
@@ -20,9 +22,9 @@ describe('ranges', function() {
 	});
 	it ('should throw error if index is not set.', function() {
 		expect(function() {
-			ranges.testIndex(1)
-		})
-	})
+			ranges.testIndex(1);
+		});
+	});
 	it ('should return true if index is within range.', function() {
 		expect(ranges.testIndex('-2,4-6,8,10-', 2)).to.equal(true);
 	});

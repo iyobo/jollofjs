@@ -1,3 +1,5 @@
+'use strict';
+
 var objectEquals = function(obj1, obj2, fn) {
 
 	var keys = Object.keys(obj1);

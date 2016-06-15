@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports.testIndex = function(ranges, index) {
 
 	// Convert to string if ranges is a Number.
@@ -30,17 +32,17 @@ module.exports.testIndex = function(ranges, index) {
 		// Test for malformed boundaries
 		for (var bidx = 0 ; bidx < 2 ; bidx++) {
 			if (!/^[0-9]*$/.test(boundaries[bidx])) throw new Error('Malformed boundary \'' + boundaries[bidx] + '\'.');
-		};
+		}
 
 		var lowBoundary = boundaries[0];
 		var highBoundary = boundaries[1];
 
 		// If no lower boundary is specified we use -Infinity
-		if (lowBoundary.length == 0) lowBoundary = -Infinity;
+		if (lowBoundary.length === 0) lowBoundary = -Infinity;
 		else lowBoundary = parseInt(lowBoundary);
 
 		// If no higher boundary is specified we use Infinity;
-		if (highBoundary.length == 0) highBoundary = Infinity;
+		if (highBoundary.length === 0) highBoundary = Infinity;
 		else highBoundary = parseInt(highBoundary);
 
 		// If index is within boundaries return true;

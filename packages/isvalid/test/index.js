@@ -1,3 +1,5 @@
+'use strict';
+
 require('./ranges.js');
 require('./equals.js');
 require('./unique.js');

@@ -1,4 +1,7 @@
-var expect = require('chai').expect;
+/*jshint expr: true*/
+'use strict';
+
+var expect = require('chai').expect,
 	equals = require('../lib/equals.js');
 
 describe('equals', function() {

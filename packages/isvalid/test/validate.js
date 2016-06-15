@@ -1,3 +1,6 @@
+/*jshint expr: true*/
+'use strict';
+
 var chai = require('chai'),
 	expect = chai.expect,
 	assert = chai.assert,
@@ -40,7 +43,7 @@ var commonTests = {
 						expect(err).to.have.property('message').equal('Type custom error message.');
 						expect(err).to.have.property('keyPath').of.length(0);
 						done();
-					})
+					});
 				});
 			});
 		});
@@ -148,7 +151,7 @@ var commonTests = {
 			});
 			it ('should call default if function with no callback is provided.', function(done) {
 				isvalid(undefined, { type: type, default: function() {
-					return validData
+					return validData;
 				} }, function(err, validData) {
 					expect(err).to.be.null;
 					expect(validData).to.be.a(type.name);
@@ -665,14 +668,14 @@ describe('validate', function() {
 		});
 		describe('trim', function() {
 			it ('should come back with trimmed string when trim is set to true.', function(done) {
-				isvalid('  123abc  ', { type: String, trim: true }, function(err, validData) {
+				isvalid('	123abc	', { type: String, trim: true }, function(err, validData) {
 					expect(err).to.be.null;
 					expect(validData).to.equal('123abc');
 					done();
 				});
 			});
 			it ('should come back with trimmed string when trim option is true.', function(done) {
-				isvalid('  123abc  ', String, function(err, validData) {
+				isvalid('	123abc	', String, function(err, validData) {
 					expect(err).to.be.null;
 					expect(validData).to.equal('123abc');
 					done();

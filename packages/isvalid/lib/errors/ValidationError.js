@@ -1,3 +1,5 @@
+'use strict';
+
 var util = require('util');
 
 function ValidationError(keyPath, schema, validator, message) {
@@ -15,7 +17,7 @@ function ValidationError(keyPath, schema, validator, message) {
 	this.validator = validator;
 	this.message = message;
 
-};
+}
 
 util.inherits(ValidationError, Error);
 

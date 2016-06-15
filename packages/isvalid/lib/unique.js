@@ -1,3 +1,5 @@
+'use strict';
+
 var equals = require('./equals.js');
 
 exports = module.exports = function(arr, fn) {
