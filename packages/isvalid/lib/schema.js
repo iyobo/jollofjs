@@ -41,6 +41,7 @@ var formalizeObject = function(formalizedSchema, nonFormalizedSchema, fn, sync) 
 
 	// If no sub-schema is provided we consider the schema final.
 	if (typeof formalizedSchema.schema === 'undefined') return finalize(formalizedSchema, nonFormalizedSchema, fn, sync);
+	if (formalizedSchema.schema.constructor.name !== 'Object') throw new SchemaError(formalizedSchema.schema, 'Object schemas must be an object.');
 
 	// Build new formalized schema into this.
 	var formalizedSubschema = {};
