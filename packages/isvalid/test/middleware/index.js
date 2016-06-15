@@ -82,14 +82,14 @@ describe('middleware', function() {
 			});
 		});
 
-		it ('should come back with 200 and correct body set if post body matches schema (x1000).', function(done) {
+		it ('should come back with 200 and correct body set if post body matches schema (x100).', function(done) {
 			var completed = 0;
 			var callback = function(err, res) {
 				expect(res.body).to.have.property('test').to.be.an('Array').of.length(1);
 				expect(res.body.test[0]).to.be.a('String').equal('myTest');
 				if (++completed == 100) done(err);
 			};
-			for (var idx = 0 ; idx < 1000 ; idx++) {
+			for (var idx = 0 ; idx < 100 ; idx++) {
 				request(app)
 				.post('/post')
 				.send({ test: ['myTest'] })
