@@ -1,5 +1,9 @@
 # History
 
+## Version 1.3.6
+
+* Introduced the `autowrap` validator on `Array` types.
+
 ## Version 1.2.0
 
 * Type shortcuts now also include `String`, `Number`, `Boolean` and `Date`.
@@ -8,9 +12,9 @@
 ## In Version 1.0.0
 
 * Opt-in to `null` values using the `allowNull` validator.
-* The object `allowUnknownKeys` validator has been deprecated in favour of the new [`unknownKeys`](#unknownkeys) validator.
+* The object `allowUnknownKeys` validator has been deprecated in favor of the new `unknownKeys` validator.
 
-> Version `>= 0.2.4 < 1.0.0` has a bug where `null` is sometimes validated even when input is required. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behaviour of `null` values.
+> Version `>= 0.2.4 < 1.0.0` has a bug where `null` is sometimes validated even when input is required. Version 1.0.0 fixes this and introduces the common `allowNull` validator to control the behavior of `null` values.
 
 ## In Version 0.3.0
 

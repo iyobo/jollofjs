@@ -156,7 +156,8 @@ var formalizeAny = function(schema, fn, sync) {
 		if ('Array' == schema.type.name) typeSpecific = {
 			'schema': true,
 			'len': [ 'String', 'Number' ],
-			'unique': [ 'Boolean' ]
+			'unique': [ 'Boolean' ],
+			'autowrap': [ 'Boolean' ]
 		};
 		if ('String' == schema.type.name) typeSpecific = {
 			'match': [ 'RegExp' ],

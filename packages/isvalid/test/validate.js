@@ -655,6 +655,50 @@ describe('validate', function() {
 					});
 				});
 			});
+			describe('autowrap', function() {
+				it ('should come back with non-array wrapped in array', function(done){
+					isvalid({
+						test: true
+					}, {
+						type: Array,
+						autowrap: true,
+						schema: {
+							test: Boolean
+						}
+					}, function(err, validData) {
+						 expect(err).to.be.null;
+						 expect(validData).to.be.an('array').lengthOf(1);
+						 expect(validData[0]).to.have.property('test').equal(true);
+						 done();
+					 });
+				});
+				it ('should come back with type error if autowrap and not matching subschema.', function(done) {
+					isvalid({
+						test: 'Not a boolean'
+					}, {
+						type: Array,
+						autowrap: true,
+						schema: {
+							test: Boolean
+						}
+					}, function(err, validData) {
+						 expect(err).to.be.instanceOf(ValidationError);
+						 expect(err).to.have.property('validator').equal('type');
+						 done();
+					 });
+				});
+				it ('should come back with type error if no autowrap and matching subschema.', function(done) {
+					isvalid({
+						test: true
+					}, [{
+						test: Boolean
+					}], function(err, validData) {
+						 expect(err).to.be.instanceOf(ValidationError);
+						 expect(err).to.have.property('validator').equal('type');
+						 done();
+					 });
+				});
+			});
 		});
 	});
 	describe('string validator', function() {

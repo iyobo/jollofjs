@@ -79,14 +79,34 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 	if (data) {
 
 		if (!(data instanceof Array)) {
-			return fn(
-				new ValidationError(
-					keyPath,
-					schema._nonFormalizedSchema,
-					'type',
-					(schema.errors || {}).type || 'Is not of type Array.'
-				)
-			);
+
+			if (schema.autowrap === true) {
+
+				return validateAny(data, schema.schema, function(err, validData) {
+
+					if (err) return fn(new ValidationError(
+						keyPath,
+						schema._nonFormalizedSchema,
+						'type',
+						(schema.errors || {}).type || 'Is not of type Array.'
+					));
+
+					validateArray([validData], schema, fn, keyPath, options);
+
+				}, keyPath, options);
+
+			} else {
+
+				return fn(
+					new ValidationError(
+						keyPath,
+						schema._nonFormalizedSchema,
+						'type',
+						(schema.errors || {}).type || 'Is not of type Array.'
+					)
+				);
+
+			}
 		}
 
 		var validArray = [];
