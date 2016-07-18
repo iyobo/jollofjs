@@ -666,10 +666,10 @@ describe('validate', function() {
 							test: Boolean
 						}
 					}, function(err, validData) {
-						 expect(err).to.be.null;
-						 expect(validData).to.be.an('array').lengthOf(1);
-						 expect(validData[0]).to.have.property('test').equal(true);
-						 done();
+						expect(err).to.be.null;
+						expect(validData).to.be.an('array').lengthOf(1);
+						expect(validData[0]).to.have.property('test').equal(true);
+						done();
 					 });
 				});
 				it ('should come back with type error if autowrap and not matching subschema.', function(done) {
@@ -682,9 +682,27 @@ describe('validate', function() {
 							test: Boolean
 						}
 					}, function(err, validData) {
-						 expect(err).to.be.instanceOf(ValidationError);
-						 expect(err).to.have.property('validator').equal('type');
-						 done();
+						expect(err).to.be.instanceOf(ValidationError);
+						expect(err).to.have.property('message').equal('Is not of type Array.');
+						expect(err).to.have.property('validator').equal('type');
+						done();
+					 });
+				});
+				it ('should come back with type error (Boolean) if autowrap is set to `transparent` and not matching subschema.', function(done) {
+					isvalid({
+						test: 'Not a boolean'
+					}, {
+						type: Array,
+						autowrap: 'transparent',
+						schema: {
+							test: Boolean
+						}
+					}, function(err, validData) {
+						console.log(err);
+						expect(err).to.be.instanceOf(ValidationError);
+						expect(err).to.have.property('message').equal('Is not of type Boolean.');
+						expect(err).to.have.property('validator').equal('type');
+						done();
 					 });
 				});
 				it ('should come back with type error if no autowrap and matching subschema.', function(done) {
@@ -693,9 +711,9 @@ describe('validate', function() {
 					}, [{
 						test: Boolean
 					}], function(err, validData) {
-						 expect(err).to.be.instanceOf(ValidationError);
-						 expect(err).to.have.property('validator').equal('type');
-						 done();
+						expect(err).to.be.instanceOf(ValidationError);
+						expect(err).to.have.property('validator').equal('type');
+						done();
 					 });
 				});
 			});

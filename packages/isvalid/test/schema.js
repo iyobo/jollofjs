@@ -84,6 +84,11 @@ describe('schema', function() {
 				formalize({ type: Object, schema: RegExp });
 			}).to.throw(SchemaError);
 		});
+		it ('should throw an error if autowrap is string but not \'transparent\'', function() {
+			expect(function() {
+				formalize({ Type: Array, autowrap: 'test' });
+			}).to.throw(SchemaError);
+		});
 		testSyncAndAsync ('should come back with an object shortcut expanded.', {}, function(s) {
 			expect(s).to.have.property('type');
 			expect(s).to.have.property('schema').to.be.an('Object');

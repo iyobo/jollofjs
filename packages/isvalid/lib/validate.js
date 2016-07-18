@@ -80,16 +80,19 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 
 		if (!(data instanceof Array)) {
 
-			if (schema.autowrap === true) {
+			if (schema.autowrap === true || schema.autowrap === 'transparent') {
 
 				return validateAny(data, schema.schema, function(err, validData) {
 
-					if (err) return fn(new ValidationError(
-						keyPath,
-						schema._nonFormalizedSchema,
-						'type',
-						(schema.errors || {}).type || 'Is not of type Array.'
-					));
+					if (err) {
+						if (schema.autowrap === 'transparent') return fn(err);
+						return fn(new ValidationError(
+							keyPath,
+							schema._nonFormalizedSchema,
+							'type',
+							(schema.errors || {}).type || 'Is not of type Array.'
+						));
+					}
 
 					validateArray([validData], schema, fn, keyPath, options);
 

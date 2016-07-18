@@ -129,13 +129,14 @@ var formalizeAny = function(schema, fn, sync) {
 		throw new SchemaError(schema, 'Schemas must have validators `type` and/or `custom`.');
 	}
 
+	// Copy schema.
 	var formalizedSchema = merge(true, schema);
 
 	// Validators common to all types.
 	var validators = {
 		'type': ['Function'],
 		'required': ['Boolean', 'String'],
-		'default': true,
+		'default': 'Any',
 		'allowNull': ['Boolean'],
 		'errors': [ 'Object' ],
 		'custom': [ 'Function', 'Array' ]
@@ -144,15 +145,15 @@ var formalizeAny = function(schema, fn, sync) {
 	// Validators specific to type.
 	if (formalizedSchema.type !== undefined) {
 		if ('Object' == formalizedSchema.type.name) merge(validators, {
-			'schema': true,
+			'schema': 'Any',
 			'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
 			'unknownKeys': [ 'String' ]
 		});
 		if ('Array' == formalizedSchema.type.name) merge(validators, {
-			'schema': true,
+			'schema': 'Any',
 			'len': [ 'String', 'Number' ],
 			'unique': [ 'Boolean' ],
-			'autowrap': [ 'Boolean' ]
+			'autowrap': [ 'Boolean', 'String' ]
 		});
 		if ('String' == formalizedSchema.type.name) merge(validators, {
 			'match': [ 'RegExp' ],
@@ -166,7 +167,7 @@ var formalizeAny = function(schema, fn, sync) {
 
 	// If custom validator is provided allow for options.
 	if (formalizedSchema.custom !== undefined) {
-		merge(validators, { 'options': true });
+		merge(validators, { 'options': 'Any' });
 	}
 
 	// Copy validators to formalizedSchema - checking
@@ -185,7 +186,7 @@ var formalizeAny = function(schema, fn, sync) {
 		// Test for - and transform - errors in validator.
 		if (test.constructor.name === 'Array' &&
 		    test.length === 2 &&
-		    (validator === true || validator.indexOf(test[0].constructor.name) > -1) &&
+		    (validator === 'Any' || validator.indexOf(test[0].constructor.name) > -1) &&
 		    test[1].constructor.name === 'String') {
 
 			formalizedSchema.errors = formalizedSchema.errors || {};
@@ -195,22 +196,18 @@ var formalizeAny = function(schema, fn, sync) {
 		}
 
 		// Ensure validator is of correct type.
-		if (validator !== true && validator.indexOf(test.constructor.name) == -1) {
+		if (validator !== 'Any' && validator.indexOf(test.constructor.name) == -1) {
 			throw new SchemaError(
 				schema,
 				'Validator \'' + key + '\' must be of type(s) ' + validators[key].join(', ') + '.'
 			);
 		}
 
-		// ------------------------------------
-		// Validator specific conditions below.
-		// ------------------------------------
+	}
 
-		// Ensure type is supported.
-		if (key === 'type' && supportedTypes.indexOf(test.name) == -1) {
-			throw new SchemaError(formalizedSchema, 'Cannot validate schema of type ' + formalizedSchema.type.name + '.');
-		}
-
+	// Check for supported type.
+	if (typeof formalizedSchema.type !== 'undefined' && supportedTypes.indexOf(formalizedSchema.type.name) == -1) {
+		throw new SchemaError(formalizedSchema, 'Cannot validate schema of type ' + formalizedSchema.type.name + '.');
 	}
 
 	// Convert custom function to array
@@ -251,6 +248,14 @@ var formalizeAny = function(schema, fn, sync) {
 				);
 			}
 		}
+	}
+
+	// Check autowrap.
+	if (typeof formalizedSchema.autowrap === 'string' && formalizedSchema.autowrap !== 'transparent') {
+		throw new SchemaError(
+			schema,
+			'Validator \'autowrap\' must have value `true`, `false` or `transparent`.'
+		);
 	}
 
 	// Finalize objects and arrays if necessary.

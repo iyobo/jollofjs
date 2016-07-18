@@ -1,8 +1,9 @@
 # History
 
-## Version 1.3.6
+## Version 1.4.0
 
 * Introduced the `autowrap` validator on `Array` types.
+* Allows for mongoose type custom errors (eg. `required: [true, 'This is required.']`).
 
 ## Version 1.2.0
 
