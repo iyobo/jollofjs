@@ -441,7 +441,7 @@ Example:
 		schema: { … }
 	}
 
-If `autowrap` is set to `true` and autowrap failed (the subschema cannot validate the data), then a the `type` validator will emit a `'Must be of type Array.'` error. If, though, `autowrap` is set to `transparent` it will emit eventual errors as the failing subschema validation - this can be useful if you want to hide the fact, that the data can be wrapped in an array.n
+If `autowrap` is set to `true` and autowrap fails (the subschema cannot validate the data), then the `type` validator will emit a `'Must be of type Array.'` error. If, though, `autowrap` is set to `transparent` it will emit eventual errors as the failing subschema validation. This can be useful if you want to hide the fact, that the data can be wrapped in an array.
 
 > Default is `false`.
 
