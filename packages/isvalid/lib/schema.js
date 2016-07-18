@@ -1,7 +1,9 @@
 'use strict';
 
-var objectAssign = require('object-assign'),
+var merge = require('merge'),
     SchemaError = require('./errors/SchemaError.js');
+
+var supportedTypes = ['Object', 'Array', 'String', 'Number', 'Boolean', 'Date'];
 
 var finalize = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 
@@ -121,22 +123,16 @@ var formalizeAny = function(schema, fn, sync) {
 			if (schema.length === 0) throw new SchemaError(schema, 'Array must have exactly one schema.');
 			return formalizeArray({ type: Array, schema: schema[0] }, schema, fn, sync);
 		}
-		if (typeof schema === 'function' && ['Object', 'Array', 'String', 'Number', 'Boolean', 'Date'].indexOf(schema.name) > -1) {
+		if (typeof schema === 'function' && supportedTypes.indexOf(schema.name) > -1) {
 			return formalizeAny({ type: schema }, fn, sync);
 		}
-		throw new SchemaError(schema, 'Supported shortcuts are Object, Array, String, Number, Boolean, Date.');
+		throw new SchemaError(schema, 'Schemas must have validators `type` and/or `custom`.');
 	}
 
-	var formalizedSchema = {};
+	var formalizedSchema = merge(true, schema);
 
-	var validators = {};
-
-	// Ensure type is supported.
-	if (typeof schema.type !== 'undefined' && [ 'Object', 'Array', 'String', 'Number', 'Boolean', 'Date' ].indexOf(schema.type.name) == -1) {
-		throw new SchemaError(schema, 'Cannot validate schema of type ' + schema.type.name + '.');
-	}
-
-	var common = {
+	// Validators common to all types.
+	var validators = {
 		'type': ['Function'],
 		'required': ['Boolean', 'String'],
 		'default': true,
@@ -145,53 +141,76 @@ var formalizeAny = function(schema, fn, sync) {
 		'custom': [ 'Function', 'Array' ]
 	};
 
-	var typeSpecific = {};
-
-	if (schema.type !== undefined) {
-		if ('Object' == schema.type.name) typeSpecific = {
+	// Validators specific to type.
+	if (formalizedSchema.type !== undefined) {
+		if ('Object' == formalizedSchema.type.name) merge(validators, {
 			'schema': true,
 			'allowUnknownKeys': [ 'Boolean' ], // Deprecated as of version 1.0.4
 			'unknownKeys': [ 'String' ]
-		};
-		if ('Array' == schema.type.name) typeSpecific = {
+		});
+		if ('Array' == formalizedSchema.type.name) merge(validators, {
 			'schema': true,
 			'len': [ 'String', 'Number' ],
 			'unique': [ 'Boolean' ],
 			'autowrap': [ 'Boolean' ]
-		};
-		if ('String' == schema.type.name) typeSpecific = {
+		});
+		if ('String' == formalizedSchema.type.name) merge(validators, {
 			'match': [ 'RegExp' ],
 			'trim': [ 'Boolean' ],
 			'enum': [ 'Array' ]
-		};
-		if ('Number' == schema.type.name) typeSpecific = {
+		});
+		if ('Number' == formalizedSchema.type.name) merge(validators, {
 			'range': [ 'String', 'Number' ]
-		};
+		});
 	}
 
 	// If custom validator is provided allow for options.
-	if (schema.custom !== undefined) {
-		common = objectAssign(common, { 'options': true });
+	if (formalizedSchema.custom !== undefined) {
+		merge(validators, { 'options': true });
 	}
-
-	validators = objectAssign(common, typeSpecific);
 
 	// Copy validators to formalizedSchema - checking
 	// for non-supported validators at the same time.
-	for (var key in schema) {
-		if (validators[key] === undefined) throw new SchemaError(
+	for (var key in formalizedSchema) {
+
+		var validator = validators[key];
+
+		if (validator === undefined) throw new SchemaError(
 			schema,
 			'Validator \'' + key + '\' is unknown in this context.'
 		);
 
-		if (validators[key] !== true && validators[key].indexOf(schema[key].constructor.name) == -1) {
+		var test = formalizedSchema[key];
+
+		// Test for - and transform - errors in validator.
+		if (test.constructor.name === 'Array' &&
+		    test.length === 2 &&
+		    (validator === true || validator.indexOf(test[0].constructor.name) > -1) &&
+		    test[1].constructor.name === 'String') {
+
+			formalizedSchema.errors = formalizedSchema.errors || {};
+			formalizedSchema.errors[key] = test[1];
+			formalizedSchema[key] = test = test[0];
+
+		}
+
+		// Ensure validator is of correct type.
+		if (validator !== true && validator.indexOf(test.constructor.name) == -1) {
 			throw new SchemaError(
 				schema,
 				'Validator \'' + key + '\' must be of type(s) ' + validators[key].join(', ') + '.'
 			);
 		}
 
-		formalizedSchema[key] = schema[key];
+		// ------------------------------------
+		// Validator specific conditions below.
+		// ------------------------------------
+
+		// Ensure type is supported.
+		if (key === 'type' && supportedTypes.indexOf(test.name) == -1) {
+			throw new SchemaError(formalizedSchema, 'Cannot validate schema of type ' + formalizedSchema.type.name + '.');
+		}
+
 	}
 
 	// Convert custom function to array

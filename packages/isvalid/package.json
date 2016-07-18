@@ -15,7 +15,7 @@
     "connect"
   ],
   "dependencies": {
-    "object-assign": ">= 1.0.0"
+    "merge": "^1.2.0"
   },
   "devDependencies": {
     "body-parser": "^1.13.3",

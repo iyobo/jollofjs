@@ -173,6 +173,16 @@ describe('schema', function() {
 		testSyncAndAsync ('should come back with custom as an array.', { custom: [ function() {} ] }, function(s) {
 			expect(s).to.have.property('custom').to.be.an('array');
 		});
+		testSyncAndAsync ('should come back with errors set on the errors key.', {
+			type: [Boolean, 'Boolean.'],
+			required: [true, 'Required.']
+		}, function(s) {
+			expect(s).to.have.property('type').equal(Boolean);
+			expect(s).to.have.property('required').equal(true);
+			expect(s).to.have.property('errors').be.an('object');
+			expect(s.errors).to.have.property('type').equal('Boolean.');
+			expect(s.errors).to.have.property('required').equal('Required.');
+		});
 		describe('allowUnknownKeys [deprecated]', function() {
 			testSyncAndAsync ('should come back with unknownKeys set to \'allow\' if allowUnknownKeys is \'true\'.', {
 				type: Object,
