@@ -22,8 +22,8 @@ var finalize = function(formalizedSchema, nonFormalizedSchema, fn, sync) {
 
 	// Allow for I/O if running async.
 	if (fn) {
-		if (sync) return fn(formalizedSchema);
-		else setImmediate(fn, formalizedSchema);
+		if (sync) return fn(formalizedSchema, true);
+		else setImmediate(fn, formalizedSchema, true);
 	}
 
 };
@@ -113,7 +113,7 @@ var formalizeAny = function(schema, fn, sync) {
 	}
 
 	// If schema is already formalized we just call back.
-	if (schema._nonFormalizedSchema !== undefined) return fn(schema);
+	if (typeof schema._nonFormalizedSchema !== 'undefined') return fn(schema, false);
 
 	if (!schema.type && !schema.custom) {
 		if ('Object' == schema.constructor.name) {

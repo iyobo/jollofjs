@@ -698,7 +698,6 @@ describe('validate', function() {
 							test: Boolean
 						}
 					}, function(err, validData) {
-						console.log(err);
 						expect(err).to.be.instanceOf(ValidationError);
 						expect(err).to.have.property('message').equal('Is not of type Boolean.');
 						expect(err).to.have.property('validator').equal('type');

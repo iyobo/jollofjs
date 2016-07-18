@@ -84,10 +84,20 @@ describe('schema', function() {
 				formalize({ type: Object, schema: RegExp });
 			}).to.throw(SchemaError);
 		});
-		it ('should throw an error if autowrap is string but not \'transparent\'', function() {
+		it ('should throw an error if autowrap is string but not \'transparent\'.', function() {
 			expect(function() {
 				formalize({ Type: Array, autowrap: 'test' });
 			}).to.throw(SchemaError);
+		});
+		it ('should not reformalize.', function(done) {
+			var schema = { type: Number };
+			formalize(schema, function(schema, formalized) {
+				expect(formalized).to.equal(true);
+				formalize(schema, function(schema, formalized) {
+					expect(formalized).to.equal(false);
+					done();
+				});
+			});
 		});
 		testSyncAndAsync ('should come back with an object shortcut expanded.', {}, function(s) {
 			expect(s).to.have.property('type');
