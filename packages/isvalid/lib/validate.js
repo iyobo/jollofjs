@@ -74,7 +74,7 @@ var validateObject = function(data, schema, fn, keyPath, options) {
 
 };
 
-var validateArray = function(data, schema, fn, keyPath, options) {
+var validateArray = function(data, schema, fn, keyPath, options, autowrapped) {
 
 	if (data) {
 
@@ -94,7 +94,7 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 						));
 					}
 
-					validateArray([validData], schema, fn, keyPath, options);
+					validateArray([validData], schema, fn, keyPath, options, true);
 
 				}, keyPath, options);
 
@@ -157,7 +157,7 @@ var validateArray = function(data, schema, fn, keyPath, options) {
 
 		};
 
-		return validateNext(0);
+		if (autowrapped !== true) return validateNext(0);
 
 	}
 
