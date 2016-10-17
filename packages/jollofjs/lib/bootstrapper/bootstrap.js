@@ -10,18 +10,7 @@ module.exports = function (fn) {
 	return co(function*() {
 		try {
 			//Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
-			log.info("[bootstrapper] Starting Jollof app... \n APPROOT: "+appPaths.appRoot);
-			log.info(`
-
-	      ____.      .__  .__          _____       ____. _________
-    |    | ____ |  | |  |   _____/ ____\     |    |/   _____/
-    |    |/  _ \|  | |  |  /  _ \   __\      |    |\_____  \ 
-/\__|    (  <_> )  |_|  |_(  <_> )  |    /\__|    |/        \
-\________|\____/|____/____/\____/|__|    \________/_______  /
-                                                          \/ 
-
-                                        By Iyobo Eki
-`);
+			log.info("[Jollof] Starting Jollof app... \n APPROOT: "+appPaths.appRoot);
 
 			//Run the application
 			return yield fn(process.argv.slice(2));
