@@ -1,6 +1,6 @@
 'use strict'
 var bcrypt = require('bcrypt-as-promised');
-const settings = require('../../../config').settings;
+const settings = require('./configurator').settings;
 
 class Crypto{
 	* hash(password) {

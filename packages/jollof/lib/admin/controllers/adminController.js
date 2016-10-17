@@ -1,6 +1,5 @@
 'use strict'
 
-const bridge = require('../../../bridge');
 const modelObj = require('../../loadModels');
 
 //FIXME: This should reference services...if it's still being used

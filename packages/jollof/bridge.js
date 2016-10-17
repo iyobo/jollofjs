@@ -8,13 +8,11 @@
  * @type {{config: Env}}
  */
 const path = require('path');
+const appPaths = require('./appPaths');
 
 module.exports={
-	appRoot: process.cwd() + '/',
 
-	config: require('../../config'),
-	viewFilters: require('../../app/views/filters'),
-
-	modelsPath: path.join('..','..','app','mongomodels'),
-	services: require("../../app/services")
+	config: require(),
+	viewFilters: require(),
+	services: require()
 }
