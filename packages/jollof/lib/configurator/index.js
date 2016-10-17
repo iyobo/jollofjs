@@ -16,7 +16,7 @@ class Env {
 
 		//load base
 		try {
-			this.settings = require('../../../../config/envs/base.js');
+			this.settings = require('../../../../config/base.js');
 
 			//load environment
 			var envSettings = require( appPaths.appRoot+"config/" + this.currentEnv);
