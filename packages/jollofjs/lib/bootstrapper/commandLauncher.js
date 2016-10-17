@@ -15,8 +15,8 @@ bootstrap(function*(params){
 	if(!scriptName || !actionName)
 	{
 		log.error(`
-		Incomplete Entry. El tool needs to be executed as such:
-		./el <script> <action> [optional_parameter]
+		Incomplete Entry. Jollof commands needs to be executed as such:
+		./jollof <script> <action> [optional_parameter]
 		`)
 		process.exit(1)
 	}

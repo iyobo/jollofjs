@@ -1,11 +1,12 @@
 'use strict'
 var bcrypt = require('bcrypt-as-promised');
+const settings = require('../../../config').settings;
 
 class Crypto{
 	* hash(password) {
 		if (!password || password==="") return null; //don't waste time hashing nothing
 
-		return yield bcrypt.hash(password, EL.config.crypto.saltrounds)
+		return yield bcrypt.hash(password, settings.crypto.saltrounds)
 	}
 
 	* compare(password,hash){
