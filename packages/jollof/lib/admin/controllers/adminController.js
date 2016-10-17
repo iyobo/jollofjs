@@ -1,5 +1,10 @@
 'use strict'
 
+const bridge = require('../../../bridge');
+const modelObj = require('../../loadModels');
+
+//FIXME: This should reference services...if it's still being used
+
 module.exports = {
 	index: function*() {
 
@@ -9,17 +14,17 @@ module.exports = {
 		//
 		// }
 
-		yield this.render('admin/index',{models: EL.models});
+		yield this.render('admin/index',{models: modelObj.models});
 	},
 
 	//List all
 	list: function*(modelName) {
-		const model = EL.models[modelName]
+		// const model = EL.models[modelName]
 
 		// this.body = {
 		// 	result: yield model.paginate({}, {})
 		// };
-		this.body= (yield model.paginate({}, {})).docs;
+		this.body= (yield modelObj.models[modelName].paginate({}, {})).docs;
 
 	},
 
@@ -27,7 +32,7 @@ module.exports = {
 	get: function*(modelName, id) {
 
 		this.body = {
-			result: yield EL.models.modelName.findById(id)
+			result: yield modelObj.models.modelName.findById(id)
 		};
 	},
 
@@ -35,21 +40,21 @@ module.exports = {
 	post: function*(modelName) {
 		//get schema
 		this.body = {
-			result: yield EL.models.modelName.create(this.request.body)
+			result: yield modelObj.models.modelName.create(this.request.body)
 		};
 	},
 
 	//Update
 	patch: function*(modelName, id) {
 		this.body = {
-			result: yield EL.models.modelName.findByIDAndUpdate(id, this.request.body)
+			result: yield modelObj.models.modelName.findByIDAndUpdate(id, this.request.body)
 		};
 	},
 
 	//Delete or disable
 	delete: function*(modelName, id) {
 		this.body = {
-			result: yield EL.models.modelName.remove(id)
+			result: yield modelObj.models.modelName.remove(id)
 		}
 	},
 }

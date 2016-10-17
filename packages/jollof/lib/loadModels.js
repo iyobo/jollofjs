@@ -4,8 +4,10 @@
 var keystone = require('keystone')
 //Models, Specifically Mongoose
 var mongoose = require( 'mongoose' );
-var dbURI = EL.config.db.mongodb.url;
+const bridge = require('../bridge');
+var dbURI = bridge.config.db.mongodb.url;
 const path = require('path');
+
 
 // Create the database connection
 mongoose.connect(dbURI);
@@ -47,15 +49,15 @@ keystone.init({
 	'session': true,
 	'auth': true,
 	'user model': 'User',
-	'cookie secret': EL.config.crypto.secrets[0],
-	'google api key': EL.config.google.map.key,
-	port: EL.config.server.keystonePort,
+	'cookie secret': bridge.config.crypto.secrets[0],
+	'google api key': bridge.config.google.map.key,
+	port: bridge.config.server.keystonePort,
 	mongoose: mongoose
 });
 
 
 // BRING IN SCHEMAS & MODELS
-var schemaLoc = path.join('..','..','..','app','mongomodels');
+var schemaLoc = bridge.modelsPath;
 var schemaPath = path.join(__dirname,schemaLoc);
 var models={}
 require("fs").readdirSync(schemaPath).forEach(function(file) {
