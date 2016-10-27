@@ -26,6 +26,7 @@ module.exports = {
 	currentEnv: require('./lib/configurator').currentEnv,
 	appRoot: appPaths.appRoot,
 	crypto: require("./lib/crypto"),
+	data: require('./lib/data')
 
 
 }
