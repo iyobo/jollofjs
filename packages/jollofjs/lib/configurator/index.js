@@ -7,21 +7,22 @@
  */
 
 const appPaths = require('../../appPaths');
+const path = require('path');
 class Env {
 
-	constructor(Helpers) {
+	constructor( Helpers ) {
 
 		this.currentEnv = process.env.NODE_ENV || 'development';
 		this.settings = {};
 
 		//load base
 		try {
-			this.settings = require('../../../../config/base.js');
+			this.settings = require(appPaths.baseConfig);
 
 			//load environment
-			var envSettings = require( appPaths.appRoot+"config/" + this.currentEnv);
-			this.overwriteSettings(envSettings,this.settings);
-			console.log('[Environment]',this.currentEnv,'settings loaded.')
+			var envSettings = require(path.join(appPaths.config,this.currentEnv));
+			this.overwriteSettings(envSettings, this.settings);
+			console.log('[Environment]', this.currentEnv, 'settings loaded.');
 
 		} catch (err) {
 			console.error(err);
@@ -33,15 +34,14 @@ class Env {
 	 * @param envMap
 	 * @param baseMap
 	 */
-	overwriteSettings(envMap, baseMap) {
+	overwriteSettings( envMap, baseMap ) {
 		for (let k in envMap) {
-			var current = envMap[k];
+			var current = envMap[ k ];
 
 			if (typeof current === 'object')
-				this.overwriteSettings(current,baseMap[k])
+				this.overwriteSettings(current, baseMap[ k ])
 			else
-				baseMap[k] = current;
-
+				baseMap[ k ] = current;
 
 
 		}
@@ -56,8 +56,8 @@ class Env {
 	 * @param  {Mixed} defaultValue
 	 * @return {Mixed}
 	 */
-	get(key, defaultValue) {
-		return this.settings[key] || defaultValue;
+	get( key, defaultValue ) {
+		return this.settings[ key ] || defaultValue;
 	}
 
 	/**
@@ -67,8 +67,8 @@ class Env {
 	 * @param  {Mixed} value
 	 * @public
 	 */
-	set(key, value) {
-		this.settings[key] = value;
+	set( key, value ) {
+		this.settings[ key ] = value;
 	}
 
 

@@ -12,9 +12,11 @@ const registry = require('./registry');
 
 
 module.exports ={
-	registerModel: registry.registerModel(),
-	registerType: registry.registerType(),
+	registerModel: registry.registerModel,
+	registerType: registry.registerType,
+	registerService: registry.registerService,
 	types: registry.types,
 	models: registry.models,
+	services: registry.services,
 	init: registry.init
 }
