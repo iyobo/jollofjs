@@ -3,37 +3,42 @@
  */
 const models = {};
 const types = {};
+const services = {};
 const appPaths = require('../../appPaths');
+const path = require('path');
+const requireDir = require('require-dir');
 
-module.exports.registerModel = function(schema) {
-	models[schema.name] = schema
+module.exports.registerModel = function ( schema ) {
+	models[ schema.name ] = schema
 };
 
-module.exports.registerType = function(schema) {
-	types[schema.name] = schema
+module.exports.registerType = function ( schema ) {
+	types[ schema.name ] = schema
+};
+module.exports.registerService = function ( name, singleton ) {
+	services[ name ] = singleton
 };
 
 /**
  * Populates registry with all models and types.
  * @param schema
  */
-module.exports.init = function(schema) {
+module.exports.init = function ( schema ) {
 	//Init in-built Schema Types
-	require("fs").readdirSync('./schemas').forEach(function ( schemaFilePath ) {
-		require(schemaFilePath);
-	});
+	requireDir(path.join(__dirname,'schemas'), {recurse: true})
 
 	//Init app Schema Types
-	require("fs").readdirSync(appPaths.schemaTypes).forEach(function ( schemaFilePath ) {
-		require(schemaFilePath);
-	});
+	requireDir(appPaths.schemaTypes, {recurse: true});
 
 	//Init app models
-	require("fs").readdirSync(appPaths.models).forEach(function ( modelFilePath ) {
-		require(modelFilePath);
-	});
+	requireDir(appPaths.models, {recurse: true});
+
+	//Init app services
+	requireDir(appPaths.services, {recurse: true});
+
 
 };
 
 module.exports.models = models;
 module.exports.types = types;
+module.exports.services = services;

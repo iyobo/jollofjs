@@ -3,7 +3,8 @@
  */
 const requireDir = require('require-dir');
 const appPaths = require('./appPaths');
-// const modelObj = require('./lib/loadModels')
+
+const data = require('./lib/data');
 
 module.exports = {
 	bootstrap: require('./lib/bootstrapper/bootstrap'),
@@ -26,11 +27,14 @@ module.exports = {
 	currentEnv: require('./lib/configurator').currentEnv,
 	appRoot: appPaths.appRoot,
 	crypto: require("./lib/crypto"),
-	data: require('./lib/data')
+	data: data
 
 
 }
 
 //Must be seperate from previous initialization of modules.export to avoid undefineds due to cyclic dependencies
-module.exports.models = require('./lib/loadModels').models;
-module.exports.services = require('../../app/services');
+module.exports.models = data.models;
+module.exports.services = data.services;
+
+//Initialize project DataVerse
+data.init();
