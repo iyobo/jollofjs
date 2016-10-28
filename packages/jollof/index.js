@@ -7,7 +7,6 @@ const appPaths = require('./appPaths');
 const data = require('./lib/data');
 
 module.exports = {
-	bootstrap: require('./lib/bootstrapper/bootstrap'),
 	errors: requireDir('./lib/errors', {recurse: true}),
 	fileStore: require('./lib/filestorage'),
 	forms: requireDir('./lib/forms', {recurse: true}),
@@ -27,14 +26,16 @@ module.exports = {
 	currentEnv: require('./lib/configurator').currentEnv,
 	appRoot: appPaths.appRoot,
 	crypto: require("./lib/crypto"),
-	data: data
-
 
 }
 
 //Must be seperate from previous initialization of modules.export to avoid undefineds due to cyclic dependencies
+module.exports.data = data;
 module.exports.models = data.models;
 module.exports.services = data.services;
+module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
+
+
 
 //Initialize project DataVerse
 data.init();
