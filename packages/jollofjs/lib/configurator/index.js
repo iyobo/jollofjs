@@ -7,6 +7,7 @@
  */
 
 const appPaths = require('../../appPaths');
+const log = require('../log');
 const path = require('path');
 class Env {
 
@@ -25,7 +26,7 @@ class Env {
 			console.log('[Environment]', this.currentEnv, 'settings loaded.');
 
 		} catch (err) {
-			console.error(err);
+			log.warn('Jollof config not loaded',err.message);
 		}
 	}
 
