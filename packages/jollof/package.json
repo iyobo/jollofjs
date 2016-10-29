@@ -19,6 +19,6 @@
   "license": "ISC",
   "dependencies": {
     "require-dir": "^0.3.1",
-    "validate": "^3.0.1"
+    "validate.js": "^0.10.0"
   }
 }
