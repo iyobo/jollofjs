@@ -16,7 +16,8 @@ const locationSchema={
 		postalCode: String,
 		country: {type: String, required: true},
 		longitude: {type: Number, required: true},
-		latitude: {type: Number, required: true}
+		latitude: {type: Number, required: true},
+		history: [{long:Number, lat: Number}]
 	}
 }
 
