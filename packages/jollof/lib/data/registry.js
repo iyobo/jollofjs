@@ -35,9 +35,9 @@ module.exports.registerService = function ( name, singleton ) {
  * @param schema
  */
 module.exports.init = function ( schema ) {
-	try {
+	// try {
 		//Init in-built Schema Types
-		requireDir(path.join(__dirname, 'schemas'), {recurse: true})
+		requireDir(path.join(__dirname, 'types'), {recurse: true});
 
 		//Init app Schema Types
 		requireDir(appPaths.schemaTypes, {recurse: true});
@@ -48,9 +48,11 @@ module.exports.init = function ( schema ) {
 		//Init app services
 		requireDir(appPaths.services, {recurse: true});
 
-	}catch(err){
-		log.warn('Jollof init error:',err.message);
-	}
+
+
+	// }catch(err){
+	// 	log.error('Jollof init error:',err.message);
+	// }
 
 };
 
