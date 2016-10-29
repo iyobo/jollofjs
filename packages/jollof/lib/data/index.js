@@ -18,5 +18,6 @@ module.exports ={
 	types: registry.types,
 	models: registry.models,
 	services: registry.services,
-	init: registry.init
+	init: registry.init,
+	joi: require('joi')
 }
