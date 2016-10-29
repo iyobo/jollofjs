@@ -14,8 +14,49 @@ module.exports.modelize = function ( schema ) {
 
 	const modelRules = {};
 
-	function parseObject(){
+	function parseObject(fieldDef, isArray, parentName, fieldName){
+		let typeOf = typeof fieldDef;
 
+		// if (fieldDef === undefined) {
+		// 	throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
+		// }
+		// else
+		if (typeOf === 'function') {
+			//This means attr is a class e.g. Boolean, String, etc.
+			return fieldDef.name;
+		}
+		else if (typeOf === 'boolean') {
+			//This means it's a boolean value
+			return typeOf;
+		}
+		else if (typeOf === 'string') {
+			//This means it's a string value
+			return typeOf;
+		}
+		else if (typeOf === 'number') {
+			//This means it's a number value
+			return typeOf;
+		}
+		else if (fieldDef === null) {
+			//This means it's a boolean value
+			return 'null';
+		}
+		else if (Array.isArray(fieldDef)) {
+			//Array
+			isArray = true;
+			return parseObject(fieldDef[ 0 ], isArray, parentName ,fieldName+'[]' );
+		}
+		else if (typeOf === 'object' && fieldDef.name && fieldDef.structure) {
+			//a schema/type
+			return parseDef(fieldDef.structure, parentName + '.' + fieldName);
+		}
+		else if (typeOf === 'object' && (fieldDef.type || Object.keys(fieldDef).length > 0)) {
+			//An extended def object
+			return parseDef(fieldDef, parentName + '.' + fieldName);
+		}
+		else {
+			throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
+		}
 	}
 
 	/**
@@ -31,46 +72,7 @@ module.exports.modelize = function ( schema ) {
 			let fieldType = "";
 			let isArray = false;
 
-			if (fieldDef === undefined) {
-				//This means it's a boolean value
-				throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
-			}
-			else if (typeOf === 'function') {
-				//This means attr is a class e.g. Boolean, String, etc.
-				fieldType = fieldDef.name;
-			}
-			else if (typeOf === 'boolean') {
-				//This means it's a boolean value
-				fieldType = typeOf;
-			}
-			else if (typeOf === 'string') {
-				//This means it's a boolean value
-				fieldType = typeOf;
-			}
-			else if (typeOf === 'number') {
-				//This means it's a boolean value
-				fieldType = typeOf;
-			}
-			else if (fieldDef === null) {
-				//This means it's a boolean value
-				fieldType = 'null';
-			}
-			else if (Array.isArray(fieldDef)) {
-				//Array
-				isArray = true;
-				fieldType = parseDef(fieldDef[ 0 ], parentName + ' ' + fieldName + '[]');
-			}
-			else if (typeOf === 'object' && fieldDef.type) {
-				//An extended def object
-				fieldType = parseDef(fieldDef, parentName + ' ' + fieldName);
-			}
-			else if (typeOf === 'object' && fieldDef.name && fieldDef.structure) {
-				//a schema/type
-				fieldType = parseDef(fieldDef.structure, parentName + ' ' + fieldName);
-			}
-			else {
-				fieldType = 'UNKNOWN'
-			}
+			fieldType = parseObject(fieldDef, isArray, parentName, fieldName, rules);
 
 			if (fieldType !== undefined) {
 				console.log(parentName, fieldName, fieldType, '(typeOf:' + typeOf + ')');
@@ -78,7 +80,7 @@ module.exports.modelize = function ( schema ) {
 				//TODO: Populate rules here with validateJS stuff
 
 				//Add crafted field constraints to model validation rules
-				modelRules[ parentName + " " + fieldName ] = rules;
+				modelRules[ parentName + "." + fieldName ] = rules;
 			}
 		}
 	}
