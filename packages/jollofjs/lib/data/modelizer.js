@@ -22,7 +22,7 @@ result = validate({foo: [ {bar: "www"}, {invalid: "eee"} ]}, constraints);
 console.log(result);
 
 /**
- * Takes a schema. Returns a model
+ * Takes a schema. Wraps it in a joi object, and Returns a model
  * @param schema
  * @returns {*}
  */
