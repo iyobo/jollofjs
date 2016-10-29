@@ -33,9 +33,8 @@ module.exports = {
 module.exports.data = data;
 module.exports.models = data.models;
 module.exports.services = data.services;
-module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
-
-
 
 //Initialize project DataVerse
 data.init();
+
+module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
