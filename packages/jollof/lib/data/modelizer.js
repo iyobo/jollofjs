@@ -13,8 +13,9 @@ const _ = require('lodash');
 module.exports.modelize = function ( schema ) {
 
 	const modelRules = {};
+	const parseLevel = [];
 
-	function parseObject(fieldDef, isArray, parentName, fieldName){
+	function parseObject( fieldDef, isArray, fieldName, parentRules ) {
 		let typeOf = typeof fieldDef;
 
 		// if (fieldDef === undefined) {
@@ -42,17 +43,17 @@ module.exports.modelize = function ( schema ) {
 			return 'null';
 		}
 		else if (Array.isArray(fieldDef)) {
-			//Array
+			//An Array
 			isArray = true;
-			return parseObject(fieldDef[ 0 ], isArray, parentName ,fieldName+'[]' );
+			return parseObject(fieldDef[ 0 ], isArray, fieldName + '[]',parentRules);
 		}
 		else if (typeOf === 'object' && fieldDef.name && fieldDef.structure) {
-			//a schema/type
-			return parseDef(fieldDef.structure, parentName + '.' + fieldName);
+			//a custom type. pass in it's structure
+			return parseDef(fieldDef.structure, parentRules);
 		}
 		else if (typeOf === 'object' && (fieldDef.type || Object.keys(fieldDef).length > 0)) {
-			//An extended def object
-			return parseDef(fieldDef, parentName + '.' + fieldName);
+			//A detailed field def object with rules
+			return parseDef(fieldDef, parentRules);
 		}
 		else {
 			throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
@@ -62,7 +63,8 @@ module.exports.modelize = function ( schema ) {
 	/**
 	 * For each field defined in structure
 	 */
-	function parseDef( structure, parentName ) {
+	function parseDef( structure, parentRules ) {
+
 		for (let fieldName in structure) {
 			const rules = {}
 			const fieldDef = structure[ fieldName ];
@@ -72,22 +74,28 @@ module.exports.modelize = function ( schema ) {
 			let fieldType = "";
 			let isArray = false;
 
-			fieldType = parseObject(fieldDef, isArray, parentName, fieldName, rules);
+			parseLevel.push(fieldName);
 
-			if (fieldType !== undefined) {
-				console.log(parentName, fieldName, fieldType, '(typeOf:' + typeOf + ')');
+			fieldType = parseObject(fieldDef, isArray, fieldName, rules);
 
-				//TODO: Populate rules here with validateJS stuff
+			// console.log(parentName, fieldName, fieldType, '(typeOf:' + typeOf + ')');
+			const fullPath = parseLevel.join('.');
+			// console.log(fullPath, fieldType, '(typeOf:' + typeOf + ')');
 
-				//Add crafted field constraints to model validation rules
-				modelRules[ parentName + "." + fieldName ] = rules;
-			}
+			//TODO: Populate rules here with validateJS stuff
+
+			//Add crafted field constraints to model validation rules
+			parentRules[ fullPath ] = rules;
+
+			parseLevel.pop();
 		}
 	}
 
 	console.log('<<< ' + schema.name + ' Model >>>');
 	//Parse the schema's structure
-	parseDef(schema.structure, "");
+	parseDef(schema.structure, modelRules);
+
+	console.log(modelRules);
 
 
 	/**
