@@ -1,9 +1,25 @@
 /**
  * Created by iyobo on 2016-10-27.
  */
-const valix = require('validate');
+const validate = require('validate.js');
 const _ = require('lodash');
+require("./plugins/validate-plugin-array").register(validate);
 
+var constraints = {
+	winners: {
+		length: {is: 1},
+		presence: true,
+		array: {
+			firstName: {presence: true},
+			lastName: {},
+		}
+	}
+};
+
+var result = validate({winners: [ {firstName: "qq"},{firstName: "oi"} ]}, constraints);
+console.log(result);
+result = validate({foo: [ {bar: "www"}, {invalid: "eee"} ]}, constraints);
+console.log(result);
 
 /**
  * Takes a schema. Returns a model
@@ -15,7 +31,7 @@ module.exports.modelize = function ( schema ) {
 	const modelRules = {};
 	const parseLevel = [];
 
-	function parseObject( fieldDef, isArray, fieldName, parentRules ) {
+	function parseObject( fieldDef, fieldName, currentRules ) {
 		let typeOf = typeof fieldDef;
 
 		// if (fieldDef === undefined) {
@@ -45,15 +61,15 @@ module.exports.modelize = function ( schema ) {
 		else if (Array.isArray(fieldDef)) {
 			//An Array
 			isArray = true;
-			return parseObject(fieldDef[ 0 ], isArray, fieldName + '[]',parentRules);
+			return parseObject(fieldDef[ 0 ], isArray, fieldName + '[]', currentRules);
 		}
 		else if (typeOf === 'object' && fieldDef.name && fieldDef.structure) {
 			//a custom type. pass in it's structure
-			return parseDef(fieldDef.structure, parentRules);
+			return parseDef(fieldDef.structure, currentRules);
 		}
 		else if (typeOf === 'object' && (fieldDef.type || Object.keys(fieldDef).length > 0)) {
 			//A detailed field def object with rules
-			return parseDef(fieldDef, parentRules);
+			return parseDef(fieldDef, currentRules);
 		}
 		else {
 			throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
@@ -69,23 +85,31 @@ module.exports.modelize = function ( schema ) {
 			const rules = {}
 			const fieldDef = structure[ fieldName ];
 
-			//craft validation rules from fieldDef
-			let typeOf = typeof fieldDef;
-			let fieldType = "";
-			let isArray = false;
+			// //craft validation rules from fieldDef
+			// let typeOf = typeof fieldDef;
+			// // let fieldType = "";
+			// let isArray = false;
 
 			parseLevel.push(fieldName);
 
-			fieldType = parseObject(fieldDef, isArray, fieldName, rules);
+			if(Array.isArray(fieldDef)){
+				rules['array'] = {};
+				parseObject(fieldDef, fieldName, rules['array']);
+			}
+			else{
+				parseObject(fieldDef, fieldName, rules);
+			}
 
-			// console.log(parentName, fieldName, fieldType, '(typeOf:' + typeOf + ')');
+
 			const fullPath = parseLevel.join('.');
-			// console.log(fullPath, fieldType, '(typeOf:' + typeOf + ')');
 
 			//TODO: Populate rules here with validateJS stuff
 
-			//Add crafted field constraints to model validation rules
-			parentRules[ fullPath ] = rules;
+			//Add crafted field constraints to model validation rules for tree bsed. but validate.js is flat
+			// if(parentRules)
+			// 	parentRules[ fullPath ] = rules;
+			// else
+			modelRules[fullPath] = rules;
 
 			parseLevel.pop();
 		}
@@ -93,7 +117,7 @@ module.exports.modelize = function ( schema ) {
 
 	console.log('<<< ' + schema.name + ' Model >>>');
 	//Parse the schema's structure
-	parseDef(schema.structure, modelRules);
+	parseDef(schema.structure);
 
 	console.log(modelRules);
 
