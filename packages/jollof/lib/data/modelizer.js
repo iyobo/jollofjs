@@ -31,6 +31,26 @@ module.exports.modelize = function ( schema ) {
 	const modelRules = {};
 	const parseLevel = [];
 
+	function parseAttributes(fieldDef, fieldName, currentRules){
+		for (let attributeName in fieldDef) {
+			switch(attributeName){
+				case 'required':
+					currentRules['presence'] = true;
+					break;
+				case 'type':
+					// currentRules['presence'] = true;
+
+
+					break;
+
+
+
+
+			}
+		}
+	}
+
+	let processingArray = false;
 	function parseObject( fieldDef, fieldName, currentRules ) {
 		let typeOf = typeof fieldDef;
 
@@ -39,8 +59,9 @@ module.exports.modelize = function ( schema ) {
 		// }
 		// else
 		if (typeOf === 'function') {
-			//This means attr is a class e.g. Boolean, String, etc.
-			return fieldDef.name;
+			//This means attr is a native data type e.g. Boolean, String, etc.
+			//switch based on fieldDef.name for numerical rules
+
 		}
 		else if (typeOf === 'boolean') {
 			//This means it's a boolean value
@@ -60,16 +81,33 @@ module.exports.modelize = function ( schema ) {
 		}
 		else if (Array.isArray(fieldDef)) {
 			//An Array
-			isArray = true;
-			return parseObject(fieldDef[ 0 ], isArray, fieldName + '[]', currentRules);
+			processingArray = true;
+			parseObject(fieldDef[ 0 ], processingArray, fieldName + '[]', currentRules);
+			processingArray = false;
 		}
 		else if (typeOf === 'object' && fieldDef.name && fieldDef.structure) {
 			//a custom type. pass in it's structure
-			return parseDef(fieldDef.structure, currentRules);
+			parseStructure(fieldDef.structure, currentRules);
 		}
 		else if (typeOf === 'object' && (fieldDef.type || Object.keys(fieldDef).length > 0)) {
 			//A detailed field def object with rules
-			return parseDef(fieldDef, currentRules);
+			if(!fieldDef.type){
+				//This is a nested map
+				 parseStructure(fieldDef, currentRules);
+			}
+			else if(fieldDef.type){
+				//This is a nested map
+				 parseAttributes(fieldDef, fieldName, currentRules);
+			}
+			else if(fieldDef.type.structure){
+				//This is a typed field
+				 parseStructure(fieldDef.type.structure, currentRules);
+			}
+			else{
+				//normal typed field with validation attributes
+				 parseAttributes(fieldDef, fieldName, currentRules);
+			}
+
 		}
 		else {
 			throw new Error('Invalid Schema: ' + schema.name + ', Field: ' + fieldName);
@@ -79,7 +117,7 @@ module.exports.modelize = function ( schema ) {
 	/**
 	 * For each field defined in structure
 	 */
-	function parseDef( structure, parentRules ) {
+	function parseStructure( structure, parentRules ) {
 
 		for (let fieldName in structure) {
 			const rules = {}
@@ -93,7 +131,7 @@ module.exports.modelize = function ( schema ) {
 			parseLevel.push(fieldName);
 
 			if(Array.isArray(fieldDef)){
-				rules['array'] = {};
+				rules['array'] = rules['array']||{};
 				parseObject(fieldDef, fieldName, rules['array']);
 			}
 			else{
@@ -117,7 +155,7 @@ module.exports.modelize = function ( schema ) {
 
 	console.log('<<< ' + schema.name + ' Model >>>');
 	//Parse the schema's structure
-	parseDef(schema.structure);
+	parseStructure(schema.structure);
 
 	console.log(modelRules);
 
