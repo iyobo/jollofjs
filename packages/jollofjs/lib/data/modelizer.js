@@ -13,14 +13,13 @@ const joiValidatePromise = Promise.promisify(joi.validate);
 module.exports.modelize = function ( schema ) {
 
 	/**
-	 * This is a dynamically crafted class with tons of accessor magic. E.g userInstance.firstName will return userInstance.data.firstName
+	 * This is a dynamically crafted class with tons of accessor/proxy magic. E.g userInstance.firstName will return userInstance.data.firstName
 	 * @type {{updateAll: ((id)), update: ((id)), list: ((id)), get: ((id)), delete: ((id)), new(data)=>{validate: (()), save: (()), type}}}
 	 */
 	const Model = class {
 		constructor( data ) {
 			this.data = data;
 			this.rules = joi.object().keys(schema.structure);
-			// console.log(schema.name, 'loaded')
 		}
 
 		get className() {
