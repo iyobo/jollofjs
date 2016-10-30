@@ -20,7 +20,7 @@ const joi = require('joi');
  */
 module.exports.registerModel = function ( schema ) {
 	//Wrap whatever this is in a true Model
-	models[ schema.name ] = Modelizer.modelize(schema.structure);
+	models[ schema.name ] = Modelizer.modelize(schema);
 	return models[ schema.name ];
 };
 
