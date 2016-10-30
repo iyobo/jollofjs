@@ -10,7 +10,7 @@ const joi = require('joi');
 const locationSchema={
 	name: 'Location',
 	structure:{
-		address1: joi.string().required(),
+		address: joi.string().required(),
 		address2: joi.string(),
 		city: joi.string().required(),
 		state: joi.string().required(),
