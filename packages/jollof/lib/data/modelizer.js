@@ -3,7 +3,8 @@
  */
 const _ = require('lodash');
 const joi = require('joi');
-
+const Promise = require('bluebird')
+const joiValidatePromise = Promise.promisify(joi.validate);
 /**
  * Takes a schema. Wraps it in a joi object, and Returns a model
  * @param schema
@@ -18,7 +19,8 @@ module.exports.modelize = function ( schema ) {
 	const Model = class {
 		constructor( data ) {
 			this.data = data;
-			this.validator = joi.object().keys(schema.structure);
+			this.rules = joi.object().keys(schema.structure);
+			console.log(schema.name, 'loaded')
 		}
 
 		get className() {
@@ -45,22 +47,22 @@ module.exports.modelize = function ( schema ) {
 			return "Hohoho";
 		}
 
-		validate() {
-			// validate it according to structure
+		* validate() {
 
-
-			return true;
+			yield joiValidatePromise(this.data, this.rules);
 		}
 
 		* save() {
-			if (this.validate()) {
-				return this;
-			}
-			else {
-				return null;
+			try {
+				//validate
+				yield this.validate();
+
+				//TODO: upsert with active adapter
+
+			} catch (err) {
+				throw err;
 			}
 		}
-
 
 	};
 
