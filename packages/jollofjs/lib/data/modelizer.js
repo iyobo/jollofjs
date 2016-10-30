@@ -20,7 +20,7 @@ module.exports.modelize = function ( schema ) {
 		constructor( data ) {
 			this.data = data;
 			this.rules = joi.object().keys(schema.structure);
-			console.log(schema.name, 'loaded')
+			// console.log(schema.name, 'loaded')
 		}
 
 		get className() {
@@ -65,6 +65,9 @@ module.exports.modelize = function ( schema ) {
 		}
 
 	};
+
+	//proxies for data access
+
 
 	// This way we can new jollof.models.user({firstName:'Joe'})
 	return Model;
