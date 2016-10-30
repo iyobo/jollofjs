@@ -6,6 +6,7 @@ const joi = require('joi');
 const Promise = require('bluebird')
 const joiValidatePromise = Promise.promisify(joi.validate);
 const stringUtil = require('../util/stringUtil');
+const config = require('../configurator');
 /**
  * Takes a schema. Wraps it in a joi object, and Returns a model
  * @param schema
@@ -21,8 +22,10 @@ module.exports.modelize = function ( schema ) {
 		constructor( data ) {
 			this._loadData(data);
 			this._loadRules(schema.structure);
+			this._adapter = schema.adapter || config.settings.db.defaultAdapter || 'arangodb'; //:) arango is default just because
 
 			this._className = stringUtil.labelize(schema.name);
+			this._originalSchema = schema;
 		}
 
 		_loadData( data ) {
