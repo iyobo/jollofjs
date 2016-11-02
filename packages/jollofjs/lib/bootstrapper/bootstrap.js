@@ -5,10 +5,23 @@ const appPaths = require("../../appPaths");
 const co = require('co');
 const log = require('../log')
 
+const data = require('../data');
+
 
 module.exports = function (fn) {
 	return co(function*() {
 		try {
+
+			for(let m in data.models){
+				const modelClass = data.models[ m ];
+				try {
+					yield modelClass.setup();
+					log.debug('Setup ' + modelClass.collectionName)
+				} catch (err) {
+					log.error(err);
+				}
+			}
+
 			//Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
 			log.info("[Jollof] Starting Jollof app... \n APPROOT: "+appPaths.appRoot);
 

@@ -27,7 +27,7 @@ module.exports.modelize = function ( schema ) {
 
 	//create tables, indexes, etc
 
-	adapter.configureCollection(schema);
+	// adapter.configureCollection(schema);
 
 	/**
 	 * This is a dynamically crafted class with some accessor/proxy magic. E.g userInstance.firstName will return userInstance.data.firstName
@@ -38,7 +38,7 @@ module.exports.modelize = function ( schema ) {
 			this._loadData(data);
 			this._loadRules(schema.structure);
 			this._adapterName = adapterName;
-			// this._adapter = adapter;
+			this._adapter = adapter;
 
 			this._collectionName = schema.name;
 			this._collectioonDisplayName = stringUtil.labelize(schema.name);
@@ -83,21 +83,8 @@ module.exports.modelize = function ( schema ) {
 			this._setDateUpdated();
 		}
 
-		static * get( id ) {
-
-			return 'Got ' + schema.name;
-		}
-
-		static * find( id ) {
-			return 'List ' + schema.name;
-		}
-
-		static * update( id ) {
-			return "Hohoho";
-		}
-
-		static * delete( id ) {
-			return "Hohoho";
+		static get collectionName(){
+			return schema.name;
 		}
 
 		* validate() {
@@ -151,6 +138,32 @@ module.exports.modelize = function ( schema ) {
 			}
 
 			return new Proxy(model, modelAccessor);
+		}
+
+		static get collectionName(){
+			return schema.name;
+		}
+
+		static * setup(){
+			const g = yield adapter.configureCollection(schema);
+			console.log(g);
+		}
+
+		static * get( id ) {
+
+			return 'Got ' + schema.name;
+		}
+
+		static * find( id ) {
+			return 'List ' + schema.name;
+		}
+
+		static * update( id ) {
+			return "Hohoho";
+		}
+
+		static * delete( id ) {
+			return "Hohoho";
 		}
 	}
 
