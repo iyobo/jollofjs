@@ -3,8 +3,11 @@
  */
 const requireDir = require('require-dir');
 const appPaths = require('./appPaths');
-
+const co = require('co');
 const data = require('./lib/data');
+const _ = require('lodash');
+
+const log = require('./lib/log');
 
 module.exports = {
 	errors: requireDir('./lib/errors', {recurse: true}),
@@ -21,7 +24,7 @@ module.exports = {
 	router: requireDir('./lib/router', {recurse: true}),
 	utils: requireDir('./lib/util', {recurse: true}),
 	cryto: require('./lib/crypto'),
-	log: require('./lib/log'),
+	log: log,
 	config: require('./lib/configurator').settings,
 	currentEnv: require('./lib/configurator').currentEnv,
 	appRoot: appPaths.appRoot,
@@ -37,4 +40,21 @@ module.exports.services = data.services;
 //Initialize project DataVerse
 data.init();
 
+// setTimeout(()=>{
 module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
+// },2000)
+
+// co(function*() {
+//
+// 	for(let m in data.models){
+// 		const modelClass = data.models[m];
+// 		try {
+// 			yield modelClass.setup();
+// 			log.debug('Setup ' + modelClass.collectionName)
+// 		}catch(err){
+// 			log.error(err);
+// 		}
+// 	}
+// 	// module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
+// });
+
