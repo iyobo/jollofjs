@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",
+    "documentjs": "^0.4.4",
     "joi": "^9.2.0",
     "require-dir": "^0.3.1",
     "validate.js": "^0.10.0"
