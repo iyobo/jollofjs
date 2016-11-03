@@ -46,6 +46,45 @@ module.exports.modelize = function ( schema ) {
 
 			//This is where ids should be stored
 			this._ids = null;
+
+
+			//Proxy magic
+			let dataKeys = Object.keys(schema.structure);
+			dataKeys.push('dateCreated', 'lastUpdated');
+
+			// const model = new Model(data);
+
+			var modelAccessor = {
+				set ( target, key, value ) {
+					if (dataKeys.indexOf(key) > -1)
+						target._data[ key ] = value;
+					else if (adapter.getIdFields().indexOf(key) > -1)
+						target._ids[ key ] = value;
+					else
+						target[ key ] = value;
+					return true
+				},
+				get ( target, key ) {
+					//if key exists in data's keys, get from there. otherwise get from the model
+					if (dataKeys.indexOf(key) > -1)
+						return target._data[ key ];
+					else if (adapter.getIdFields().indexOf(key) > -1)
+						return target._ids[ key ];
+					else
+						return target[ key ];
+				}
+			}
+
+			return new Proxy(this, modelAccessor);
+		}
+
+		static * setup() {
+			const g = yield adapter.configureCollection(schema);
+			console.log(g);
+		}
+
+		static get collectionName() {
+			return schema.name;
 		}
 
 		_loadData( data ) {
@@ -83,7 +122,7 @@ module.exports.modelize = function ( schema ) {
 			this._setDateUpdated();
 		}
 
-		static get collectionName(){
+		static get collectionName() {
 			return schema.name;
 		}
 
@@ -92,82 +131,19 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		* save() {
-			try {
-				//validate
-				yield this.validate();
 
-				this._setTimestamps();
-				yield adapter.save(this);
-				// log.debug('Saved ' + this._collectionName)
-				null;
+			//validate
+			yield this.validate();
 
-			} catch (err) {
-				throw err;
-			}
+			this._setTimestamps();
+			yield adapter.save(this);
+			// log.debug('Saved ' + this._collectionName)
+			return true;
+
 		}
 
 	};
 
-	//Proxy class for wrapping models
-	const ModelProxy = class {
-		constructor( data ) {
-			let dataKeys = Object.keys(schema.structure);
-			dataKeys.push('dateCreated', 'lastUpdated');
-
-			const model = new Model(data);
-
-			var modelAccessor = {
-				set ( target, key, value ) {
-					if (dataKeys.indexOf(key) > -1)
-						target._data[ key ] = value;
-					else if (adapter.getIdFields().indexOf(key) > -1)
-						target._ids[ key ] = value;
-					else
-						target[ key ] = value;
-					return true
-				},
-				get ( target, key ) {
-					//if key exists in data's keys, get from there. otherwise get from the model
-					if (dataKeys.indexOf(key) > -1)
-						return target._data[ key ];
-					else if (adapter.getIdFields().indexOf(key) > -1)
-						return target._ids[ key ];
-					else
-						return target[ key ];
-				}
-			}
-
-			return new Proxy(model, modelAccessor);
-		}
-
-		static get collectionName(){
-			return schema.name;
-		}
-
-		static * setup(){
-			const g = yield adapter.configureCollection(schema);
-			console.log(g);
-		}
-
-		static * get( id ) {
-
-			return 'Got ' + schema.name;
-		}
-
-		static * find( id ) {
-			return 'List ' + schema.name;
-		}
-
-		static * update( id ) {
-			return "Hohoho";
-		}
-
-		static * delete( id ) {
-			return "Hohoho";
-		}
-	}
-
-
 	// This way we can new jollof.models.user({firstName:'Joe'})
-	return ModelProxy;
+	return Model;
 }
