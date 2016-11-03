@@ -56,6 +56,9 @@ module.exports.modelize = function ( schema ) {
 
 			var modelAccessor = {
 				set ( target, key, value ) {
+					if(target._isDeleted)
+						throw new Error('Jollof Data: Cannot set data for a deleted item');
+
 					if (dataKeys.indexOf(key) > -1)
 						target._data[ key ] = value;
 					else if (adapter.getIdFields().indexOf(key) > -1)
@@ -65,6 +68,9 @@ module.exports.modelize = function ( schema ) {
 					return true
 				},
 				get ( target, key ) {
+					if(target._isDeleted)
+						throw new Error('Jollof Data: Cannot set data for a deleted item');
+
 					//if key exists in data's keys, get from there. otherwise get from the model
 					if (dataKeys.indexOf(key) > -1)
 						return target._data[ key ];
@@ -140,6 +146,19 @@ module.exports.modelize = function ( schema ) {
 			// log.debug('Saved ' + this._collectionName)
 			return true;
 
+		}
+
+		_destroy(){
+			this._isDeleted = true;
+			// this._data = null;
+			this._ids = null;
+		}
+
+		* delete(){
+			yield adapter.delete(this);
+
+			this._destroy();
+			return true;
 		}
 
 	};
