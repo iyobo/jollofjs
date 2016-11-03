@@ -40,21 +40,4 @@ module.exports.services = data.services;
 //Initialize project DataVerse
 data.init();
 
-// setTimeout(()=>{
 module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
-// },2000)
-
-// co(function*() {
-//
-// 	for(let m in data.models){
-// 		const modelClass = data.models[m];
-// 		try {
-// 			yield modelClass.setup();
-// 			log.debug('Setup ' + modelClass.collectionName)
-// 		}catch(err){
-// 			log.error(err);
-// 		}
-// 	}
-// 	// module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');
-// });
-
