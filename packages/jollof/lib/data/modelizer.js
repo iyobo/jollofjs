@@ -82,10 +82,6 @@ module.exports.modelize = function ( schema ) {
 			return new Proxy(this, modelAccessor);
 		}
 
-		isPersisted(){
-			return this._ids && this._ids.length > 0;
-		}
-
 		/**
 		 * Must be called once, during boot, to configure the database with
 		 * collections/indices for this Model.
@@ -108,7 +104,7 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		static * get( id, params ) {
-			const val= yield adapter.get(collectionName, id, params || {});
+			const val = yield adapter.get(collectionName, id, params || {});
 			return Model.instantiate(val);
 		}
 
@@ -117,14 +113,14 @@ module.exports.modelize = function ( schema ) {
 		 * @param data
 		 * @returns {*}
 		 */
-		static instantiate(data) {
+		static instantiate( data ) {
 
 			if (!data)
 				return null;
 
 			if (Array.isArray(data)) {
 				//This is an array of items
-				return data.map((item)=>{
+				return data.map(( item )=> {
 					return new Model(item);
 				});
 			}
@@ -135,13 +131,31 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		/**
+		 * Prepares the criteria for adapter use.
+		 * E.g if the word 'id' exists in the criteria, convert that to the adapter's idField.
+		 *
+		 * @param criteria
+		 * @returns {*}
+		 * @private
+		 */
+		static _scrubCriteria( criteria ) {
+			if (criteria[ 'id' ] && 'id' !== adapter.idField) {
+				criteria[ adapter.idField ] = criteria[ 'id' ];
+				delete criteria[ 'id' ];
+			}
+
+			return criteria
+		}
+
+		/**
 		 *
 		 * @param criteria
 		 * @param params
 		 * @returns {*}
 		 */
 		static * find( criteria, params ) {
-			const res= yield adapter.find(collectionName, criteria, params || {});
+
+			const res = yield adapter.find(collectionName, Model._scrubCriteria(criteria), params || {});
 			return Model.instantiate(res);
 		}
 
@@ -154,7 +168,7 @@ module.exports.modelize = function ( schema ) {
 		static * findOne( criteria, params ) {
 			params = params || {};
 			params.limit = 1;
-			const res= yield adapter.find(collectionName, criteria, params);
+			const res = yield adapter.find(collectionName, Model._scrubCriteria(criteria), params || {});
 			return Model.instantiate(res);
 		}
 
@@ -165,7 +179,7 @@ module.exports.modelize = function ( schema ) {
 		 * @returns {*}
 		 */
 		static * update( criteria, params ) {
-			return yield adapter.update(collectionName, criteria, params || {});
+			return yield adapter.update(collectionName, Model._scrubCriteria(criteria), params || {});
 		}
 
 		/**
@@ -177,17 +191,16 @@ module.exports.modelize = function ( schema ) {
 		static * updateOne( criteria, params ) {
 			params = params || {};
 			params.limit = 1;
-			return yield adapter.update(collectionName, criteria, params);
+			return yield adapter.update(collectionName, Model._scrubCriteria(criteria), params || {});
 		}
 
 		/**
-		 *
 		 * @param criteria
 		 * @param params
 		 * @returns {*}
 		 */
 		static * remove( criteria, params ) {
-			return yield adapter.remove(collectionName, criteria, params || {});
+			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params || {});
 		}
 
 		/**
@@ -199,7 +212,7 @@ module.exports.modelize = function ( schema ) {
 		static * removeOne( criteria, params ) {
 			params = params || {};
 			params.limit = 1;
-			return yield adapter.remove(collectionName, criteria, params);
+			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params);
 		}
 
 		_loadData( data ) {
@@ -235,6 +248,10 @@ module.exports.modelize = function ( schema ) {
 			this._rules = joi.object().keys(tempStructure);
 		}
 
+		isPersisted() {
+			return (this._ids && this._ids[adapter.idField] );
+		}
+
 		_setDateCreated() {
 			if (!this._data.dateCreated)
 				this._data.dateCreated = new Date();
@@ -264,7 +281,7 @@ module.exports.modelize = function ( schema ) {
 			yield this.validate();
 
 			this._setTimestamps();
-			const res = yield adapter.save(this);
+			const res = yield adapter.saveModel(this);
 			log.debug('Saved ' + this._ids[ adapter.idField ]);
 			return res;
 		}
@@ -284,8 +301,8 @@ module.exports.modelize = function ( schema ) {
 		 * Delete this item from the database
 		 * @returns {boolean}
 		 */
-		* delete() {
-			yield adapter.remove(this);
+		* remove() {
+			yield adapter.removeModel(this);
 
 			this._markDeleted();
 			return true;
