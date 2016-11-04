@@ -249,7 +249,7 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		isPersisted() {
-			return (this._ids && this._ids[adapter.idField] );
+			return (this._ids && this._ids[ adapter.idField ] );
 		}
 
 		_setDateCreated() {
@@ -266,9 +266,32 @@ module.exports.modelize = function ( schema ) {
 			this._setDateUpdated();
 		}
 
-
 		* validate() {
 			yield joiValidatePromise(this._data, this._rules);
+		}
+
+		* _preSave() {
+			if (schema.hooks && schema.hooks.pre && schema.hooks.pre.save) {
+				yield schema.hooks.pre.save(this);
+			}
+		}
+
+		* _preCreate() {
+			if (schema.hooks && schema.hooks.pre && schema.hooks.pre.create) {
+				yield schema.hooks.pre.create(this);
+			}
+		}
+
+		* _postSave() {
+			if (schema.hooks && schema.hooks.post && schema.hooks.post.save) {
+				yield schema.hooks.post.save(this);
+			}
+		}
+
+		* _postCreate() {
+			if (schema.hooks && schema.hooks.post && schema.hooks.post.create) {
+				yield schema.hooks.post.create(this);
+			}
 		}
 
 		/**
@@ -277,11 +300,25 @@ module.exports.modelize = function ( schema ) {
 		 */
 		* save() {
 
+			const creating = this.isPersisted()?false: true;
+
+			//pre
+			if(creating)
+				yield this._preCreate(this);
+
+			yield this._preSave(this);
+
 			//validate
 			yield this.validate();
 
 			this._setTimestamps();
 			const res = yield adapter.saveModel(this);
+
+			if(creating)
+				yield this._postCreate(this);
+
+			yield this._postSave(this);
+
 			log.debug('Saved ' + this._ids[ adapter.idField ]);
 			return res;
 		}
