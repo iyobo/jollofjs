@@ -352,6 +352,10 @@ module.exports.modelize = function ( schema ) {
 			return _.assign(this._ids, this._data);
 		}
 
+		toString(){
+			return JSON.stringify(this.display());
+		}
+
 	};
 
 	// This way we can new jollof.models.user({firstName:'Joe'})
