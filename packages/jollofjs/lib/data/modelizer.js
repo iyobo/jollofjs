@@ -294,6 +294,19 @@ module.exports.modelize = function ( schema ) {
 			}
 		}
 
+		* _preRemove() {
+			if (schema.hooks && schema.hooks.pre && schema.hooks.pre.remove) {
+				yield schema.hooks.pre.remove(this);
+			}
+		}
+
+		* _postRemove() {
+			if (schema.hooks && schema.hooks.post && schema.hooks.post.remove) {
+				yield schema.hooks.post.remove(this);
+			}
+		}
+
+
 		/**
 		 * Persists the model object in the DB
 		 * @returns {boolean}
@@ -325,6 +338,7 @@ module.exports.modelize = function ( schema ) {
 
 		/**
 		 * Marks this item as deleted.
+		 * Severs ties with stuff and prepare this object as much as possible for GC.
 		 * @private
 		 */
 		_markDeleted() {
@@ -339,7 +353,10 @@ module.exports.modelize = function ( schema ) {
 		 * @returns {boolean}
 		 */
 		* remove() {
+
+			yield this._preRemove();
 			yield adapter.removeModel(this);
+			yield this._postRemove();
 
 			this._markDeleted();
 			return true;
