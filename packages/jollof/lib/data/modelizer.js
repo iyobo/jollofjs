@@ -103,7 +103,7 @@ module.exports.modelize = function ( schema ) {
 			return adapter;
 		}
 
-		static * get( id, params ) {
+		static * findById( id, params ) {
 			const val = yield adapter.get(collectionName, id, params || {});
 			return Model.instantiate(val);
 		}
@@ -166,9 +166,7 @@ module.exports.modelize = function ( schema ) {
 		 * @returns {*}
 		 */
 		static * findOne( criteria, params ) {
-			params = params || {};
-			params.limit = 1;
-			const res = yield adapter.find(collectionName, Model._scrubCriteria(criteria), params || {});
+			const res = yield adapter.findOne(collectionName, Model._scrubCriteria(criteria), params || {});
 			return Model.instantiate(res);
 		}
 
@@ -183,16 +181,20 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		/**
+		 * DISALLOWED
+		 * If you are not sure your update query is only updating one,
+		 * then you need to just grab that as a model, compare/contrast and update the one you want.
+		 * Prevents mistaken updates.
 		 *
 		 * @param criteria
 		 * @param params
 		 * @returns {*}
 		 */
-		static * updateOne( criteria, params ) {
-			params = params || {};
-			params.limit = 1;
-			return yield adapter.update(collectionName, Model._scrubCriteria(criteria), params || {});
-		}
+		// static * updateOne( criteria, params ) {
+		// 	params = params || {};
+		// 	params.limit = 1;
+		// 	return yield adapter.update(collectionName, Model._scrubCriteria(criteria), params || {});
+		// }
 
 		/**
 		 * @param criteria
