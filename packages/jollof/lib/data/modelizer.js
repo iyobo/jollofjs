@@ -104,7 +104,7 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		static * findById( id, params ) {
-			const val = yield adapter.get(collectionName, id, params || {});
+			const val = yield adapter.findById(collectionName, id, params || {});
 			return Model.instantiate(val);
 		}
 
@@ -269,7 +269,10 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		* validate() {
-			yield joiValidatePromise(this._data, this._rules);
+			this._data = yield joiValidatePromise(this._data, this._rules, {
+				stripUnknown: true, //quietly strip unknown keys without throwing an error
+			});
+			// console.log(this._data)
 		}
 
 		* _preSave() {
