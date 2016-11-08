@@ -84,6 +84,27 @@
 	 */
 	function buildResource(schema) {
 
+		console.log(schema);
+
+		var modelListFields = _.map(schema.structure, function (v, k) {
+			console.log('k', k, 'v', v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextField, { source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextField, { source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateField, { source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextField, { source: k });
+					break;
+
+			}
+		});
+
 		var modelList = function modelList(props) {
 			return _react2.default.createElement(
 				_mui.List,
@@ -91,11 +112,7 @@
 				_react2.default.createElement(
 					_mui.Datagrid,
 					null,
-					_react2.default.createElement(_mui.TextField, { source: 'id' }),
-					_react2.default.createElement(_mui.TextField, { source: 'title' }),
-					_react2.default.createElement(_mui.DateField, { source: 'published_at' }),
-					_react2.default.createElement(_mui.TextField, { source: 'average_note' }),
-					_react2.default.createElement(_mui.TextField, { source: 'views' }),
+					modelListFields,
 					_react2.default.createElement(_mui.EditButton, { basePath: '/posts' })
 				)
 			);
@@ -143,7 +160,6 @@
 
 	var modelResources = [];
 	axios.get('/admin/models').then(function (response) {
-		console.log(response.data);
 
 		_.each(response.data, function (schema) {
 			modelResources.push(buildResource(schema));

@@ -29,14 +29,31 @@ const _ = require('lodash');
  */
 function buildResource( schema ) {
 
+	console.log(schema);
+
+	let modelListFields = _.map(schema.structure,(v,k)=>{
+		console.log('k',k,'v',v);
+		switch (v._type){
+			case 'string':
+				return <TextField source={k}/>
+				break;
+			case 'number':
+				return <TextField source={k}/>
+				break;
+			case 'date':
+				return <DateField source={k}/>
+				break;
+			default:
+				return <TextField source={k}/>
+				break;
+
+		}
+	});
+
 	const modelList = ( props ) => (
 		<List {...props}>
 			<Datagrid>
-				<TextField source="id"/>
-				<TextField source="title"/>
-				<DateField source="published_at"/>
-				<TextField source="average_note"/>
-				<TextField source="views"/>
+				{modelListFields}
 				<EditButton basePath="/posts"/>
 			</Datagrid>
 		</List>
@@ -74,7 +91,6 @@ function buildResource( schema ) {
 let modelResources = [];
 axios.get('/admin/models')
 	.then(function ( response ) {
-		console.log(response.data);
 
 		_.each(response.data, ( schema )=> {
 			modelResources.push(buildResource(schema));
