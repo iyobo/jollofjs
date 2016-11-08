@@ -5,8 +5,10 @@
     <title>Jollof Admin</title>
 
 </head>
-<body ng-app="myApp">
+<body>
 <h1>Jollof Admin</h1>
 
+
+<script src="/jollofstatic/admin.bundle.js"></script>
 </body>
 </html>

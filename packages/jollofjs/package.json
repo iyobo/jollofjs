@@ -4,7 +4,8 @@
   "description": "A solid application framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "admin": "webpack --progress --colors --watch"
   },
   "repository": {
     "type": "git",
@@ -18,11 +19,21 @@
   "author": "Iyobo Eki",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.15.2",
     "bluebird": "^3.4.6",
     "co": "^4.6.0",
     "documentjs": "^0.4.4",
     "joi": "^9.2.0",
     "require-dir": "^0.3.1",
-    "validate.js": "^0.10.0"
+    "validate.js": "^0.10.0",
+    "webpack": "^1.13.3"
+  },
+  "devDependencies": {
+    "admin-on-rest": "^0.4.0",
+    "css-loader": "^0.25.0",
+    "quill": "^1.1.5",
+    "react": "^15.3.2",
+    "static": "^2.0.0",
+    "style-loader": "^0.13.1"
   }
 }

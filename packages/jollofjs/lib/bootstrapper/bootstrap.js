@@ -100,13 +100,13 @@ module.exports.bootServer = function (overWriteFn) {
 			//contoller/router
 			serverApp.use(kc.tools()); // optional
 
-			//statics
+			//app statics
 			serverApp.use(serve({rootDir: 'static', rootPath: '/static'}));
 
-			serverApp.use(serve({rootDir: 'logos', rootPath: '/logos'}));
-			serverApp.use(serve({rootDir: 'client', rootPath: '/app'}));
-			serverApp.use(serve({rootDir: 'client/assets', rootPath: '/assets'}));
-			serverApp.use(serve({rootDir: 'client/global', rootPath: '/global'}));
+			//Internal jollof statics
+			serverApp.use(serve({rootDir: 'node_modules/jollof/static', rootPath: '/jollofstatic'}));
+
+
 
 			//Subdomain Routing
 			serverApp.use(subdomain('emp', kc.router({

@@ -1,53 +1,63 @@
 'use strict'
 
-const modelObj = require('../../loadModels');
+const data = require('../../data');
+const _ = require('lodash');
 
 //FIXME: This should reference services...if it's still being used
 
 module.exports = {
 	index: function*() {
+		yield this.render('jollofadmin/index', {models: data.models});
+	},
 
-		yield this.render('admin/index',{models: modelObj.models});
+	models: function*( ) {
+		//generate a list of model schemas and send it down
+		let models = [];
+		_.each(data.models, (model)=>{
+			models.push(model.schema)
+		});
+
+		this.body = models;
 	},
 
 	//List all
-	list: function*(modelName) {
+	list: function*( modelName ) {
 		// const model = EL.models[modelName]
 
 		// this.body = {
 		// 	result: yield model.paginate({}, {})
 		// };
-		this.body= (yield modelObj.models[modelName].paginate({}, {})).docs;
+		this.body = (yield data.models[ modelName ].paginate({}, {})).docs;
 
 	},
 
 	//Get singular
-	get: function*(modelName, id) {
+	get: function*( modelName, id ) {
 
 		this.body = {
-			result: yield modelObj.models.modelName.findById(id)
+			result: yield data.models[ modelName ].findById(id)
 		};
 	},
 
 	//Create
-	post: function*(modelName) {
+	post: function*( modelName ) {
 		//get schema
 		this.body = {
-			result: yield modelObj.models.modelName.create(this.request.body)
+			result: yield data.models[ modelName ].create(this.request.body)
 		};
 	},
 
 	//Update
-	patch: function*(modelName, id) {
+	patch: function*( modelName, id ) {
 		this.body = {
-			result: yield modelObj.models.modelName.findByIDAndUpdate(id, this.request.body)
+			result: yield data.models[ modelName ].update(id, this.request.body)
 		};
 	},
 
 	//Delete or disable
-	delete: function*(modelName, id) {
+	delete: function*( modelName, id ) {
 		this.body = {
-			result: yield modelObj.models.modelName.remove(id)
+			result: yield data.models[ modelName ].remove(id)
 		}
 	},
 }

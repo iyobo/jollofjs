@@ -184,6 +184,17 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		/**
+		 *
+		 * @param criteria
+		 * @param params
+		 * @returns {*}
+		 */
+		static * create( data, params ) {
+			return yield adapter.create(collectionName, data, params || {});
+
+		}
+
+		/**
 		 * DISALLOWED
 		 * If you are not sure your update query is only updating one,
 		 * then you need to just grab that as a model, compare/contrast and update the one you want.
