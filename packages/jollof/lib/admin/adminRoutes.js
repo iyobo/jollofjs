@@ -4,7 +4,8 @@
 var helper = require('../router/helper');
 
 const routes = {
-	'get /admin': {to: 'adminController index', constraint:'adminSecurity loggedIn'},
+	// 'get /admin': {to: 'adminController index', constraint:'adminSecurity loggedIn'},
+	'get /admin': {to: 'adminController index'},
 }
 
 //All api routes
