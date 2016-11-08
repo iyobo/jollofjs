@@ -147,7 +147,9 @@
 
 		_.each(response.data, function (schema) {
 			modelResources.push(buildResource(schema));
-		})(_react2.default.createElement(
+		});
+
+		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
 			{ restClient: (0, _adminOnRest.simpleRestClient)('http://localhost:3333/api') },
 			modelResources
