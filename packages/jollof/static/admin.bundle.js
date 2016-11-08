@@ -87,7 +87,7 @@
 		console.log(schema);
 
 		var modelListFields = _.map(schema.structure, function (v, k) {
-			console.log('k', k, 'v', v);
+			// console.log('k',k,'v',v);
 			switch (v._type) {
 				case 'string':
 					return _react2.default.createElement(_mui.TextField, { source: k });
@@ -105,19 +105,6 @@
 			}
 		});
 
-		var modelList = function modelList(props) {
-			return _react2.default.createElement(
-				_mui.List,
-				props,
-				_react2.default.createElement(
-					_mui.Datagrid,
-					null,
-					modelListFields,
-					_react2.default.createElement(_mui.EditButton, { basePath: '/posts' })
-				)
-			);
-		};
-
 		var modelTitle = function modelTitle(_ref) {
 			var record = _ref.record;
 
@@ -129,17 +116,48 @@
 			);
 		};
 
+		var modelUpdateFields = _.map(schema.structure, function (v, k) {
+			// console.log('k',k,'v',v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextInput, { source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextInput, { source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateInput, { source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextInput, { source: k });
+					break;
+			}
+		});
+
+		// Views
+
+		var modelList = function modelList(props) {
+			return _react2.default.createElement(
+				_mui.List,
+				props,
+				_react2.default.createElement(
+					_mui.Datagrid,
+					null,
+					_react2.default.createElement(_mui.TextField, { source: 'id' }),
+					modelListFields,
+					_react2.default.createElement(_mui.EditButton, { basePath: '/posts' })
+				)
+			);
+		};
+
 		var modelEdit = function modelEdit(props) {
 			return _react2.default.createElement(
 				_mui.Edit,
 				_extends({ title: modelTitle }, props),
 				_react2.default.createElement(_mui.DisabledInput, { source: 'id' }),
-				_react2.default.createElement(_mui.TextInput, { source: 'title' }),
-				_react2.default.createElement(_mui.TextInput, { source: 'teaser', options: { multiLine: true } }),
-				_react2.default.createElement(_mui.LongTextInput, { source: 'body' }),
-				_react2.default.createElement(_mui.DateInput, { label: 'Publication date', source: 'published_at' }),
-				_react2.default.createElement(_mui.TextInput, { source: 'average_note' }),
-				_react2.default.createElement(_mui.DisabledInput, { label: 'Nb views', source: 'views' })
+				modelUpdateFields,
+				_react2.default.createElement(_mui.DisabledInput, { source: 'dateCreated' }),
+				_react2.default.createElement(_mui.DisabledInput, { source: 'lastUpdated' })
 			);
 		};
 
@@ -147,11 +165,7 @@
 			return _react2.default.createElement(
 				_mui.Create,
 				_extends({ title: 'Create a Post' }, props),
-				_react2.default.createElement(_mui.TextInput, { source: 'title' }),
-				_react2.default.createElement(_mui.TextInput, { source: 'teaser', options: { multiLine: true } }),
-				_react2.default.createElement(_mui.LongTextInput, { source: 'body' }),
-				_react2.default.createElement(_mui.TextInput, { label: 'Publication date', source: 'published_at' }),
-				_react2.default.createElement(_mui.TextInput, { source: 'average_note' })
+				modelUpdateFields
 			);
 		};
 
@@ -167,7 +181,7 @@
 
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
-			{ restClient: (0, _adminOnRest.simpleRestClient)('http://localhost:3333/api') },
+			{ title: 'Jollof Admin', restClient: (0, _adminOnRest.simpleRestClient)('http://localhost:3333/api') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {
