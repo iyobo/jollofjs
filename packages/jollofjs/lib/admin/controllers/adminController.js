@@ -7,12 +7,6 @@ const modelObj = require('../../loadModels');
 module.exports = {
 	index: function*() {
 
-		// let ng
-		// //Generate config string for ngadmin
-		// for (let k in EL.models){
-		//
-		// }
-
 		yield this.render('admin/index',{models: modelObj.models});
 	},
 

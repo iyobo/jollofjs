@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jollof Admin</title>
+
+</head>
+<body ng-app="myApp">
+<h1>Jollof Admin</h1>
+
+</body>
+</html>

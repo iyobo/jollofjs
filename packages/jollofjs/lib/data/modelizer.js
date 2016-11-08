@@ -88,7 +88,6 @@ module.exports.modelize = function ( schema ) {
 		 */
 		static * setup() {
 			const g = yield adapter.configureCollection(schema);
-			console.log(g);
 		}
 
 		static get collectionName() {
@@ -101,6 +100,10 @@ module.exports.modelize = function ( schema ) {
 
 		static get adapter() {
 			return adapter;
+		}
+
+		static get schema() {
+			return schema;
 		}
 
 		static * findById( id, params ) {

@@ -9,6 +9,7 @@
 const appPaths = require('../../appPaths');
 const log = require('../log');
 const path = require('path');
+const _ = require('lodash');
 class Env {
 
 	constructor( Helpers ) {
@@ -18,33 +19,19 @@ class Env {
 
 		//load base
 		try {
-			this.settings = require(appPaths.baseConfig);
+			this.settings = require('./base');
+			const appBase = require(appPaths.baseConfig);
+
+			_.merge(this.settings , appBase)
 
 			//load environment
 			var envSettings = require(path.join(appPaths.config,this.currentEnv));
-			this.overwriteSettings(envSettings, this.settings);
+			_.merge(this.settings, envSettings);
+
 			console.log('[Environment]', this.currentEnv, 'settings loaded.');
 
 		} catch (err) {
 			log.warn('Jollof config not loaded',err.message);
-		}
-	}
-
-	/**
-	 * overwrites settings in baseMap with EnvMap
-	 * @param envMap
-	 * @param baseMap
-	 */
-	overwriteSettings( envMap, baseMap ) {
-		for (let k in envMap) {
-			var current = envMap[ k ];
-
-			if (typeof current === 'object')
-				this.overwriteSettings(current, baseMap[ k ])
-			else
-				baseMap[ k ] = current;
-
-
 		}
 	}
 
