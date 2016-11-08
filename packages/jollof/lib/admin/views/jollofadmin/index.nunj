@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>Jollof Admin</h1>
-
+<div id="root"></div>
 
 <script src="/jollofstatic/admin.bundle.js"></script>
 </body>
