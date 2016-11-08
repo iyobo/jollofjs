@@ -80,7 +80,7 @@ axios.get('/admin/models')
 			modelResources.push(buildResource(schema));
 		})
 
-		(
+		render(
 			<Admin restClient={simpleRestClient('http://localhost:3333/api')}>
 				{modelResources}
 			</Admin>
