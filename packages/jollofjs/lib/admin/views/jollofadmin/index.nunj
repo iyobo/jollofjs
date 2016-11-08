@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Jollof Admin</title>
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid rgb(0, 188, 212); /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin: 40px;
+            animation: spin 1s linear infinite;
+        }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-<h1>Jollof Admin</h1>
-<div id="root"></div>
+<div id="root">
+    <span>Loading Jollof Admin...</span>
+    <div class="loader"></div>
+</div>
 
 <script src="/jollofstatic/admin.bundle.js"></script>
 </body>

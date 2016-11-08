@@ -32,7 +32,7 @@ function buildResource( schema ) {
 	console.log(schema);
 
 	let modelListFields = _.map(schema.structure,(v,k)=>{
-		console.log('k',k,'v',v);
+		// console.log('k',k,'v',v);
 		switch (v._type){
 			case 'string':
 				return <TextField source={k}/>
@@ -50,38 +50,53 @@ function buildResource( schema ) {
 		}
 	});
 
+	const modelTitle = ( {record} ) => {
+		return <span>Post {record ? `"${record.title}"` : ''}</span>;
+	};
+
+
+	let modelUpdateFields = _.map(schema.structure,(v,k)=>{
+		// console.log('k',k,'v',v);
+		switch (v._type){
+			case 'string':
+				return <TextInput source={k}/>
+				break;
+			case 'number':
+				return <TextInput source={k}/>
+				break;
+			case 'date':
+				return <DateInput source={k}/>
+				break;
+			default:
+				return <TextInput source={k}/>
+				break;
+		}
+	});
+
+	// Views
+
 	const modelList = ( props ) => (
 		<List {...props}>
 			<Datagrid>
+				<TextField source="id"/>
 				{modelListFields}
 				<EditButton basePath="/posts"/>
 			</Datagrid>
 		</List>
 	);
 
-	const modelTitle = ( {record} ) => {
-		return <span>Post {record ? `"${record.title}"` : ''}</span>;
-	};
-
 	const modelEdit = ( props ) => (
 		<Edit title={modelTitle} {...props}>
 			<DisabledInput source="id"/>
-			<TextInput source="title"/>
-			<TextInput source="teaser" options={{multiLine: true}}/>
-			<LongTextInput source="body"/>
-			<DateInput label="Publication date" source="published_at"/>
-			<TextInput source="average_note"/>
-			<DisabledInput label="Nb views" source="views"/>
+			{modelUpdateFields}
+			<DisabledInput source="dateCreated"/>
+			<DisabledInput source="lastUpdated"/>
 		</Edit>
 	);
 
 	const modelCreate = ( props ) => (
 		<Create title="Create a Post" {...props}>
-			<TextInput source="title"/>
-			<TextInput source="teaser" options={{multiLine: true}}/>
-			<LongTextInput source="body"/>
-			<TextInput label="Publication date" source="published_at"/>
-			<TextInput source="average_note"/>
+			{modelUpdateFields}
 		</Create>
 	);
 
@@ -97,7 +112,7 @@ axios.get('/admin/models')
 		})
 
 		render(
-			<Admin restClient={simpleRestClient('http://localhost:3333/api')}>
+			<Admin title="Jollof Admin" restClient={simpleRestClient('http://localhost:3333/api')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')
