@@ -18,13 +18,18 @@ import {
 	DateInput
 } from 'admin-on-rest/lib/mui';
 export PostIcon from 'material-ui/svg-icons/action/book';
-// import {PostList, PostEdit, PostCreate, PostIcon} from './posts';
 const axios = require('axios');
+const _ = require('lodash');
 
-function loadResources() {
 
+/**
+ * Builds a client resource for this schema
+ * @param schema
+ * @returns {XML}
+ */
+function buildResource( schema ) {
 
-	 const PostList = ( props ) => (
+	const modelList = ( props ) => (
 		<List {...props}>
 			<Datagrid>
 				<TextField source="id"/>
@@ -37,12 +42,12 @@ function loadResources() {
 		</List>
 	);
 
-	const PostTitle = ( {record} ) => {
+	const modelTitle = ( {record} ) => {
 		return <span>Post {record ? `"${record.title}"` : ''}</span>;
 	};
 
-	const PostEdit = ( props ) => (
-		<Edit title={PostTitle} {...props}>
+	const modelEdit = ( props ) => (
+		<Edit title={modelTitle} {...props}>
 			<DisabledInput source="id"/>
 			<TextInput source="title"/>
 			<TextInput source="teaser" options={{multiLine: true}}/>
@@ -53,7 +58,7 @@ function loadResources() {
 		</Edit>
 	);
 
-	const PostCreate = ( props ) => (
+	const modelCreate = ( props ) => (
 		<Create title="Create a Post" {...props}>
 			<TextInput source="title"/>
 			<TextInput source="teaser" options={{multiLine: true}}/>
@@ -62,23 +67,27 @@ function loadResources() {
 			<TextInput source="average_note"/>
 		</Create>
 	);
+
+	return <Resource key={schema.name} name={schema.name} list={modelList} edit={modelEdit} create={modelCreate}/>
 }
 
 let modelResources = [];
 axios.get('/admin/models')
 	.then(function ( response ) {
-		console.log(response);
-		// modelResources = loadResources();
+		console.log(response.data);
+
+		_.each(response.data, ( schema )=> {
+			modelResources.push(buildResource(schema));
+		})
+
+		(
+			<Admin restClient={simpleRestClient('http://localhost:3333/api')}>
+				{modelResources}
+			</Admin>
+			, document.getElementById('root')
+		)
+
 	})
 	.catch(function ( error ) {
 		console.log(error);
 	});
-
-
-render(
-	<Admin restClient={simpleRestClient('http://localhost:3333/api')}>
-		{/*<Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} icon={PostIcon}/>*/}
-		modelResources
-	</Admin>,
-	document.getElementById('root')
-);
