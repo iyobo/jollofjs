@@ -64,6 +64,10 @@
 
 	var _adminOnRest = __webpack_require__(172);
 
+	var _Dashboard = __webpack_require__(978);
+
+	var _Dashboard2 = _interopRequireDefault(_Dashboard);
+
 	var _mui = __webpack_require__(796);
 
 	var _book = __webpack_require__(951);
@@ -86,56 +90,56 @@
 
 		console.log(schema);
 
-		var modelListFields = _.map(schema.structure, function (v, k) {
-			// console.log('k',k,'v',v);
-			switch (v._type) {
-				case 'string':
-					return _react2.default.createElement(_mui.TextField, { source: k });
-					break;
-				case 'number':
-					return _react2.default.createElement(_mui.TextField, { source: k });
-					break;
-				case 'date':
-					return _react2.default.createElement(_mui.DateField, { source: k });
-					break;
-				default:
-					return _react2.default.createElement(_mui.TextField, { source: k });
-					break;
-
-			}
-		});
-
 		var modelTitle = function modelTitle(_ref) {
 			var record = _ref.record;
 
 			return _react2.default.createElement(
 				'span',
 				null,
-				'Post ',
+				'Posty ',
 				record ? '"' + record.title + '"' : ''
 			);
 		};
 
+		var modelListFields = _.map(schema.structure, function (v, k) {
+			// console.log('k',k,'v',v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+
+			}
+		});
+
+		//For create and Edit
 		var modelUpdateFields = _.map(schema.structure, function (v, k) {
 			// console.log('k',k,'v',v);
 			switch (v._type) {
 				case 'string':
-					return _react2.default.createElement(_mui.TextInput, { source: k });
+					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
 					break;
 				case 'number':
-					return _react2.default.createElement(_mui.TextInput, { source: k });
+					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
 					break;
 				case 'date':
-					return _react2.default.createElement(_mui.DateInput, { source: k });
+					return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
 					break;
 				default:
-					return _react2.default.createElement(_mui.TextInput, { source: k });
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
 					break;
 			}
 		});
 
 		// Views
-
 		var modelList = function modelList(props) {
 			return _react2.default.createElement(
 				_mui.List,
@@ -164,7 +168,7 @@
 		var modelCreate = function modelCreate(props) {
 			return _react2.default.createElement(
 				_mui.Create,
-				_extends({ title: 'Create a Post' }, props),
+				_extends({ title: "Create a " + schema.name }, props),
 				modelUpdateFields
 			);
 		};
@@ -173,7 +177,7 @@
 	}
 
 	var modelResources = [];
-	axios.get('/admin/models').then(function (response) {
+	axios.get('/api/admin/models').then(function (response) {
 
 		_.each(response.data, function (schema) {
 			modelResources.push(buildResource(schema));
@@ -181,7 +185,7 @@
 
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
-			{ title: 'Jollof Admin', restClient: (0, _adminOnRest.simpleRestClient)('http://localhost:3333/api') },
+			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.simpleRestClient)('http://localhost:3333/api/admin/v1') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {
@@ -111376,6 +111380,40 @@
 	}.call(this));
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(236)(module)))
+
+/***/ },
+/* 978 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Card = __webpack_require__(917);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Created by iyobo on 2016-11-08.
+	 */
+	exports.default = function () {
+		return _react2.default.createElement(
+			_Card.Card,
+			{ style: { margin: '2em' } },
+			_react2.default.createElement(_Card.CardHeader, { title: 'Welcome to the Jollof Administrator' }),
+			_react2.default.createElement(
+				_Card.CardText,
+				null,
+				'Make changes responsibly'
+			)
+		);
+	};
 
 /***/ }
 /******/ ]);
