@@ -143,7 +143,7 @@ module.exports.modelize = function ( schema ) {
 		 */
 		static _scrubCriteria( criteria ) {
 
-			criteria = criteria||{};
+			criteria = criteria || {};
 
 			if (criteria[ 'id' ] && 'id' !== adapter.idField) {
 				criteria[ adapter.idField ] = criteria[ 'id' ];
@@ -182,8 +182,9 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * update( criteria, params ) {
-			return yield adapter.update(collectionName, Model._scrubCriteria(criteria), params || {});
+		static * update( criteria, data, params ) {
+			const g = yield adapter.update(collectionName, Model._scrubCriteria(criteria), data, params || {});
+			return g;
 		}
 
 		/**
@@ -336,10 +337,10 @@ module.exports.modelize = function ( schema ) {
 		 */
 		* save() {
 
-			const creating = this.isPersisted()?false: true;
+			const creating = this.isPersisted() ? false : true;
 
 			//pre
-			if(creating)
+			if (creating)
 				yield this._preCreate(this);
 
 			yield this._preSave(this);
@@ -350,7 +351,7 @@ module.exports.modelize = function ( schema ) {
 			this._setTimestamps();
 			const res = yield adapter.saveModel(this);
 
-			if(creating)
+			if (creating)
 				yield this._postCreate(this);
 
 			yield this._postSave(this);
@@ -392,7 +393,7 @@ module.exports.modelize = function ( schema ) {
 			return _.assign(this._ids, this._data);
 		}
 
-		toString(){
+		toString() {
 			return JSON.stringify(this.display());
 		}
 
