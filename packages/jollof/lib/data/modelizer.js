@@ -142,6 +142,9 @@ module.exports.modelize = function ( schema ) {
 		 * @private
 		 */
 		static _scrubCriteria( criteria ) {
+
+			criteria = criteria||{};
+
 			if (criteria[ 'id' ] && 'id' !== adapter.idField) {
 				criteria[ adapter.idField ] = criteria[ 'id' ];
 				delete criteria[ 'id' ];
@@ -190,7 +193,8 @@ module.exports.modelize = function ( schema ) {
 		 * @returns {*}
 		 */
 		static * create( data, params ) {
-			return yield adapter.create(collectionName, data, params || {});
+
+			return yield new Model(data).save()
 
 		}
 

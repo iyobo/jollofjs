@@ -4,6 +4,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import {simpleRestClient, Admin, Resource} from 'admin-on-rest';
+import Dashboard from './Dashboard';
 import {
 	List,
 	Edit,
@@ -31,50 +32,51 @@ function buildResource( schema ) {
 
 	console.log(schema);
 
-	let modelListFields = _.map(schema.structure,(v,k)=>{
+	const modelTitle = ( {record} ) => {
+		return <span>Posty {record ? `"${record.title}"` : ''}</span>;
+	};
+
+
+	let modelListFields = _.map(schema.structure, ( v, k )=> {
 		// console.log('k',k,'v',v);
-		switch (v._type){
+		switch (v._type) {
 			case 'string':
-				return <TextField source={k}/>
+				return <TextField key={k} source={k}/>
 				break;
 			case 'number':
-				return <TextField source={k}/>
+				return <TextField key={k} source={k}/>
 				break;
 			case 'date':
-				return <DateField source={k}/>
+				return <DateField key={k} source={k}/>
 				break;
 			default:
-				return <TextField source={k}/>
+				return <TextField key={k} source={k}/>
 				break;
 
 		}
 	});
 
-	const modelTitle = ( {record} ) => {
-		return <span>Post {record ? `"${record.title}"` : ''}</span>;
-	};
 
-
-	let modelUpdateFields = _.map(schema.structure,(v,k)=>{
+	//For create and Edit
+	let modelUpdateFields = _.map(schema.structure, ( v, k )=> {
 		// console.log('k',k,'v',v);
-		switch (v._type){
+		switch (v._type) {
 			case 'string':
-				return <TextInput source={k}/>
+				return <TextInput key={k} source={k}/>
 				break;
 			case 'number':
-				return <TextInput source={k}/>
+				return <TextInput key={k} source={k}/>
 				break;
 			case 'date':
-				return <DateInput source={k}/>
+				return <DateInput key={k} source={k}/>
 				break;
 			default:
-				return <TextInput source={k}/>
+				return <TextField key={k} source={k}/>
 				break;
 		}
 	});
 
 	// Views
-
 	const modelList = ( props ) => (
 		<List {...props}>
 			<Datagrid>
@@ -95,7 +97,7 @@ function buildResource( schema ) {
 	);
 
 	const modelCreate = ( props ) => (
-		<Create title="Create a Post" {...props}>
+		<Create title={"Create a "+schema.name} {...props}>
 			{modelUpdateFields}
 		</Create>
 	);
@@ -104,15 +106,15 @@ function buildResource( schema ) {
 }
 
 let modelResources = [];
-axios.get('/admin/models')
+axios.get('/api/admin/models')
 	.then(function ( response ) {
 
 		_.each(response.data, ( schema )=> {
 			modelResources.push(buildResource(schema));
-		})
+		});
 
 		render(
-			<Admin title="Jollof Admin" restClient={simpleRestClient('http://localhost:3333/api')}>
+			<Admin dashboard={Dashboard} title="Jollof Admin" restClient={simpleRestClient('http://localhost:3333/api/admin/v1')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')

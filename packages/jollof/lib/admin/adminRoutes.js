@@ -1,18 +1,18 @@
 /**
  * Created by iyobo on 2016-08-24.
  */
-var helper = require('../router/helper');
+
 
 const routes = {
 	// 'get /admin': {to: 'adminController index', constraint:'adminSecurity loggedIn'},
 	'get /admin': {to: 'adminController index'},
-	'get /admin/models': {to: 'adminController models'},
-	'get /admin/:modelName': {to: 'adminController list'},
+	'get /api/admin/models': {to: 'adminController models'},
+
+	'get /api/admin/v1/:modelName': {to: 'adminController list'},
+	'get /api/admin/v1/:modelName/:id': {to: 'adminController get'},
+	'post /api/admin/v1/:modelName': {to: 'adminController create'},
+	'patch /api/admin/v1/:modelName/:id': {to: 'adminController update'},
+	'delete /api/admin/v1/:modelName/:id': {to: 'adminController delete'},
 }
-
-//All api routes
-helper.generateAdminAPI(routes);
-
-
 
 module.exports = routes;
