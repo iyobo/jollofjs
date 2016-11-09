@@ -71,9 +71,9 @@ module.exports = {
 	},
 
 	//Update
-	patch: function*( modelName, id ) {
+	update: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].update(id, this.request.body)
+			this.body = yield models[ modelName ].update({id:id}, this.request.body)
 		} catch (err) {
 			this.body = err;
 		}
@@ -82,7 +82,7 @@ module.exports = {
 	//Delete or disable
 	delete: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].remove(id)
+			this.body = yield models[ modelName ].remove({id:id})
 		} catch (err) {
 			this.body = err;
 		}
