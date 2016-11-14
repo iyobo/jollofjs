@@ -33,6 +33,11 @@ function* loadModels(){
 	}
 }
 
+/**
+ * Default bootstrap behavior
+ * @param fn
+ * @returns {*}
+ */
 module.exports.boot = function (fn) {
 	return co(function*() {
 		try {

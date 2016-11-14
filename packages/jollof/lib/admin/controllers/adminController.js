@@ -34,17 +34,28 @@ module.exports = {
 
 	//List all
 	list: function*( modelName ) {
-		// const model = EL.models[modelName]
-
-		// this.body = {
-		// 	result: yield model.paginate({}, {})
-		// };
 		try {
-			let res = yield models[ modelName ].find();
+			//pagination params
+			const options = {
+				// pagination: {
+				// 	page: this.query('_page'),
+				// 	start: this.query('_start'),
+				// 	end: this.query('_end')
+				// },
+				// sorting: {
+				// 	sort: this.query('_sort'),
+				// 	order: this.query('_order')
+				// }
+			};
+
+			let res = yield models[ modelName ].find({}, options);
 			res = res.map(( it )=> {
 				return it.display();
-			})
+			});
 			this.body = res;
+
+			//Set headers
+			this.set('x-total-count', res.length);
 		} catch (err) {
 			this.body = err;
 		}
@@ -73,7 +84,7 @@ module.exports = {
 	//Update
 	update: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].update({id:id}, this.request.body)
+			this.body = yield models[ modelName ].update({id: id}, this.request.body)
 		} catch (err) {
 			this.body = err;
 		}
@@ -82,7 +93,7 @@ module.exports = {
 	//Delete or disable
 	delete: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].remove({id:id})
+			this.body = yield models[ modelName ].remove({id: id})
 		} catch (err) {
 			this.body = err;
 		}

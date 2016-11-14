@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {render} from 'react-dom';
-import {simpleRestClient, Admin, Resource} from 'admin-on-rest';
+import {simpleRestClient,jsonServerRestClient, Admin, Resource} from 'admin-on-rest';
 import Dashboard from './Dashboard';
 import {
 	List,
@@ -88,7 +88,7 @@ function buildResource( schema ) {
 	);
 
 	const modelEdit = ( props ) => (
-		<Edit title={modelTitle} {...props}>
+		<Edit title={"Edit "+schema.name} {...props}>
 			<DisabledInput source="id"/>
 			{modelUpdateFields}
 			<DisabledInput source="dateCreated"/>
@@ -114,7 +114,7 @@ axios.get('/api/admin/models')
 		});
 
 		render(
-			<Admin dashboard={Dashboard} title="Jollof Admin" restClient={simpleRestClient('http://localhost:3333/api/admin/v1')}>
+			<Admin dashboard={Dashboard} title="Jollof Admin" restClient={jsonServerRestClient(apiRoot+'/api/admin/v1')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')
