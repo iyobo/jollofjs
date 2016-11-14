@@ -107,8 +107,13 @@ module.exports.modelize = function ( schema ) {
 		}
 
 		static * findById( id, params ) {
-			const val = yield adapter.findById(collectionName, id, params || {});
-			return Model.instantiate(val);
+			const res = yield adapter.findById(collectionName, id, params || {});
+			if(params.raw){
+				return res;
+			}else{
+				return Model.instantiate(res);
+			}
+
 		}
 
 		/**
@@ -159,10 +164,15 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * find( criteria, params ) {
-
+		static * find( criteria, params ={}) {
 			const res = yield adapter.find(collectionName, Model._scrubCriteria(criteria), params || {});
-			return Model.instantiate(res);
+
+			if(params.raw){
+				return res;
+			}else{
+				return Model.instantiate(res);
+			}
+
 		}
 
 		/**
@@ -171,9 +181,14 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * findOne( criteria, params ) {
-			const res = yield adapter.findOne(collectionName, Model._scrubCriteria(criteria), params || {});
-			return Model.instantiate(res);
+		static * findOne( criteria, params ={}) {
+
+			const res = yield adapter.findOne(collectionName, Model._scrubCriteria(criteria), params);
+			if(params.raw){
+				return res;
+			}else{
+				return Model.instantiate(res);
+			}
 		}
 
 		/**
@@ -182,8 +197,8 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * update( criteria, data, params ) {
-			const g = yield adapter.update(collectionName, Model._scrubCriteria(criteria), data, params || {});
+		static * update( criteria, data, params ={}) {
+			const g = yield adapter.update(collectionName, Model._scrubCriteria(criteria), data, params);
 			return g;
 		}
 
@@ -193,7 +208,7 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * create( data, params ) {
+		static * create( data, params ={}) {
 
 			return yield new Model(data).save()
 
@@ -220,7 +235,7 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * remove( criteria, params ) {
+		static * remove( criteria, params ={}) {
 			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params || {});
 		}
 
@@ -230,7 +245,7 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * removeOne( criteria, params ) {
+		static * removeOne( criteria, params ={}) {
 			params = params || {};
 			params.limit = 1;
 			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params);
@@ -390,7 +405,13 @@ module.exports.modelize = function ( schema ) {
 		 * The json representation of this model's combined data.
 		 */
 		display() {
-			return _.assign(this._ids, this._data);
+			// Merge Ids with data
+			let disp = _.assign(this._ids, this._data);
+
+			// Convert id field to id
+			disp['id'] = disp[adapter.idField];
+
+			return disp;
 		}
 
 		toString() {

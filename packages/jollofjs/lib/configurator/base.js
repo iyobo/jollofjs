@@ -7,7 +7,7 @@
  * Created by iyobo on 2016-03-22.
  */
 module.exports = {
-	appName: "Set this in your app base",
+	appName: "Jollof App",
 
 	server: {
 		port: 3333, //Port main app runs on
@@ -37,17 +37,17 @@ module.exports = {
 		},
 		arangodb: {
 			url: 'http://jollofuser:jollofpassword@localhost:8529',
-			databaseName: 'noDatabaseNameSet',
+			databaseName: 'jollofdb',
 		},
 		rethinkdb:{
 			host: 'localhost',
 			port: '28015',
 			user: 'jollofuser',
 			password: 'jollofpassword',
-			dbname: 'noDatabaseNameSet'
+			dbname: 'jollofdb'
 		},
 		mongodb:{
-			url:'mongodb://localhost:27017/noDatabaseNameSet'
+			url:'mongodb://localhost:27017/jollofdb'
 		}
 	},
 
