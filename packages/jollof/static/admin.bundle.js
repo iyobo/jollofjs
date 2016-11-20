@@ -90,17 +90,6 @@
 
 		console.log(schema);
 
-		var modelTitle = function modelTitle(_ref) {
-			var record = _ref.record;
-
-			return _react2.default.createElement(
-				'span',
-				null,
-				'Posty ',
-				record ? '"' + record.title + '"' : ''
-			);
-		};
-
 		var modelListFields = _.map(schema.structure, function (v, k) {
 			// console.log('k',k,'v',v);
 			switch (v._type) {
@@ -146,7 +135,7 @@
 				props,
 				_react2.default.createElement(
 					_mui.Datagrid,
-					null,
+					{ key: schema.name },
 					_react2.default.createElement(_mui.TextField, { source: 'id' }),
 					modelListFields,
 					_react2.default.createElement(_mui.EditButton, { basePath: '/posts' })
@@ -185,7 +174,7 @@
 
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
-			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.jsonServerRestClient)(apiRoot + '/api/admin/v1') },
+			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.simpleRestClient)(apiRoot + '/api/admin/v1') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {
@@ -22841,6 +22830,7 @@
 	    var convertRESTRequestToHTTP = function convertRESTRequestToHTTP(type, resource, params) {
 	        var url = '';
 	        var options = {};
+	        // console.log('params',params)
 	        switch (type) {
 	            case _types.GET_LIST:
 	                {

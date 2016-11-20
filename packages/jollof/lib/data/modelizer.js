@@ -106,7 +106,7 @@ module.exports.modelize = function ( schema ) {
 			return schema;
 		}
 
-		static * findById( id, params ) {
+		static * findById( id, params ={}) {
 			const res = yield adapter.findById(collectionName, id, params || {});
 			if(params.raw){
 				return res;
@@ -118,7 +118,7 @@ module.exports.modelize = function ( schema ) {
 
 		/**
 		 * Digests an array or object and returns either an array or singular model instance of the model.
-		 * @param data
+		 * @param data - an object or array of objects
 		 * @returns {*}
 		 */
 		static instantiate( data ) {
@@ -170,7 +170,8 @@ module.exports.modelize = function ( schema ) {
 			if(params.raw){
 				return res;
 			}else{
-				return Model.instantiate(res);
+				res.items =Model.instantiate(res.items);
+				return res;
 			}
 
 		}

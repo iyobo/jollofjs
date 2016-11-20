@@ -28,6 +28,7 @@ module.exports = {
 
 			this.body = schemas;
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 	},
@@ -35,28 +36,39 @@ module.exports = {
 	//List all
 	list: function*( modelName ) {
 		try {
+
+			const page = Number(this.query['_page'])
+			const start = Number(this.query['_start'])
+			const end = Number(this.query['_end'])
+
 			//pagination params
 			const options = {
-				// pagination: {
-				// 	page: this.query('_page'),
-				// 	start: this.query('_start'),
-				// 	end: this.query('_end')
-				// },
-				// sorting: {
-				// 	sort: this.query('_sort'),
-				// 	order: this.query('_order')
-				// }
+				paging: {
+					page: page,
+					limit: (end - start) + 1
+				},
+				sorting: {
+					sortBy: this.query['_sort'],
+					order: this.query['_order']
+				},
+				// raw: true
 			};
 
-			let res = yield models[ modelName ].find({}, options);
-			res = res.map(( it )=> {
+			if(!options.paging.page){
+				options.paging.page = (end+1)/ options.paging.limit;
+			}
+
+			const res = yield models[ modelName ].find({}, options);
+			// console.log(res);
+
+			this.body = res.items.map((it)=>{
 				return it.display();
 			});
-			this.body = res;
 
 			//Set headers
-			this.set('x-total-count', res.length);
+			this.set('content-range', res.count+'/'+res.count);
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 
@@ -67,6 +79,7 @@ module.exports = {
 		try {
 			this.body = yield models[ modelName ].findById(id)
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 	},
@@ -77,6 +90,7 @@ module.exports = {
 		try {
 			this.body = yield models[ modelName ].create(this.request.body)
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 	},
@@ -86,6 +100,7 @@ module.exports = {
 		try {
 			this.body = yield models[ modelName ].update({id: id}, this.request.body)
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 	},
@@ -95,6 +110,7 @@ module.exports = {
 		try {
 			this.body = yield models[ modelName ].remove({id: id})
 		} catch (err) {
+			log.err(err.stack);
 			this.body = err;
 		}
 	},

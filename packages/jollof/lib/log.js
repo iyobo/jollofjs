@@ -10,4 +10,7 @@ if(!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
 else
 	logger = require('tracer').dailyfile({root:'../logs/', maxLogFiles: 10});
 
+logger.err = logger.error;
+
 module.exports = logger
+
