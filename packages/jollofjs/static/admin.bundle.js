@@ -129,13 +129,25 @@
 		});
 
 		// Views
+		var PostFilter = function PostFilter(props) {
+			return _react2.default.createElement(
+				_mui.Filter,
+				props,
+				_react2.default.createElement(_mui.TextInput, { label: 'Search', source: 'q', alwaysOn: true }),
+				_react2.default.createElement(
+					_mui.ReferenceInput,
+					{ label: 'User', source: 'userId', reference: 'users', allowEmpty: true },
+					_react2.default.createElement(_mui.SelectInput, { optionText: 'name' })
+				)
+			);
+		};
 		var modelList = function modelList(props) {
 			return _react2.default.createElement(
 				_mui.List,
-				props,
+				_extends({}, props, { filter: PostFilter }),
 				_react2.default.createElement(
 					_mui.Datagrid,
-					{ key: schema.name },
+					null,
 					_react2.default.createElement(_mui.TextField, { source: 'id' }),
 					modelListFields,
 					_react2.default.createElement(_mui.EditButton, { basePath: '/posts' })
@@ -143,6 +155,7 @@
 			);
 		};
 
+		//Edit View
 		var modelEdit = function modelEdit(props) {
 			return _react2.default.createElement(
 				_mui.Edit,
@@ -154,6 +167,7 @@
 			);
 		};
 
+		//Create view
 		var modelCreate = function modelCreate(props) {
 			return _react2.default.createElement(
 				_mui.Create,
