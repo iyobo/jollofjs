@@ -109,7 +109,7 @@ axios.get('/api/admin/models')
 		});
 
 		render(
-			<Admin dashboard={Dashboard} title="Jollof Admin" restClient={simpleRestClient(apiRoot+'/api/admin/v1')}>
+			<Admin dashboard={Dashboard} title="Jollof Admin" restClient={jsonServerRestClient(apiRoot+'/api/admin/v1')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')

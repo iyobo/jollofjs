@@ -174,7 +174,7 @@
 
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
-			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.simpleRestClient)(apiRoot + '/api/admin/v1') },
+			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.jsonServerRestClient)(apiRoot + '/api/admin/v1') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {

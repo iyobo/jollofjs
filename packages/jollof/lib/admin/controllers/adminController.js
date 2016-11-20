@@ -66,7 +66,7 @@ module.exports = {
 			});
 
 			//Set headers
-			this.set('content-range', res.count+'/'+res.count);
+			this.set('x-total-count', options.paging.limit+'/'+res.count);
 		} catch (err) {
 			log.err(err.stack);
 			this.body = err;
