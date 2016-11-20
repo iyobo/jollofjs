@@ -16,7 +16,10 @@ import {
 	DisabledInput,
 	TextInput,
 	LongTextInput,
-	DateInput
+	DateInput,
+	SelectInput,
+	Filter,
+	ReferenceInput
 } from 'admin-on-rest/lib/mui';
 export PostIcon from 'material-ui/svg-icons/action/book';
 const axios = require('axios');
@@ -72,9 +75,17 @@ function buildResource( schema ) {
 	});
 
 	// Views
+	const PostFilter = (props) => (
+		<Filter {...props}>
+			<TextInput label="Search" source="q" alwaysOn />
+			<ReferenceInput label="User" source="userId" reference="users" allowEmpty>
+				<SelectInput optionText="name" />
+			</ReferenceInput>
+		</Filter>
+	);
 	const modelList = ( props ) => (
-		<List {...props}>
-			<Datagrid key={schema.name}>
+		<List {...props} filter={PostFilter}>
+			<Datagrid>
 				<TextField source="id"/>
 				{modelListFields}
 				<EditButton basePath="/posts"/>
@@ -82,6 +93,7 @@ function buildResource( schema ) {
 		</List>
 	);
 
+	//Edit View
 	const modelEdit = ( props ) => (
 		<Edit title={"Edit "+schema.name} {...props}>
 			<DisabledInput source="id"/>
@@ -91,6 +103,7 @@ function buildResource( schema ) {
 		</Edit>
 	);
 
+	//Create view
 	const modelCreate = ( props ) => (
 		<Create title={"Create a "+schema.name} {...props}>
 			{modelUpdateFields}
