@@ -19,7 +19,8 @@ import {
 	DateInput,
 	SelectInput,
 	Filter,
-	ReferenceInput
+	ReferenceInput,
+	Delete
 } from 'admin-on-rest/lib/mui';
 export PostIcon from 'material-ui/svg-icons/action/book';
 const axios = require('axios');
@@ -110,7 +111,7 @@ function buildResource( schema ) {
 		</Create>
 	);
 
-	return <Resource key={schema.name} name={schema.name} list={modelList} edit={modelEdit} create={modelCreate}/>
+	return <Resource key={schema.name} name={schema.name} list={modelList} edit={modelEdit} create={modelCreate} remove={Delete}  />
 }
 
 let modelResources = [];
