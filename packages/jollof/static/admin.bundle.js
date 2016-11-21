@@ -176,7 +176,7 @@
 			);
 		};
 	
-		return _react2.default.createElement(_adminOnRest.Resource, { key: schema.name, name: schema.name, list: modelList, edit: modelEdit, create: modelCreate });
+		return _react2.default.createElement(_adminOnRest.Resource, { key: schema.name, name: schema.name, list: modelList, edit: modelEdit, create: modelCreate, remove: _mui.Delete });
 	}
 	
 	var modelResources = [];
