@@ -30,6 +30,7 @@ module.exports = {
 		path: "./static/",
 		filename: "[name].bundle.js"
 	},
+	devtool: "source-map",
 	// plugins: plugins,
 	module: {
 		loaders: [

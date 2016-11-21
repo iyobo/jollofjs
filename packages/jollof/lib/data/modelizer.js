@@ -211,8 +211,9 @@ module.exports.modelize = function ( schema ) {
 		 */
 		static * create( data, params ={}) {
 
-			return yield new Model(data).save()
-
+			const newItem= new Model(data)
+			yield newItem.save()
+			return newItem.display()
 		}
 
 		/**

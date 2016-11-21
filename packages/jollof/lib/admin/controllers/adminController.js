@@ -29,7 +29,7 @@ module.exports = {
 			this.body = schemas;
 		} catch (err) {
 			log.err(err.stack);
-			this.body = err;
+			this.throw(err);
 		}
 	},
 
@@ -77,10 +77,10 @@ module.exports = {
 	//Get singular
 	get: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].findById(id)
+			this.body = (yield models[ modelName ].findById(id)).display()
 		} catch (err) {
 			log.err(err.stack);
-			this.body = err;
+			this.throw(err);
 		}
 	},
 
@@ -91,7 +91,7 @@ module.exports = {
 			this.body = yield models[ modelName ].create(this.request.body)
 		} catch (err) {
 			log.err(err.stack);
-			this.body = err;
+			this.throw(err);
 		}
 	},
 
@@ -101,7 +101,7 @@ module.exports = {
 			this.body = yield models[ modelName ].update({id: id}, this.request.body)
 		} catch (err) {
 			log.err(err.stack);
-			this.body = err;
+			this.throw(err);
 		}
 	},
 
@@ -111,7 +111,7 @@ module.exports = {
 			this.body = yield models[ modelName ].remove({id: id})
 		} catch (err) {
 			log.err(err.stack);
-			this.body = err;
+			this.throw(err);
 		}
 	},
 }

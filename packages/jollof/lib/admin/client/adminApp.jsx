@@ -88,7 +88,7 @@ function buildResource( schema ) {
 			<Datagrid>
 				<TextField source="id"/>
 				{modelListFields}
-				<EditButton basePath="/posts"/>
+				<EditButton basePath="/"/>
 			</Datagrid>
 		</List>
 	);
