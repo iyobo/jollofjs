@@ -46,16 +46,6 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.PostIcon = undefined;
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
-	                                                                                                                                                                                                                                                                   * Created by iyobo on 2016-11-08.
-	                                                                                                                                                                                                                                                                   */
-	
-	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -68,127 +58,27 @@
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
-	var _mui = __webpack_require__(809);
-	
-	var _book = __webpack_require__(952);
-	
-	var _book2 = _interopRequireDefault(_book);
+	var _resourceBuilder = __webpack_require__(979);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.PostIcon = _book2.default;
+	var axios = __webpack_require__(953); /**
+	                               * Created by iyobo on 2016-11-08.
+	                               */
 	
-	var axios = __webpack_require__(953);
 	var _ = __webpack_require__(978);
-	
-	/**
-	 * Builds a client resource for this schema
-	 * @param schema
-	 * @returns {XML}
-	 */
-	function buildResource(schema) {
-	
-		console.log(schema);
-	
-		var modelListFields = _.map(schema.structure, function (v, k) {
-			// console.log('k',k,'v',v);
-			switch (v._type) {
-				case 'string':
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-				case 'number':
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-				case 'date':
-					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
-					break;
-				default:
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-	
-			}
-		});
-	
-		//For create and Edit
-		var modelUpdateFields = _.map(schema.structure, function (v, k) {
-			// console.log('k',k,'v',v);
-			switch (v._type) {
-				case 'string':
-					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					break;
-				case 'number':
-					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					break;
-				case 'date':
-					return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
-					break;
-				default:
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-			}
-		});
-	
-		// Views
-		var PostFilter = function PostFilter(props) {
-			return _react2.default.createElement(
-				_mui.Filter,
-				props,
-				_react2.default.createElement(_mui.TextInput, { label: 'Search', source: 'q', alwaysOn: true }),
-				_react2.default.createElement(
-					_mui.ReferenceInput,
-					{ label: 'User', source: 'userId', reference: 'users', allowEmpty: true },
-					_react2.default.createElement(_mui.SelectInput, { optionText: 'name' })
-				)
-			);
-		};
-		var modelList = function modelList(props) {
-			return _react2.default.createElement(
-				_mui.List,
-				_extends({}, props, { filter: PostFilter }),
-				_react2.default.createElement(
-					_mui.Datagrid,
-					null,
-					_react2.default.createElement(_mui.TextField, { source: 'id' }),
-					modelListFields,
-					_react2.default.createElement(_mui.EditButton, { basePath: '/' })
-				)
-			);
-		};
-	
-		//Edit View
-		var modelEdit = function modelEdit(props) {
-			return _react2.default.createElement(
-				_mui.Edit,
-				_extends({ title: "Edit " + schema.name }, props),
-				_react2.default.createElement(_mui.DisabledInput, { source: 'id' }),
-				modelUpdateFields,
-				_react2.default.createElement(_mui.DisabledInput, { source: 'dateCreated' }),
-				_react2.default.createElement(_mui.DisabledInput, { source: 'lastUpdated' })
-			);
-		};
-	
-		//Create view
-		var modelCreate = function modelCreate(props) {
-			return _react2.default.createElement(
-				_mui.Create,
-				_extends({ title: "Create a " + schema.name }, props),
-				modelUpdateFields
-			);
-		};
-	
-		return _react2.default.createElement(_adminOnRest.Resource, { key: schema.name, name: schema.name, list: modelList, edit: modelEdit, create: modelCreate, remove: _mui.Delete });
-	}
 	
 	var modelResources = [];
 	axios.get('/api/admin/models').then(function (response) {
 	
 		_.each(response.data, function (schema) {
-			modelResources.push(buildResource(schema));
+			modelResources.push((0, _resourceBuilder.buildResource)(schema));
 		});
 	
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
-			{ dashboard: _Dashboard2.default, title: 'Jollof Admin', restClient: (0, _adminOnRest.jsonServerRestClient)(apiRoot + '/api/admin/v1') },
+			{ dashboard: _Dashboard2.default, title: 'Jollof Admin',
+				restClient: (0, _adminOnRest.jsonServerRestClient)(apiRoot + '/api/admin/v1') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {
@@ -111418,6 +111308,166 @@
 	}.call(this));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(236)(module)))
+
+/***/ },
+/* 979 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.PostIcon = undefined;
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
+	                                                                                                                                                                                                                                                                   * Created by iyobo on 2016-11-08.
+	                                                                                                                                                                                                                                                                   */
+	
+	
+	exports.
+	
+	/**
+	 * Builds a client resource for this schema
+	 * @param schema
+	 * @returns {XML}
+	 */
+	buildResource = buildResource;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(34);
+	
+	var _adminOnRest = __webpack_require__(172);
+	
+	var _mui = __webpack_require__(809);
+	
+	var _book = __webpack_require__(952);
+	
+	var _book2 = _interopRequireDefault(_book);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.PostIcon = _book2.default;
+	
+	var _ = __webpack_require__(978);function buildResource(schema) {
+	
+		console.log(schema);
+	
+		//for each schema field, create array of elements
+		var modelListFields = _.map(schema.structure, function (v, k) {
+			// console.log('k',k,'v',v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+	
+			}
+		});
+	
+		var modelViewFields = _.map(schema.structure, function (v, k) {
+			// console.log('k',k,'v',v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					break;
+	
+			}
+		});
+	
+		//For create and Edit
+		var modelUpdateFields = _.map(schema.structure, function (v, k) {
+			// console.log('k',k,'v',v);
+			switch (v._type) {
+				case 'string':
+					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+					break;
+				case 'number':
+					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+					break;
+				case 'date':
+					return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
+					break;
+				default:
+					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+					break;
+			}
+		});
+	
+		// Views
+		var PostFilter = function PostFilter(props) {
+			return _react2.default.createElement(
+				_mui.Filter,
+				props,
+				_react2.default.createElement(_mui.TextInput, { label: 'Search', source: 'q', alwaysOn: true })
+			);
+		};
+		var modelList = function modelList(props) {
+			return _react2.default.createElement(
+				_mui.List,
+				_extends({}, props, { filter: PostFilter }),
+				_react2.default.createElement(
+					_mui.Datagrid,
+					null,
+					_react2.default.createElement(_mui.TextField, { source: 'id' }),
+					modelListFields,
+					_react2.default.createElement(_mui.EditButton, { basePath: '/' })
+				)
+			);
+		};
+	
+		var modelShow = function modelShow(props) {
+			return _react2.default.createElement(
+				_mui.Show,
+				_extends({ title: "Viewing " + schema.name }, props),
+				modelViewFields
+			);
+		};
+	
+		//Edit View
+		var modelEdit = function modelEdit(props) {
+			return _react2.default.createElement(
+				_mui.Edit,
+				_extends({ title: "Edit " + schema.name }, props),
+				_react2.default.createElement(_mui.DisabledInput, { source: 'id' }),
+				modelUpdateFields,
+				_react2.default.createElement(_mui.DisabledInput, { source: 'dateCreated' }),
+				_react2.default.createElement(_mui.DisabledInput, { source: 'lastUpdated' })
+			);
+		};
+	
+		//Create view
+		var modelCreate = function modelCreate(props) {
+			return _react2.default.createElement(
+				_mui.Create,
+				_extends({ title: "Create a " + schema.name }, props),
+				modelUpdateFields
+			);
+		};
+	
+		return _react2.default.createElement(_adminOnRest.Resource, { key: schema.name, name: schema.name, list: modelList, edit: modelEdit, create: modelCreate,
+			show: modelShow, remove: _mui.Delete });
+	}
 
 /***/ }
 /******/ ]);
