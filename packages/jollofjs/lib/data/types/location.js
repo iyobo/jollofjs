@@ -9,7 +9,7 @@ const joi = require('joi');
  */
 const locationSchema={
 	name: 'Location',
-	structure:{
+	structure: joi.object().keys({
 		address: joi.string().required(),
 		address2: joi.string(),
 		city: joi.string().required(),
@@ -18,7 +18,8 @@ const locationSchema={
 		country: joi.string().required(),
 		longitude: joi.number().required(),
 		latitude: joi.number().required()
-	}
+	}).meta({widget:'map'})
+
 }
 
 module.exports = registry.registerType(locationSchema);

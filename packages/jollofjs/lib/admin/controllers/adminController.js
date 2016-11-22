@@ -37,10 +37,22 @@ module.exports = {
 	list: function*( modelName ) {
 		try {
 
-			const page = Number(this.query['_page'])
-			const start = Number(this.query['_start'])
-			const end = Number(this.query['_end'])
+			if(this.query['_start']) {
+				var page = Number(this.query[ '_page' ])
+				var start = Number(this.query[ '_start' ])
+				var end = Number(this.query[ '_end' ])
 
+				var sort = this.query['_sort'];
+				var order = this.query['_order'];
+			}else{
+				let rangeq = JSON.parse(this.query['range']);
+				var start = Number(rangeq[0]);
+				var end = Number(rangeq[1]);
+
+				let sortq = JSON.parse(this.query['sort']);
+				var sort = sortq[0];
+				var order = sortq[1];
+			}
 			//pagination params
 			const options = {
 				paging: {
@@ -48,8 +60,8 @@ module.exports = {
 					limit: (end - start) + 1
 				},
 				sorting: {
-					sortBy: this.query['_sort'],
-					order: this.query['_order']
+					sort: sort,
+					order: order
 				},
 				// raw: true
 			};
@@ -67,6 +79,7 @@ module.exports = {
 
 			//Set headers
 			this.set('x-total-count', options.paging.limit+'/'+res.count);
+			this.set('content-range', options.paging.limit+'/'+res.count);
 		} catch (err) {
 			log.err(err.stack);
 			this.body = err;
