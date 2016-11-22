@@ -25,6 +25,7 @@ import {
 } from 'admin-on-rest/lib/mui';
 
 import {buildResource} from "./resourceBuilder";
+import jollofRestClient from "./rest/jollofRestClient";
 
 const axios = require('axios');
 const _ = require('lodash');
@@ -63,7 +64,7 @@ axios.get('/api/admin/models')
 
 		render(
 			<Admin dashboard={Dashboard} title="Jollof Admin"
-				   restClient={simpleRestClient(apiRoot + '/api/admin/v1')}>
+				   restClient={jollofRestClient(apiRoot + '/api/admin/v1')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')

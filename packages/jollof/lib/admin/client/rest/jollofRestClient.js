@@ -1,4 +1,4 @@
-import { queryParameters, fetchJson } from '../util/fetch';
+import { queryParameters, fetchJson } from '../../../../../admin-on-rest/src/util/fetch';
 import {
 	GET_LIST,
 	GET_MATCHING,
@@ -8,8 +8,20 @@ import {
 	CREATE,
 	UPDATE,
 	DELETE,
-} from './types';
+} from "../../../../../admin-on-rest/src/rest/types";
 
+let jollofApiUrl='';
+let jollofAdminUrl='';
+let previousListUrl = '';
+
+function redirectToPreviousList(){
+	//remove _k from path
+	previousListUrl = previousListUrl.substring(0,previousListUrl.indexOf('&_k'));
+
+	console.log('redirecting to previous list url', previousListUrl);
+	window.location.replace(previousListUrl);
+	location.reload();
+}
 /**
  * Maps admin-on-rest queries to a simple REST API
  *
@@ -25,6 +37,7 @@ import {
  * DELETE       => DELETE http://my.api.url/posts/123
  */
 export default (apiUrl, httpClient = fetchJson) => {
+	jollofApiUrl = apiUrl;
 	/**
 	 * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
 	 * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -99,14 +112,26 @@ export default (apiUrl, httpClient = fetchJson) => {
 	 */
 	const convertHTTPResponseToREST = (response, type, resource, params) => {
 		const { headers, json } = response;
+		console.log({response,type,resource,params});
 		switch (type) {
 			case GET_LIST:
+				previousListUrl = location.href;
 				return {
 					data: json.map(x => x),
 					total: parseInt(headers.get('content-range').split('/').pop(), 10),
 				};
 			case CREATE:
+				//FIXME: Hack to stop bad admin app state after create
+				redirectToPreviousList();
 				return { ...params.data, id: json.id };
+			case DELETE:
+				//FIXME: Hack to stop bad admin app state after delete
+				redirectToPreviousList();
+				return json;
+			case UPDATE:
+				//FIXME: Hack to stop bad admin app state after update
+				redirectToPreviousList();
+				return json;
 			default:
 				return json;
 		}

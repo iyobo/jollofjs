@@ -13,6 +13,8 @@ import {
 	DateField,
 	TextField,
 	EditButton,
+	ShowButton,
+	DeleteButton,
 	DisabledInput,
 	TextInput,
 	LongTextInput,
@@ -22,7 +24,7 @@ import {
 	ReferenceInput,
 	Delete
 } from 'admin-on-rest/lib/mui';
-export PostIcon from 'material-ui/svg-icons/action/book';
+import PostIcon from 'material-ui/svg-icons/action/book';
 const _ = require('lodash');
 
 
@@ -108,7 +110,9 @@ export function buildResource( schema ) {
 			<Datagrid>
 				<TextField source="id"/>
 				{modelListFields}
-				<EditButton basePath="/"/>
+				<EditButton/>
+				{/*<ShowButton />*/}
+				<DeleteButton />
 			</Datagrid>
 		</List>
 	);
@@ -137,5 +141,5 @@ export function buildResource( schema ) {
 	);
 
 	return <Resource key={schema.name} name={schema.name} list={modelList} edit={modelEdit} create={modelCreate}
-					 show={modelShow} remove={Delete}/>
+					 show={modelShow} remove={Delete} icon={PostIcon}/>
 }
