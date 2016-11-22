@@ -37,21 +37,21 @@ module.exports = {
 	list: function*( modelName ) {
 		try {
 
-			if(this.query['_start']) {
+			if (this.query[ '_start' ]) {
 				var page = Number(this.query[ '_page' ])
 				var start = Number(this.query[ '_start' ])
 				var end = Number(this.query[ '_end' ])
 
-				var sort = this.query['_sort'];
-				var order = this.query['_order'];
-			}else{
-				let rangeq = JSON.parse(this.query['range']);
-				var start = Number(rangeq[0]);
-				var end = Number(rangeq[1]);
+				var sort = this.query[ '_sort' ];
+				var order = this.query[ '_order' ];
+			} else {
+				let rangeq = JSON.parse(this.query[ 'range' ]);
+				var start = Number(rangeq[ 0 ]);
+				var end = Number(rangeq[ 1 ]);
 
-				let sortq = JSON.parse(this.query['sort']);
-				var sort = sortq[0];
-				var order = sortq[1];
+				let sortq = JSON.parse(this.query[ 'sort' ]);
+				var sort = sortq[ 0 ];
+				var order = sortq[ 1 ];
 			}
 			//pagination params
 			const options = {
@@ -66,20 +66,20 @@ module.exports = {
 				// raw: true
 			};
 
-			if(!options.paging.page){
-				options.paging.page = (end+1)/ options.paging.limit;
+			if (!options.paging.page) {
+				options.paging.page = (end + 1) / options.paging.limit;
 			}
 
 			const res = yield models[ modelName ].find({}, options);
 			// console.log(res);
 
-			this.body = res.items.map((it)=>{
+			this.body = res.items.map(( it )=> {
 				return it.display();
 			});
 
 			//Set headers
-			this.set('x-total-count', options.paging.limit+'/'+res.count);
-			this.set('content-range', options.paging.limit+'/'+res.count);
+			this.set('x-total-count', options.paging.limit + '/' + res.count);
+			this.set('content-range', options.paging.limit + '/' + res.count);
 		} catch (err) {
 			log.err(err.stack);
 			this.body = err;
