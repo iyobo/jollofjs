@@ -25,7 +25,7 @@ module.exports.registerModel = function ( schema ) {
 };
 
 module.exports.registerType = function ( schema ) {
-	types[ schema.name ] = joi.object().keys(schema.structure);
+	types[ schema.name ] = schema.structure;
 	return types[ schema.name ];
 };
 module.exports.registerService = function ( name, Class ) {
