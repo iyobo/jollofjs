@@ -26,6 +26,8 @@ import {
 } from 'admin-on-rest/lib/mui';
 import PostIcon from 'material-ui/svg-icons/action/book';
 const _ = require('lodash');
+import {FileField} from './fields/file/FileField'
+import {FileInput} from './fields/file/FileInput'
 
 
 /**
@@ -35,7 +37,7 @@ const _ = require('lodash');
  */
 export function buildResource( schema ) {
 
-	console.log(schema);
+	// console.log(schema);
 
 	//for each schema field, create array of elements
 	let modelListFields = _.map(schema.structure, ( v, k )=> {
@@ -79,7 +81,7 @@ export function buildResource( schema ) {
 
 	//For create and Edit
 	let modelUpdateFields = _.map(schema.structure, ( v, k )=> {
-		// console.log('k',k,'v',v);
+		// console.log('k', k, 'v', v);
 		switch (v._type) {
 			case 'string':
 				return <TextInput key={k} source={k}/>
@@ -89,6 +91,27 @@ export function buildResource( schema ) {
 				break;
 			case 'date':
 				return <DateInput key={k} source={k}/>
+				break;
+			case 'object':
+				//This could either be a nested object, array, or custom type.
+				if (v._meta.length > 0) {
+					//This requires a special field type
+					if (v._meta[ 0 ].widget) {
+						switch (v._meta[ 0 ].widget) {
+							case 'file':
+								return <FileInput key={k} source={k}/>
+							default:
+								return <TextInput key={k} source={k}/>
+						}
+					}
+					else {
+						return <TextInput key={k} source={k}/>
+					}
+				}
+				else {
+					return <TextInput key={k} source={k}/>
+				}
+
 				break;
 			default:
 				return <TextInput key={k} source={k}/>

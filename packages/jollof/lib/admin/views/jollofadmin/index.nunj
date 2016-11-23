@@ -23,6 +23,8 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <link href="/jollofstatic/admin.css" rel="stylesheet" type="text/css" >
+    <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css" >
 </head>
 <body>
 <div id="root">

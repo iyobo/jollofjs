@@ -18,7 +18,7 @@ const locationSchema={
 		country: joi.string().required(),
 		longitude: joi.number().required(),
 		latitude: joi.number().required()
-	}).meta({widget:'map'})
+	}).meta({widget:'map', foo:'bar'})
 
 }
 

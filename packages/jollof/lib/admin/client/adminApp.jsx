@@ -70,8 +70,6 @@ axios.get('/api/admin/models')
 			, document.getElementById('root')
 		);
 
-
-
 	})
 	.catch(function ( error ) {
 		console.log(error);
