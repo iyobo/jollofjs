@@ -115118,15 +115118,22 @@
 		_createClass(FileInput, [{
 			key: 'onDrop',
 			value: function onDrop(files) {
-				console.log('files', files);
-				this.setState({ files: files.concat(this.state.files || []) });
+				console.log('files', files, this.props.record, this.props.source);
+				this.props.record[this.props.source] = files.concat(this.state.files || []);
+				this.setState({ files: this.props.record[this.props.source] });
 			}
+	
+			/**
+	   * remove file on click
+	   * @param file
+	   */
+	
 		}, {
 			key: 'onPreviewClick',
 			value: function onPreviewClick(file) {
-				_.remove(this.state.files, file);
+				_.remove(this.props.record[this.props.source], file);
 				// this.forceUpdate();
-				this.setState({ files: this.state.files });
+				this.setState({ files: this.props.record[this.props.source] });
 			}
 		}, {
 			key: 'derivePreviewStyle',
@@ -115150,9 +115157,22 @@
 						//...and render a preview
 						return _react2.default.createElement(
 							'div',
-							{ key: file.name, className: 'filePreview', onClick: _this2.onPreviewClick.bind(_this2, file) },
-							_react2.default.createElement('div', { className: 'clickable image',
-								style: _this2.derivePreviewStyle(path) }),
+							{ key: file.name, className: 'filePreview' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'clickable image',
+									onClick: _this2.onPreviewClick.bind(_this2, file),
+									style: _this2.derivePreviewStyle(path) },
+								_react2.default.createElement(
+									'div',
+									{ className: 'overlay' },
+									_react2.default.createElement(
+										'span',
+										{ className: 'x' },
+										'X'
+									)
+								)
+							),
 							_react2.default.createElement(
 								'span',
 								{ className: 'fileName' },
@@ -115164,17 +115184,25 @@
 	
 				return _react2.default.createElement(
 					'div',
-					{ className: 'fileInput' },
+					{ className: 'mdl-grid' },
 					_react2.default.createElement(
-						Dropzone,
-						{ ref: 'dropzone', onDrop: this.onDrop.bind(this) },
+						'div',
+						{ className: 'fileInput mdl-cell mdl-cell--4-col' },
 						_react2.default.createElement(
-							'div',
-							{ className: 'fill clickable' },
-							'Click or drag file here to upload.'
+							Dropzone,
+							{ ref: 'dropzone', onDrop: this.onDrop.bind(this) },
+							_react2.default.createElement(
+								'div',
+								{ className: 'fill clickable' },
+								'Click or drag file here to upload.'
+							)
 						)
 					),
-					previews
+					_react2.default.createElement(
+						'div',
+						{ className: 'mdl-cell--8-col' },
+						previews
+					)
 				);
 			}
 		}]);

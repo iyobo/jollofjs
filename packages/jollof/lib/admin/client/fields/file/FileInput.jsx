@@ -10,14 +10,19 @@ export class FileInput extends Component {
 	}
 
 	onDrop( files ) {
-		console.log('files', files)
-		this.setState({files: files.concat(this.state.files || [])});
+		console.log('files', files, this.props.record, this.props.source)
+		this.props.record[this.props.source] = files.concat(this.state.files || [])
+		this.setState({files: this.props.record[this.props.source]});
 	}
 
-	onPreviewClick(file){
-		_.remove(this.state.files, file);
+	/**
+	 * remove file on click
+	 * @param file
+	 */
+	onPreviewClick( file ) {
+		_.remove(this.props.record[this.props.source], file);
 		// this.forceUpdate();
-		this.setState({files: this.state.files});
+		this.setState({files: this.props.record[this.props.source]});
 	}
 
 	derivePreviewStyle( path ) {
@@ -38,9 +43,14 @@ export class FileInput extends Component {
 
 				//...and render a preview
 				return (
-					<div key={file.name} className="filePreview" onClick={this.onPreviewClick.bind(this,file)}>
-						<div  className="clickable image"
-							  style={this.derivePreviewStyle(path)}></div>
+					<div key={file.name} className="filePreview">
+						<div className="clickable image"
+							 onClick={this.onPreviewClick.bind(this, file)}
+							 style={this.derivePreviewStyle(path)}>
+							<div className="overlay">
+								<span className="x">X</span>
+							</div>
+						</div>
 						<span className="fileName">{file.name}</span>
 					</div>
 
@@ -50,12 +60,15 @@ export class FileInput extends Component {
 		}
 
 		return (
-			<div className="fileInput">
-				<Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)}>
-					<div className="fill clickable">Click or drag file here to upload.</div>
-				</Dropzone>
-
-				{previews}
+			<div className="mdl-grid">
+				<div className="fileInput mdl-cell mdl-cell--4-col">
+					<Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)}>
+						<div className="fill clickable">Click or drag file here to upload.</div>
+					</Dropzone>
+				</div>
+				<div className="mdl-cell--8-col">
+					{previews}
+				</div>
 			</div>
 		);
 	}
