@@ -1,8 +1,4 @@
 
-.fileInput {
-    cursor: pointer;
-}
-
 .clickable {
     cursor: pointer;
 }
@@ -12,38 +8,44 @@
     height: 100%;
 }
 
-.file-preview {
-    font-size: 14px;
-    font-weight: 500;
+
+/*.filePreview .image {*/
+    /*width: 100px;*/
+    /*height: 100px;*/
+    /*overflow:hidden;*/
+    /*margin: 5px;*/
+/*}*/
+
+/*.overlay {*/
+    /*background: rgba(0, 0, 0, .50);*/
+    /*text-align: center;*/
+    /*padding: 45px 0 66px 0;*/
+    /*opacity: 0;*/
+    /*-webkit-transition: opacity .25s ease;*/
+    /*transition: opacity .25s ease;*/
+/*}*/
+
+/*.filePreview .image:hover .overlay {*/
+    /*opacity: 1;*/
+/*}*/
+
+/*.x {*/
+    /*font-family: Helvetica;*/
+    /*font-weight: 900;*/
+    /*color: rgba(255, 162, 160, 0.85);*/
+    /*font-size: 96px;*/
+/*}*/
+
+/*//Filepreview v2*/
+.filePreview .fileImage{
+    width: 100%;
+    max-width: 300px;
+}
+
+
+.wrapText{
+    word-wrap: break-word;
+}
+.pad-5{
     padding: 5px;
-    margin: 7px;
 }
-
-.filePreview .image {
-    width: 100px;
-    height: 100px;
-    overflow:hidden;
-    margin: 5px;
-}
-
-.overlay {
-    background: rgba(0, 0, 0, .50);
-    text-align: center;
-    padding: 45px 0 66px 0;
-    opacity: 0;
-    -webkit-transition: opacity .25s ease;
-    transition: opacity .25s ease;
-}
-
-.filePreview .image:hover .overlay {
-    opacity: 1;
-}
-
-.x {
-    font-family: Helvetica;
-    font-weight: 900;
-    color: rgba(255, 162, 160, 0.85);
-    font-size: 96px;
-}
-
-

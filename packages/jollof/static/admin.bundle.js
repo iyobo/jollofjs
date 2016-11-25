@@ -94157,6 +94157,14 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _delete = __webpack_require__(752);
+	
+	var _delete2 = _interopRequireDefault(_delete);
+	
+	var _FlatButton = __webpack_require__(717);
+	
+	var _FlatButton2 = _interopRequireDefault(_FlatButton);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -94177,31 +94185,13 @@
 	
 			var _this = _possibleConstructorReturn(this, (FileInput.__proto__ || Object.getPrototypeOf(FileInput)).call(this, props));
 	
-			_this.state = {};
+			_this.state = {
+				key: uuid()
+			};
 			return _this;
 		}
 	
 		_createClass(FileInput, [{
-			key: 'onDrop',
-			value: function onDrop(files) {
-				console.log('files', files, this.props.record, this.props.source);
-				this.props.record[this.props.source] = files.concat(this.state.files || []);
-				this.setState({ files: this.props.record[this.props.source] });
-			}
-	
-			/**
-	   * remove file on click
-	   * @param file
-	   */
-	
-		}, {
-			key: 'onPreviewClick',
-			value: function onPreviewClick(file) {
-				_.remove(this.props.record[this.props.source], file);
-				// this.forceUpdate();
-				this.setState({ files: this.props.record[this.props.source] });
-			}
-		}, {
 			key: 'derivePreviewStyle',
 			value: function derivePreviewStyle(path) {
 				return {
@@ -94229,35 +94219,20 @@
 					reader.readAsDataURL(file);
 				}
 			}
+	
+			/**
+	   * remove file on click
+	   * @param file
+	   */
+	
+		}, {
+			key: 'onPreviewClick',
+			value: function onPreviewClick() {
+				this.setState(_extends({}, this.state, { file: null, preview: null, key: uuid() }));
+			}
 		}, {
 			key: 'render',
 			value: function render() {
-				//Loop through all uploaded files...
-				// if (this.state.file) {
-				// 	var previews = this.state.files.map(( file ) => {
-				// 		let path = file.preview;
-				//
-				// 		if (file.type.indexOf('image') === -1)
-				// 			path = '/jollofstatic/doc.png'
-				//
-				//
-				// 		//...and render a preview
-				// 		return (
-				// 			<div key={file.name} className="filePreview">
-				// 				<div className="clickable image"
-				// 					 onClick={this.onPreviewClick.bind(this, file)}
-				// 					 style={this.derivePreviewStyle(path)}>
-				// 					<div className="overlay">
-				// 						<span className="x">X</span>
-				// 					</div>
-				// 				</div>
-				// 				<span className="fileName">{file.name}</span>
-				// 			</div>
-				//
-				// 		)
-				//
-				// 	});
-				// }
 	
 				var preview = _react2.default.createElement(
 					'div',
@@ -94268,19 +94243,31 @@
 				if (this.state.preview) {
 					preview = _react2.default.createElement(
 						'div',
-						{ className: 'filePreview' },
+						{ className: 'filePreview row' },
 						_react2.default.createElement(
 							'div',
-							{ className: 'clickable image',
-								style: this.derivePreviewStyle(this.state.preview) },
+							{ className: 'col-md-3' },
+							_react2.default.createElement('img', { src: this.state.preview, className: 'fileImage' })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-9' },
 							_react2.default.createElement(
 								'div',
-								{ className: 'overlay' },
-								_react2.default.createElement(
-									'span',
-									{ className: 'x' },
-									'X'
-								)
+								{ className: 'wrapText pad-5' },
+								this.state.file.name
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'wrapText pad-5' },
+								Math.round(this.state.file.size / 1024),
+								' KB'
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'wrapText pad-5' },
+								_react2.default.createElement(_FlatButton2.default, { label: 'Delete', secondary: true,
+									onClick: this.onPreviewClick.bind(this), className: 'clickable' })
 							)
 						)
 					);
@@ -94288,44 +94275,16 @@
 	
 				return _react2.default.createElement(
 					'div',
-					{ className: 'row' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'fileInput col-md-3' },
-						_react2.default.createElement('input', { type: 'file', name: this.props.key, onChange: this.previewFile.bind(this) })
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'col-md-8' },
-						preview
-					)
+					{ className: 'fileInput' },
+					_react2.default.createElement('input', { key: this.state.key, type: 'file', name: this.props.key,
+						onChange: this.previewFile.bind(this) }),
+					preview
 				);
 			}
 		}]);
 	
 		return FileInput;
 	}(_react.Component);
-	//
-	// const onDrop = (files)=>{
-	// 	console.log('File Input: ', files);
-	// }
-	//
-	//
-	// export const FileInputold = ( {record = {}, source} ) => {
-	// 	let file = record[ source ];
-	//
-	// 	return (
-	// 		<div>
-	// 			<Dropzone onDrop={onDrop}>
-	// 				<div>Click or drag file here to upload.</div>
-	// 			</Dropzone>
-	// 			<div>
-	//
-	// 			</div>
-	// 		</div>
-	// 	)
-	// }
-	//
 	
 	FileInput.propTypes = {
 		source: _react.PropTypes.string.isRequired,
