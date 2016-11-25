@@ -2,28 +2,17 @@ import React, {PropTypes, Component} from 'react';
 var Dropzone = require('react-dropzone');
 const uuid = require('uuid');
 const _ = require('lodash');
+import deleteIcon from 'material-ui/svg-icons/action/delete';
+import FlatButton from 'material-ui/FlatButton';
 
 export class FileInput extends Component {
 	constructor( props ) {
 		super(props)
-		this.state = {}
+		this.state = {
+			key: uuid()
+		}
 	}
 
-	onDrop( files ) {
-		console.log('files', files, this.props.record, this.props.source)
-		this.props.record[ this.props.source ] = files.concat(this.state.files || [])
-		this.setState({files: this.props.record[ this.props.source ]});
-	}
-
-	/**
-	 * remove file on click
-	 * @param file
-	 */
-	onPreviewClick( file ) {
-		_.remove(this.props.record[ this.props.source ], file);
-		// this.forceUpdate();
-		this.setState({files: this.props.record[ this.props.source ]});
-	}
 
 	derivePreviewStyle( path ) {
 		return {
@@ -35,8 +24,8 @@ export class FileInput extends Component {
 		let file = evt.target.files[ 0 ]
 		var reader = new FileReader();
 
-		reader.addEventListener("load", () =>{
-			console.log('file',file);
+		reader.addEventListener("load", () => {
+			console.log('file', file);
 
 			var preview = reader.result;
 			if (file.type.indexOf('image') === -1)
@@ -50,83 +39,53 @@ export class FileInput extends Component {
 		}
 	}
 
+	/**
+	 * remove file on click
+	 * @param file
+	 */
+	onPreviewClick() {
+		this.setState({...this.state, file: null, preview: null, key: uuid()});
+	}
+
 	render() {
-		//Loop through all uploaded files...
-		// if (this.state.file) {
-		// 	var previews = this.state.files.map(( file ) => {
-		// 		let path = file.preview;
-		//
-		// 		if (file.type.indexOf('image') === -1)
-		// 			path = '/jollofstatic/doc.png'
-		//
-		//
-		// 		//...and render a preview
-		// 		return (
-		// 			<div key={file.name} className="filePreview">
-		// 				<div className="clickable image"
-		// 					 onClick={this.onPreviewClick.bind(this, file)}
-		// 					 style={this.derivePreviewStyle(path)}>
-		// 					<div className="overlay">
-		// 						<span className="x">X</span>
-		// 					</div>
-		// 				</div>
-		// 				<span className="fileName">{file.name}</span>
-		// 			</div>
-		//
-		// 		)
-		//
-		// 	});
-		// }
 
 		var preview = <div>Upload a File to see Preview...</div>;
 
 		if (this.state.preview) {
 			preview = (
-				<div className="filePreview">
-					<div className="clickable image"
-						 style={this.derivePreviewStyle(this.state.preview)}>
-						<div className="overlay">
-							<span className="x">X</span>
-						</div>
+				<div className="filePreview row">
+					{/*<div className="col-md-5">*/}
+					{/*<div className="clickable image"*/}
+					{/*onClick={this.onPreviewClick.bind(this)}*/}
+					{/*style={this.derivePreviewStyle(this.state.preview)}>*/}
+					{/*<div className="overlay">*/}
+					{/*<span className="x">X</span>*/}
+					{/*</div>*/}
+					{/*</div>*/}
+					{/*</div>*/}
+					<div className="col-md-3">
+						<img src={this.state.preview} className="fileImage"/>
 					</div>
-					{/*<span className="fileName">{this.state.file.name}</span>*/}
+					<div className="col-md-9">
+						<div className="wrapText pad-5">{this.state.file.name}</div>
+						<div className="wrapText pad-5">{Math.round(this.state.file.size / 1024)} KB</div>
+						<div className="wrapText pad-5"><FlatButton label="Delete" secondary={true}
+																	onClick={this.onPreviewClick.bind(this)} className="clickable"/></div>
+					</div>
+
 				</div>
 			)
 		}
 
 		return (
-			<div className="row">
-				<div className="fileInput col-md-3">
-					<input type="file" name={this.props.key} onChange={this.previewFile.bind(this)}/>
-				</div>
-				<div className="col-md-8">
-					{preview}
-				</div>
+			<div className="fileInput">
+				<input key={this.state.key} type="file" name={this.props.key}
+					   onChange={this.previewFile.bind(this)}/>
+				{preview}
 			</div>
 		);
 	}
 }
-//
-// const onDrop = (files)=>{
-// 	console.log('File Input: ', files);
-// }
-//
-//
-// export const FileInputold = ( {record = {}, source} ) => {
-// 	let file = record[ source ];
-//
-// 	return (
-// 		<div>
-// 			<Dropzone onDrop={onDrop}>
-// 				<div>Click or drag file here to upload.</div>
-// 			</Dropzone>
-// 			<div>
-//
-// 			</div>
-// 		</div>
-// 	)
-// }
-//
 
 FileInput.propTypes = {
 	source: PropTypes.string.isRequired,
