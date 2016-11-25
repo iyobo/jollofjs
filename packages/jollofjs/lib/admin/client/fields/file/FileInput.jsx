@@ -1,6 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 var Dropzone = require('react-dropzone');
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 const _ = require('lodash');
 
 export class FileInput extends Component {
@@ -11,8 +11,8 @@ export class FileInput extends Component {
 
 	onDrop( files ) {
 		console.log('files', files, this.props.record, this.props.source)
-		this.props.record[this.props.source] = files.concat(this.state.files || [])
-		this.setState({files: this.props.record[this.props.source]});
+		this.props.record[ this.props.source ] = files.concat(this.state.files || [])
+		this.setState({files: this.props.record[ this.props.source ]});
 	}
 
 	/**
@@ -20,9 +20,9 @@ export class FileInput extends Component {
 	 * @param file
 	 */
 	onPreviewClick( file ) {
-		_.remove(this.props.record[this.props.source], file);
+		_.remove(this.props.record[ this.props.source ], file);
 		// this.forceUpdate();
-		this.setState({files: this.props.record[this.props.source]});
+		this.setState({files: this.props.record[ this.props.source ]});
 	}
 
 	derivePreviewStyle( path ) {
@@ -31,43 +31,76 @@ export class FileInput extends Component {
 		}
 	}
 
+	previewFile( evt ) {
+		let file = evt.target.files[ 0 ]
+		var reader = new FileReader();
+
+		reader.addEventListener("load", () =>{
+			console.log('file',file);
+
+			var preview = reader.result;
+			if (file.type.indexOf('image') === -1)
+				preview = '/jollofstatic/doc.png';
+
+			this.setState({...this.state, file: file, preview: preview});
+		}, false);
+
+		if (file) {
+			reader.readAsDataURL(file);
+		}
+	}
+
 	render() {
 		//Loop through all uploaded files...
-		if (this.state.files) {
-			var previews = this.state.files.map(( file ) => {
-				let path = file.preview;
+		// if (this.state.file) {
+		// 	var previews = this.state.files.map(( file ) => {
+		// 		let path = file.preview;
+		//
+		// 		if (file.type.indexOf('image') === -1)
+		// 			path = '/jollofstatic/doc.png'
+		//
+		//
+		// 		//...and render a preview
+		// 		return (
+		// 			<div key={file.name} className="filePreview">
+		// 				<div className="clickable image"
+		// 					 onClick={this.onPreviewClick.bind(this, file)}
+		// 					 style={this.derivePreviewStyle(path)}>
+		// 					<div className="overlay">
+		// 						<span className="x">X</span>
+		// 					</div>
+		// 				</div>
+		// 				<span className="fileName">{file.name}</span>
+		// 			</div>
+		//
+		// 		)
+		//
+		// 	});
+		// }
 
-				if (file.type.indexOf('image') === -1)
-					path = '/jollofstatic/doc.png'
+		var preview = <div>Upload a File to see Preview...</div>;
 
-
-				//...and render a preview
-				return (
-					<div key={file.name} className="filePreview">
-						<div className="clickable image"
-							 onClick={this.onPreviewClick.bind(this, file)}
-							 style={this.derivePreviewStyle(path)}>
-							<div className="overlay">
-								<span className="x">X</span>
-							</div>
+		if (this.state.preview) {
+			preview = (
+				<div className="filePreview">
+					<div className="clickable image"
+						 style={this.derivePreviewStyle(this.state.preview)}>
+						<div className="overlay">
+							<span className="x">X</span>
 						</div>
-						<span className="fileName">{file.name}</span>
 					</div>
-
-				)
-
-			});
+					{/*<span className="fileName">{this.state.file.name}</span>*/}
+				</div>
+			)
 		}
 
 		return (
-			<div className="mdl-grid">
-				<div className="fileInput mdl-cell mdl-cell--4-col">
-					<Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)}>
-						<div className="fill clickable">Click or drag file here to upload.</div>
-					</Dropzone>
+			<div className="row">
+				<div className="fileInput col-md-3">
+					<input type="file" name={this.props.key} onChange={this.previewFile.bind(this)}/>
 				</div>
-				<div className="mdl-cell--8-col">
-					{previews}
+				<div className="col-md-8">
+					{preview}
 				</div>
 			</div>
 		);

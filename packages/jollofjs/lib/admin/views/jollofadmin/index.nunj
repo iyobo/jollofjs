@@ -23,6 +23,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <link href="/jollofstatic/flexboxgrid.min.css" rel="stylesheet" type="text/css" >
     <link href="/jollofstatic/admin.css" rel="stylesheet" type="text/css" >
     <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css" >
 </head>

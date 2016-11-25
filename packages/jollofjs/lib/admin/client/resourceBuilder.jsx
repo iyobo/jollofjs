@@ -29,18 +29,8 @@ const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
 
-
-/**
- * Builds a client resource for this schema
- * @param schema
- * @returns {XML}
- */
-export function buildResource( schema ) {
-
-	// console.log(schema);
-
-	//for each schema field, create array of elements
-	let modelListFields = _.map(schema.structure, ( v, k )=> {
+function buildViewFields(structure){
+	return _.map(structure, ( v, k )=> {
 		// console.log('k',k,'v',v);
 		switch (v._type) {
 			case 'string':
@@ -58,29 +48,10 @@ export function buildResource( schema ) {
 
 		}
 	});
+}
 
-	let modelViewFields = _.map(schema.structure, ( v, k )=> {
-		// console.log('k',k,'v',v);
-		switch (v._type) {
-			case 'string':
-				return <TextField key={k} source={k}/>
-				break;
-			case 'number':
-				return <TextField key={k} source={k}/>
-				break;
-			case 'date':
-				return <DateField key={k} source={k}/>
-				break;
-			default:
-				return <TextField key={k} source={k}/>
-				break;
-
-		}
-	});
-
-
-	//For create and Edit
-	let modelUpdateFields = _.map(schema.structure, ( v, k )=> {
+function buildUpdateFields(structure){
+	return _.map(structure, ( v, k )=> {
 		// console.log('k', k, 'v', v);
 		switch (v._type) {
 			case 'string':
@@ -118,6 +89,22 @@ export function buildResource( schema ) {
 				break;
 		}
 	});
+}
+
+/**
+ * Builds a client resource for this schema
+ * @param schema
+ * @returns {XML}
+ */
+export function buildResource( schema ) {
+
+	// console.log(schema);
+
+	//for each schema field, create array of elements
+	let modelViewFields = buildViewFields(schema.structure);
+	
+	//For create and Edit
+	let modelUpdateFields = buildUpdateFields(schema.structure);
 
 	// Views
 	const PostFilter = ( props ) => (
@@ -132,9 +119,9 @@ export function buildResource( schema ) {
 		<List {...props} filter={PostFilter}>
 			<Datagrid>
 				<TextField source="id"/>
-				{modelListFields}
+				{modelViewFields}
 				<EditButton/>
-				{/*<ShowButton />*/}
+				<ShowButton />
 				<DeleteButton />
 			</Datagrid>
 		</List>
@@ -142,7 +129,10 @@ export function buildResource( schema ) {
 
 	const modelShow = ( props ) => (
 		<Show title={"Viewing " + schema.name} {...props}>
+			<TextField source="id"/>
 			{modelViewFields}
+			<TextField source="dateCreated"/>
+			<TextField source="lastUpdated"/>
 		</Show>
 	);
 
