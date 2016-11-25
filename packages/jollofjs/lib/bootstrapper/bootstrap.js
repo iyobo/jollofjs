@@ -19,7 +19,7 @@ const serve = require('koa-static-server');
 const jollof = require('jollof');
 const subdomain = jollof.router.subdomain;
 let serverApp;
-
+const formidable = require('koa-formidable')
 
 function* loadModels(){
 	for(let m in data.models){
@@ -76,6 +76,7 @@ module.exports.bootServer = function (overWriteFn) {
 			//Set'em up------------------------------------------------------
 			serverApp = new koa();
 
+
 			//Sessions
 			serverApp.keys = jollof.config.crypto.secrets;
 			serverApp.use(session({
@@ -94,8 +95,8 @@ module.exports.bootServer = function (overWriteFn) {
 				this.state.sessionId = this.sessionId;
 				this.state.env = jollof.config.env;
 				this.state.config = jollof.config;
-				return yield next
-			})
+				return yield next;
+			});
 
 
 			//forms

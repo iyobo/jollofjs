@@ -43,7 +43,8 @@ function buildViewFields(structure){
 				return <DateField key={k} source={k}/>
 				break;
 			default:
-				return <TextField key={k} source={k}/>
+				return <div></div>
+				return;
 				break;
 
 		}
