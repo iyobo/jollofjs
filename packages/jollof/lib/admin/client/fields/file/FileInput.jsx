@@ -20,12 +20,13 @@ export class FileInput extends Component {
 		}
 	}
 
-	previewFile( evt ) {
+	onFileAdded( evt ) {
 		let file = evt.target.files[ 0 ]
 		var reader = new FileReader();
 
+
 		reader.addEventListener("load", () => {
-			console.log('file', file);
+			// console.log('file', file);
 
 			var preview = reader.result;
 			if (file.type.indexOf('image') === -1)
@@ -67,7 +68,7 @@ export class FileInput extends Component {
 						<img src={this.state.preview} className="fileImage"/>
 					</div>
 					<div className="col-md-9">
-						<div className="wrapText pad-5">{this.state.file.name}</div>
+						<div className="wrapText pad-5 bold">{this.state.file.name}</div>
 						<div className="wrapText pad-5">{Math.round(this.state.file.size / 1024)} KB</div>
 						<div className="wrapText pad-5"><FlatButton label="Delete" secondary={true}
 																	onClick={this.onPreviewClick.bind(this)} className="clickable"/></div>
@@ -80,7 +81,7 @@ export class FileInput extends Component {
 		return (
 			<div className="fileInput">
 				<input key={this.state.key} type="file" name={this.props.key}
-					   onChange={this.previewFile.bind(this)}/>
+					   onChange={this.onFileAdded.bind(this)}/>
 				{preview}
 			</div>
 		);

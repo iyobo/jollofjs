@@ -1,4 +1,4 @@
-import { queryParameters, fetchJson } from '../../../../../admin-on-rest/src/util/fetch';
+import { queryParameters, fetchJson } from 'admin-on-rest/lib/util/fetch';
 import {
 	GET_LIST,
 	GET_MATCHING,
@@ -8,20 +8,10 @@ import {
 	CREATE,
 	UPDATE,
 	DELETE,
-} from "../../../../../admin-on-rest/src/rest/types";
+} from "admin-on-rest/lib/rest/types";
 
 let jollofApiUrl='';
-let jollofAdminUrl='';
-let previousListUrl = '';
 
-function redirectToPreviousList(){
-	//remove _k from path
-	previousListUrl = previousListUrl.substring(0,previousListUrl.indexOf('&_k'));
-
-	console.log('redirecting to previous list url', previousListUrl);
-	window.location.replace(previousListUrl);
-	location.reload();
-}
 /**
  * Maps admin-on-rest queries to a simple REST API
  *
@@ -39,12 +29,15 @@ function redirectToPreviousList(){
 export default (apiUrl, httpClient = fetchJson) => {
 	jollofApiUrl = apiUrl;
 	/**
+	 * Upstream to Server
 	 * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
 	 * @param {String} resource Name of the resource to fetch, e.g. 'posts'
 	 * @param {Object} params The REST request params, depending on the type
 	 * @returns {Object} { url, options } The HTTP request parameters
 	 */
 	const convertRESTRequestToHTTP = (type, resource, params) => {
+
+		console.log(type,resource,params)
 		let url = '';
 		const options = {};
 		switch (type) {
@@ -104,6 +97,7 @@ export default (apiUrl, httpClient = fetchJson) => {
 	};
 
 	/**
+	 * Downstream from server
 	 * @param {Object} response HTTP response from fetch()
 	 * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
 	 * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -115,23 +109,10 @@ export default (apiUrl, httpClient = fetchJson) => {
 		console.log({response,type,resource,params});
 		switch (type) {
 			case GET_LIST:
-				previousListUrl = location.href;
 				return {
 					data: json.map(x => x),
 					total: parseInt(headers.get('content-range').split('/').pop(), 10),
 				};
-			case CREATE:
-				//FIXME: Hack to stop bad admin app state after create
-				redirectToPreviousList();
-				return { ...params.data, id: json.id };
-			case DELETE:
-				//FIXME: Hack to stop bad admin app state after delete
-				redirectToPreviousList();
-				return json;
-			case UPDATE:
-				//FIXME: Hack to stop bad admin app state after update
-				redirectToPreviousList();
-				return json;
 			default:
 				return json;
 		}

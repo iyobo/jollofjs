@@ -111,7 +111,8 @@ module.exports = {
 	//Update
 	update: function*( modelName, id ) {
 		try {
-			this.body = yield models[ modelName ].update({id: id}, this.request.body)
+			const res = yield models[ modelName ].update({id: id}, this.request.body)
+			this.body = res;
 		} catch (err) {
 			log.err(err.stack);
 			this.throw(err);

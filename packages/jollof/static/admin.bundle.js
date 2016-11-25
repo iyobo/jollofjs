@@ -62,14 +62,16 @@
 	
 	var _resourceBuilder = __webpack_require__(894);
 	
+	var _jollofRestClient = __webpack_require__(902);
+	
+	var _jollofRestClient2 = _interopRequireDefault(_jollofRestClient);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// import jollofRestClient from "./rest/jollofRestClient";
+	var axios = __webpack_require__(903); /**
+	                               * Created by iyobo on 2016-11-08.
+	                               */
 	
-	/**
-	 * Created by iyobo on 2016-11-08.
-	 */
-	var axios = __webpack_require__(902);
 	var _ = __webpack_require__(901);
 	
 	var modelResources = [];
@@ -82,7 +84,7 @@
 		(0, _reactDom.render)(_react2.default.createElement(
 			_adminOnRest.Admin,
 			{ dashboard: _Dashboard2.default, title: 'Jollof Admin',
-				restClient: (0, _adminOnRest.simpleRestClient)(apiRoot + '/api/admin/v1') },
+				restClient: (0, _jollofRestClient2.default)(apiRoot + '/api/admin/v1') },
 			modelResources
 		), document.getElementById('root'));
 	}).catch(function (error) {
@@ -93949,7 +93951,8 @@
 					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
 					break;
 				default:
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+					return _react2.default.createElement('div', null);
+					return;
 					break;
 	
 			}
@@ -94199,15 +94202,15 @@
 				};
 			}
 		}, {
-			key: 'previewFile',
-			value: function previewFile(evt) {
+			key: 'onFileAdded',
+			value: function onFileAdded(evt) {
 				var _this2 = this;
 	
 				var file = evt.target.files[0];
 				var reader = new FileReader();
 	
 				reader.addEventListener("load", function () {
-					console.log('file', file);
+					// console.log('file', file);
 	
 					var preview = reader.result;
 					if (file.type.indexOf('image') === -1) preview = '/jollofstatic/doc.png';
@@ -94254,7 +94257,7 @@
 							{ className: 'col-md-9' },
 							_react2.default.createElement(
 								'div',
-								{ className: 'wrapText pad-5' },
+								{ className: 'wrapText pad-5 bold' },
 								this.state.file.name
 							),
 							_react2.default.createElement(
@@ -94277,7 +94280,7 @@
 					'div',
 					{ className: 'fileInput' },
 					_react2.default.createElement('input', { key: this.state.key, type: 'file', name: this.props.key,
-						onChange: this.previewFile.bind(this) }),
+						onChange: this.onFileAdded.bind(this) }),
 					preview
 				);
 			}
@@ -102113,17 +102116,174 @@
 /* 902 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(903);
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _fetch = __webpack_require__(225);
+	
+	var _types = __webpack_require__(175);
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var jollofApiUrl = '';
+	
+	/**
+	 * Maps admin-on-rest queries to a simple REST API
+	 *
+	 * The REST dialect is similar to the one of FakeRest
+	 * @see https://github.com/marmelab/FakeRest
+	 * @example
+	 * GET_LIST     => GET http://my.api.url/posts?sort=['title','ASC']&range=[0, 24]
+	 * GET_MATCHING => GET http://my.api.url/posts?filter={title:'bar'}
+	 * GET_ONE      => GET http://my.api.url/posts/123
+	 * GET_MANY     => GET http://my.api.url/posts?filter={ids:[123,456,789]}
+	 * UPDATE       => PUT http://my.api.url/posts/123
+	 * CREATE       => POST http://my.api.url/posts/123
+	 * DELETE       => DELETE http://my.api.url/posts/123
+	 */
+	
+	exports.default = function (apiUrl) {
+		var httpClient = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _fetch.fetchJson;
+	
+		jollofApiUrl = apiUrl;
+		/**
+	  * Upstream to Server
+	  * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
+	  * @param {String} resource Name of the resource to fetch, e.g. 'posts'
+	  * @param {Object} params The REST request params, depending on the type
+	  * @returns {Object} { url, options } The HTTP request parameters
+	  */
+		var convertRESTRequestToHTTP = function convertRESTRequestToHTTP(type, resource, params) {
+	
+			console.log(type, resource, params);
+			var url = '';
+			var options = {};
+			switch (type) {
+				case _types.GET_LIST:
+					{
+						var _params$pagination = params.pagination,
+						    page = _params$pagination.page,
+						    perPage = _params$pagination.perPage;
+						var _params$sort = params.sort,
+						    field = _params$sort.field,
+						    order = _params$sort.order;
+	
+						var query = {
+							sort: JSON.stringify([field, order]),
+							range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+							filter: JSON.stringify(params.filter)
+						};
+						url = apiUrl + '/' + resource + '?' + (0, _fetch.queryParameters)(query);
+						break;
+					}
+				case _types.GET_MATCHING:
+					{
+						var _query = {
+							filter: JSON.stringify(params.filter)
+						};
+						url = apiUrl + '/' + resource + '?' + (0, _fetch.queryParameters)(_query);
+						break;
+					}
+				case _types.GET_ONE:
+					url = apiUrl + '/' + resource + '/' + params.id;
+					break;
+				case _types.GET_MANY:
+					{
+						var _query2 = {
+							filter: JSON.stringify({ id: params.ids })
+						};
+						url = apiUrl + '/' + resource + '?' + (0, _fetch.queryParameters)(_query2);
+						break;
+					}
+				case _types.GET_MANY_REFERENCE:
+					{
+						var _query3 = {
+							filter: JSON.stringify(_defineProperty({}, params.target, params.id))
+						};
+						url = apiUrl + '/' + resource + '?' + (0, _fetch.queryParameters)(_query3);
+						break;
+					}
+				case _types.UPDATE:
+					url = apiUrl + '/' + resource + '/' + params.id;
+					options.method = 'PUT';
+					options.body = JSON.stringify(params.data);
+					break;
+				case _types.CREATE:
+					url = apiUrl + '/' + resource;
+					options.method = 'POST';
+					options.body = JSON.stringify(params.data);
+					break;
+				case _types.DELETE:
+					url = apiUrl + '/' + resource + '/' + params.id;
+					options.method = 'DELETE';
+					break;
+				default:
+					throw new Error('Unsupported fetch action type ' + type);
+			}
+			return { url: url, options: options };
+		};
+	
+		/**
+	  * Downstream from server
+	  * @param {Object} response HTTP response from fetch()
+	  * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
+	  * @param {String} resource Name of the resource to fetch, e.g. 'posts'
+	  * @param {Object} params The REST request params, depending on the type
+	  * @returns {Object} REST response
+	  */
+		var convertHTTPResponseToREST = function convertHTTPResponseToREST(response, type, resource, params) {
+			var headers = response.headers,
+			    json = response.json;
+	
+			console.log({ response: response, type: type, resource: resource, params: params });
+			switch (type) {
+				case _types.GET_LIST:
+					return {
+						data: json.map(function (x) {
+							return x;
+						}),
+						total: parseInt(headers.get('content-range').split('/').pop(), 10)
+					};
+				default:
+					return json;
+			}
+		};
+	
+		/**
+	  * @param {string} type Request type, e.g GET_LIST
+	  * @param {string} resource Resource name, e.g. "posts"
+	  * @param {Object} payload Request parameters. Depends on the request type
+	  * @returns {Promise} the Promise for a REST response
+	  */
+		return function (type, resource, params) {
+			var _convertRESTRequestTo = convertRESTRequestToHTTP(type, resource, params),
+			    url = _convertRESTRequestTo.url,
+			    options = _convertRESTRequestTo.options;
+	
+			return httpClient(url, options).then(function (response) {
+				return convertHTTPResponseToREST(response, type, resource, params);
+			});
+		};
+	};
 
 /***/ },
 /* 903 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(904);
+
+/***/ },
+/* 904 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
-	var utils = __webpack_require__(904);
-	var bind = __webpack_require__(905);
-	var Axios = __webpack_require__(906);
+	var utils = __webpack_require__(905);
+	var bind = __webpack_require__(906);
+	var Axios = __webpack_require__(907);
 	
 	/**
 	 * Create an instance of Axios
@@ -102156,15 +102316,15 @@
 	};
 	
 	// Expose Cancel & CancelToken
-	axios.Cancel = __webpack_require__(924);
-	axios.CancelToken = __webpack_require__(925);
-	axios.isCancel = __webpack_require__(921);
+	axios.Cancel = __webpack_require__(925);
+	axios.CancelToken = __webpack_require__(926);
+	axios.isCancel = __webpack_require__(922);
 	
 	// Expose all/spread
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(926);
+	axios.spread = __webpack_require__(927);
 	
 	module.exports = axios;
 	
@@ -102173,12 +102333,12 @@
 
 
 /***/ },
-/* 904 */
+/* 905 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var bind = __webpack_require__(905);
+	var bind = __webpack_require__(906);
 	
 	/*global toString:true*/
 	
@@ -102478,7 +102638,7 @@
 
 
 /***/ },
-/* 905 */
+/* 906 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -102495,17 +102655,17 @@
 
 
 /***/ },
-/* 906 */
+/* 907 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var defaults = __webpack_require__(907);
-	var utils = __webpack_require__(904);
-	var InterceptorManager = __webpack_require__(918);
-	var dispatchRequest = __webpack_require__(919);
-	var isAbsoluteURL = __webpack_require__(922);
-	var combineURLs = __webpack_require__(923);
+	var defaults = __webpack_require__(908);
+	var utils = __webpack_require__(905);
+	var InterceptorManager = __webpack_require__(919);
+	var dispatchRequest = __webpack_require__(920);
+	var isAbsoluteURL = __webpack_require__(923);
+	var combineURLs = __webpack_require__(924);
 	
 	/**
 	 * Create a new instance of Axios
@@ -102586,13 +102746,13 @@
 
 
 /***/ },
-/* 907 */
+/* 908 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var utils = __webpack_require__(904);
-	var normalizeHeaderName = __webpack_require__(908);
+	var utils = __webpack_require__(905);
+	var normalizeHeaderName = __webpack_require__(909);
 	
 	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
@@ -102609,10 +102769,10 @@
 	  var adapter;
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(909);
+	    adapter = __webpack_require__(910);
 	  } else if (typeof process !== 'undefined') {
 	    // For node use HTTP adapter
-	    adapter = __webpack_require__(909);
+	    adapter = __webpack_require__(910);
 	  }
 	  return adapter;
 	}
@@ -102679,12 +102839,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 908 */
+/* 909 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -102697,18 +102857,18 @@
 
 
 /***/ },
-/* 909 */
+/* 910 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var utils = __webpack_require__(904);
-	var settle = __webpack_require__(910);
-	var buildURL = __webpack_require__(913);
-	var parseHeaders = __webpack_require__(914);
-	var isURLSameOrigin = __webpack_require__(915);
-	var createError = __webpack_require__(911);
-	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(916);
+	var utils = __webpack_require__(905);
+	var settle = __webpack_require__(911);
+	var buildURL = __webpack_require__(914);
+	var parseHeaders = __webpack_require__(915);
+	var isURLSameOrigin = __webpack_require__(916);
+	var createError = __webpack_require__(912);
+	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(917);
 	
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -102804,7 +102964,7 @@
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-	      var cookies = __webpack_require__(917);
+	      var cookies = __webpack_require__(918);
 	
 	      // Add xsrf header
 	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -102881,12 +103041,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 910 */
+/* 911 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var createError = __webpack_require__(911);
+	var createError = __webpack_require__(912);
 	
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -102912,12 +103072,12 @@
 
 
 /***/ },
-/* 911 */
+/* 912 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var enhanceError = __webpack_require__(912);
+	var enhanceError = __webpack_require__(913);
 	
 	/**
 	 * Create an Error with the specified message, config, error code, and response.
@@ -102935,7 +103095,7 @@
 
 
 /***/ },
-/* 912 */
+/* 913 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -102960,12 +103120,12 @@
 
 
 /***/ },
-/* 913 */
+/* 914 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -103034,12 +103194,12 @@
 
 
 /***/ },
-/* 914 */
+/* 915 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	/**
 	 * Parse headers into an object
@@ -103077,12 +103237,12 @@
 
 
 /***/ },
-/* 915 */
+/* 916 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -103151,7 +103311,7 @@
 
 
 /***/ },
-/* 916 */
+/* 917 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -103193,12 +103353,12 @@
 
 
 /***/ },
-/* 917 */
+/* 918 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -103252,12 +103412,12 @@
 
 
 /***/ },
-/* 918 */
+/* 919 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -103310,15 +103470,15 @@
 
 
 /***/ },
-/* 919 */
+/* 920 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
-	var transformData = __webpack_require__(920);
-	var isCancel = __webpack_require__(921);
-	var defaults = __webpack_require__(907);
+	var utils = __webpack_require__(905);
+	var transformData = __webpack_require__(921);
+	var isCancel = __webpack_require__(922);
+	var defaults = __webpack_require__(908);
 	
 	/**
 	 * Throws a `Cancel` if cancellation has been requested.
@@ -103395,12 +103555,12 @@
 
 
 /***/ },
-/* 920 */
+/* 921 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(904);
+	var utils = __webpack_require__(905);
 	
 	/**
 	 * Transform the data for a request or a response
@@ -103421,7 +103581,7 @@
 
 
 /***/ },
-/* 921 */
+/* 922 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -103432,7 +103592,7 @@
 
 
 /***/ },
-/* 922 */
+/* 923 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -103452,7 +103612,7 @@
 
 
 /***/ },
-/* 923 */
+/* 924 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -103470,7 +103630,7 @@
 
 
 /***/ },
-/* 924 */
+/* 925 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -103495,12 +103655,12 @@
 
 
 /***/ },
-/* 925 */
+/* 926 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Cancel = __webpack_require__(924);
+	var Cancel = __webpack_require__(925);
 	
 	/**
 	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -103558,7 +103718,7 @@
 
 
 /***/ },
-/* 926 */
+/* 927 */
 /***/ function(module, exports) {
 
 	'use strict';
