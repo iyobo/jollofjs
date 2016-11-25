@@ -25,34 +25,10 @@ import {
 } from 'admin-on-rest/lib/mui';
 
 import {buildResource} from "./resourceBuilder";
-import jollofRestClient from "./rest/jollofRestClient";
+// import jollofRestClient from "./rest/jollofRestClient";
 
 const axios = require('axios');
 const _ = require('lodash');
-
-// export const PostList = (props) => (
-// 	<List {...props}>
-// 		<Datagrid>
-// 			<TextField source="id" />
-// 			<TextField source="title" />
-// 			<TextField source="body" />
-// 			<EditButton />
-// 		</Datagrid>
-// 	</List>
-// );
-// export const PostEdit = (props) => (
-// 	<Edit {...props}>
-// 		<DisabledInput source="id" />
-// 		<TextInput source="title" />
-// 		<TextInput source="body" />
-// 	</Edit>
-// );
-// render(
-// 	<Admin restClient={jsonServerRestClient('http://jsonplaceholder.typicode.com')}>
-// 		<Resource name="posts" list={PostList} edit={PostEdit} />
-// 	</Admin>
-// 	, document.getElementById('root')
-// );
 
 let modelResources = [];
 axios.get('/api/admin/models')
@@ -64,7 +40,7 @@ axios.get('/api/admin/models')
 
 		render(
 			<Admin dashboard={Dashboard} title="Jollof Admin"
-				   restClient={jollofRestClient(apiRoot + '/api/admin/v1')}>
+				   restClient={simpleRestClient(apiRoot + '/api/admin/v1')}>
 				{modelResources}
 			</Admin>
 			, document.getElementById('root')
