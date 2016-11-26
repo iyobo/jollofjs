@@ -93928,6 +93928,14 @@
 	
 	var _book2 = _interopRequireDefault(_book);
 	
+	var _Edit = __webpack_require__(929);
+	
+	var _Edit2 = _interopRequireDefault(_Edit);
+	
+	var _Create = __webpack_require__(931);
+	
+	var _Create2 = _interopRequireDefault(_Create);
+	
 	var _FileField = __webpack_require__(896);
 	
 	var _FileInput = __webpack_require__(897);
@@ -93951,7 +93959,7 @@
 					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
 					break;
 				default:
-					return _react2.default.createElement('div', null);
+					return _react2.default.createElement('div', { key: k, source: k });
 					return;
 					break;
 	
@@ -94044,7 +94052,7 @@
 		//Edit View
 		var modelEdit = function modelEdit(props) {
 			return _react2.default.createElement(
-				_mui.Edit,
+				_Edit2.default,
 				_extends({ title: "Edit " + schema.name }, props),
 				_react2.default.createElement(_mui.DisabledInput, { source: 'id' }),
 				modelUpdateFields,
@@ -94056,7 +94064,7 @@
 		//Create view
 		var modelCreate = function modelCreate(props) {
 			return _react2.default.createElement(
-				_mui.Create,
+				_Create2.default,
 				_extends({ title: "Create a " + schema.name }, props),
 				modelUpdateFields
 			);
@@ -94216,6 +94224,12 @@
 					if (file.type.indexOf('image') === -1) preview = '/jollofstatic/doc.png';
 	
 					_this2.setState(_extends({}, _this2.state, { file: file, preview: preview }));
+					_this2.props.record[_this2.props.source] = file;
+					_this2.props.input.value = file;
+	
+					console.log('file uploaded', _this2.props);
+	
+					// this.props.onChange(evt);
 				}, false);
 	
 				if (file) {
@@ -94290,8 +94304,10 @@
 	}(_react.Component);
 	
 	FileInput.propTypes = {
-		source: _react.PropTypes.string.isRequired,
-		record: _react.PropTypes.object
+		input: _react.PropTypes.object,
+		label: _react.PropTypes.string,
+		onChange: _react.PropTypes.func,
+		source: _react.PropTypes.string.isRequired
 	};
 
 /***/ },
@@ -102122,13 +102138,42 @@
 		value: true
 	});
 	
-	var _fetch = __webpack_require__(225);
+	var _fetch = __webpack_require__(928);
 	
 	var _types = __webpack_require__(175);
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var jollofApiUrl = '';
+	
+	/**
+	 * Process the entiti's data and return appropriate AJAx body.
+	 * Wether formdata or json string.
+	 * @param data
+	 */
+	function processOutBody(data) {
+	
+		//First check to see if data has any files
+		for (var k in data) {
+			if (data[k] instanceof File) {
+				var hasFile = true;
+			}
+		}
+	
+		//
+		if (!hasFile) {
+			console.log('no file', data);
+			return JSON.stringify(data);
+		} else {
+			console.log('file present', data);
+			var formData = new FormData();
+			for (var _k in data) {
+				formData.append(_k, data[_k]);
+			}
+	
+			return formData;
+		}
+	}
 	
 	/**
 	 * Maps admin-on-rest queries to a simple REST API
@@ -102209,12 +102254,12 @@
 				case _types.UPDATE:
 					url = apiUrl + '/' + resource + '/' + params.id;
 					options.method = 'PUT';
-					options.body = JSON.stringify(params.data);
+					options.body = processOutBody(params.data);
 					break;
 				case _types.CREATE:
 					url = apiUrl + '/' + resource;
 					options.method = 'POST';
-					options.body = JSON.stringify(params.data);
+					options.body = processOutBody(params.data);
 					break;
 				case _types.DELETE:
 					url = apiUrl + '/' + resource + '/' + params.id;
@@ -102237,8 +102282,8 @@
 		var convertHTTPResponseToREST = function convertHTTPResponseToREST(response, type, resource, params) {
 			var headers = response.headers,
 			    json = response.json;
+			// console.log({response, type, resource, params});
 	
-			console.log({ response: response, type: type, resource: resource, params: params });
 			switch (type) {
 				case _types.GET_LIST:
 					return {
@@ -103749,6 +103794,550 @@
 	  };
 	};
 
+
+/***/ },
+/* 928 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var fetchJson = exports.fetchJson = function fetchJson(url) {
+	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	
+	
+	    var requestHeaders = options.headers || new Headers({
+	        Accept: 'application/json'
+	    });
+	
+	    //To form or not to form
+	    if (options && options.body && options.body instanceof FormData) {
+	        requestHeaders.set('Content-Type', 'multipart/form-data');
+	    } else {
+	        requestHeaders.set('Content-Type', 'application/json');
+	    }
+	
+	    if (options.user && options.user.authenticated && options.user.token) {
+	        requestHeaders.set('Authorization', options.user.token);
+	    }
+	
+	    return fetch(url, _extends({}, options, { headers: requestHeaders })).then(function (response) {
+	        return response.text().then(function (text) {
+	            return {
+	                status: response.status,
+	                statusText: response.statusText,
+	                headers: response.headers,
+	                body: text
+	            };
+	        });
+	    }).then(function (_ref) {
+	        var status = _ref.status,
+	            statusText = _ref.statusText,
+	            headers = _ref.headers,
+	            body = _ref.body;
+	
+	        var json = void 0;
+	        try {
+	            json = JSON.parse(body);
+	        } catch (e) {
+	            // not json, no big deal
+	        }
+	        if (status < 200 || status >= 300) {
+	            return Promise.reject(new Error(json && json.message || statusText));
+	        }
+	        return { status: status, headers: headers, body: body, json: json };
+	    });
+	};
+	
+	var queryParameters = exports.queryParameters = function queryParameters(data) {
+	    return Object.keys(data).map(function (key) {
+	        return [key, data[key]].map(encodeURIComponent).join('=');
+	    }).join('&');
+	};
+
+/***/ },
+/* 929 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Edit = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(311);
+	
+	var _Card = __webpack_require__(735);
+	
+	var _inflection = __webpack_require__(721);
+	
+	var _inflection2 = _interopRequireDefault(_inflection);
+	
+	var _Title = __webpack_require__(765);
+	
+	var _Title2 = _interopRequireDefault(_Title);
+	
+	var _button = __webpack_require__(748);
+	
+	var _dataActions = __webpack_require__(174);
+	
+	var _RecordForm = __webpack_require__(930);
+	
+	var _RecordForm2 = _interopRequireDefault(_RecordForm);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// eslint-disable-line import/no-named-as-default
+	
+	/**
+	 * Turns a children data structure (either single child or array of children) into an array.
+	 * We can't use React.Children.toArray as it loses references.
+	 */
+	var arrayizeChildren = function arrayizeChildren(children) {
+	    return Array.isArray(children) ? children : [children];
+	};
+	
+	var Edit = exports.Edit = function (_Component) {
+	    _inherits(Edit, _Component);
+	
+	    function Edit(props) {
+	        _classCallCheck(this, Edit);
+	
+	        var _this = _possibleConstructorReturn(this, (Edit.__proto__ || Object.getPrototypeOf(Edit)).call(this, props));
+	
+	        _this.state = { record: props.data };
+	        _this.handleSubmit = _this.handleSubmit.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(Edit, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.props.crudGetOne(this.props.resource, this.props.id, this.getBasePath());
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            if (this.props.data !== nextProps.data) {
+	                this.setState({ record: nextProps.data }); // FIXME: erases user entry when fetch response arrives late
+	            }
+	            if (this.props.id !== nextProps.id) {
+	                this.props.crudGetOne(nextProps.resource, nextProps.id, this.getBasePath());
+	            }
+	        }
+	
+	        // FIXME Seems that the cloneElement in CrudRoute slices the children array, which makes this necessary to avoid rerenders
+	
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps) {
+	            if (nextProps.isLoading !== this.props.isLoading) {
+	                return true;
+	            }
+	
+	            var currentChildren = arrayizeChildren(this.props.children);
+	            var newChildren = arrayizeChildren(nextProps.children);
+	
+	            return newChildren.every(function (child, index) {
+	                return child === currentChildren[index];
+	            });
+	        }
+	    }, {
+	        key: 'getBasePath',
+	        value: function getBasePath() {
+	            var location = this.props.location;
+	
+	            return location.pathname.split('/').slice(0, -1).join('/');
+	        }
+	    }, {
+	        key: 'handleSubmit',
+	        value: function handleSubmit(record) {
+	            this.props.crudUpdate(this.props.resource, this.props.id, record, this.getBasePath());
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props,
+	                title = _props.title,
+	                children = _props.children,
+	                id = _props.id,
+	                data = _props.data,
+	                isLoading = _props.isLoading,
+	                resource = _props.resource,
+	                hasDelete = _props.hasDelete,
+	                hasShow = _props.hasShow,
+	                validation = _props.validation;
+	
+	            var basePath = this.getBasePath();
+	
+	            return _react2.default.createElement(
+	                _Card.Card,
+	                { style: { margin: '2em', opacity: isLoading ? 0.8 : 1 } },
+	                _react2.default.createElement(
+	                    _Card.CardActions,
+	                    { style: { zIndex: 2, display: 'inline-block', float: 'right' } },
+	                    hasShow && _react2.default.createElement(_button.ShowButton, { basePath: basePath, record: data }),
+	                    _react2.default.createElement(_button.ListButton, { basePath: basePath }),
+	                    hasDelete && _react2.default.createElement(_button.DeleteButton, { basePath: basePath, record: data })
+	                ),
+	                _react2.default.createElement(_Card.CardTitle, { title: _react2.default.createElement(_Title2.default, { title: title, record: data, defaultTitle: _inflection2.default.humanize(_inflection2.default.singularize(resource)) + ' #' + id }) }),
+	                data && _react2.default.createElement(
+	                    _RecordForm2.default,
+	                    {
+	                        onSubmit: this.handleSubmit,
+	                        record: data,
+	                        resource: resource,
+	                        basePath: basePath,
+	                        initialValues: data,
+	                        validation: validation
+	                    },
+	                    children
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Edit;
+	}(_react.Component);
+	
+	Edit.propTypes = {
+	    children: _react.PropTypes.node,
+	    crudGetOne: _react.PropTypes.func.isRequired,
+	    crudUpdate: _react.PropTypes.func.isRequired,
+	    data: _react.PropTypes.object,
+	    hasDelete: _react.PropTypes.bool,
+	    hasShow: _react.PropTypes.bool,
+	    id: _react.PropTypes.string.isRequired,
+	    isLoading: _react.PropTypes.bool.isRequired,
+	    location: _react.PropTypes.object.isRequired,
+	    params: _react.PropTypes.object.isRequired,
+	    resource: _react.PropTypes.string.isRequired,
+	    title: _react.PropTypes.any
+	};
+	
+	function mapStateToProps(state, props) {
+	    return {
+	        id: props.params.id,
+	        data: state.admin[props.resource].data[props.params.id],
+	        isLoading: state.admin.loading > 0
+	    };
+	}
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, { crudGetOne: _dataActions.crudGetOne, crudUpdate: _dataActions.crudUpdate })(Edit);
+
+/***/ },
+/* 930 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.RecordForm = exports.validateForm = undefined;
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reduxForm = __webpack_require__(391);
+	
+	var _Toolbar = __webpack_require__(767);
+	
+	var _validate = __webpack_require__(772);
+	
+	var _button = __webpack_require__(748);
+	
+	var _Labeled = __webpack_require__(773);
+	
+	var _Labeled2 = _interopRequireDefault(_Labeled);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	/**
+	 * @example
+	 * from the following fields:
+	 *     <TextField source="title" validation={{ minLength: 5 }} />
+	 *     <TextField source="age" validation={{ required: true, min: 18 }} />
+	 * produces the following output
+	 * {
+	 *    title: (value) => value.length < 5 ? ['title is too short'] : [],
+	 *    age:   (value) => {
+	 *       const errors = [];
+	 *       if (value) errors.push('age is required');
+	 *       if (value < 18) errors.push('age is under 18');
+	 *       return errors;
+	 *    }
+	 * }
+	 */
+	var getFieldConstraints = function getFieldConstraints(children) {
+	  return _react2.default.Children.toArray(children).map(function (_ref) {
+	    var _ref$props = _ref.props,
+	        fieldName = _ref$props.source,
+	        validation = _ref$props.validation;
+	    return { fieldName: fieldName, validation: validation };
+	  }).filter(function (_ref2) {
+	    var validation = _ref2.validation;
+	    return !!validation;
+	  }).reduce(function (constraints, _ref3) {
+	    var fieldName = _ref3.fieldName,
+	        validation = _ref3.validation;
+	
+	    constraints[fieldName] = (0, _validate.getConstraintsFunctionFromFunctionOrObject)(validation);
+	    return constraints;
+	  }, {});
+	};
+	
+	var validateForm = exports.validateForm = function validateForm(values, _ref4) {
+	  var children = _ref4.children,
+	      validation = _ref4.validation;
+	
+	  var errors = typeof validation === 'function' ? validation(values) : {};
+	
+	  // warn user we expect an object here, in case of validation just returned an error message
+	  if (errors === null || (typeof errors === 'undefined' ? 'undefined' : _typeof(errors)) !== 'object') {
+	    throw new Error('Validation function given to form components should return an object.');
+	  }
+	
+	  var fieldConstraints = getFieldConstraints(children);
+	  Object.keys(fieldConstraints).forEach(function (fieldName) {
+	    var error = fieldConstraints[fieldName](values[fieldName], values);
+	    if (error.length > 0) {
+	      if (!errors[fieldName]) {
+	        errors[fieldName] = [];
+	      }
+	      errors[fieldName] = [].concat(_toConsumableArray(errors[fieldName]), _toConsumableArray(error));
+	    }
+	  });
+	  return errors;
+	};
+	
+	var RecordForm = exports.RecordForm = function RecordForm(_ref5) {
+	  var children = _ref5.children,
+	      handleSubmit = _ref5.handleSubmit,
+	      record = _ref5.record,
+	      resource = _ref5.resource,
+	      basePath = _ref5.basePath;
+	
+	
+	  _react2.default.Children.forEach(children, function (input) {
+	    console.log('React Child', children, input);
+	  });
+	
+	  return _react2.default.createElement(
+	    'form',
+	    { onSubmit: handleSubmit, encType: 'multipart/form-data' },
+	    _react2.default.createElement(
+	      'div',
+	      { style: { padding: '0 1em 1em 1em' } },
+	      _react2.default.Children.map(children, function (input) {
+	        return _react2.default.createElement(
+	          'div',
+	          { key: input.props.source },
+	          input.props.includesLabel ? _react2.default.createElement(_reduxForm.Field, _extends({}, input.props, {
+	            name: input.props.source,
+	            component: input.type,
+	            resource: resource,
+	            record: record,
+	            basePath: basePath
+	          })) : _react2.default.createElement(
+	            _reduxForm.Field,
+	            _extends({}, input.props, {
+	              name: input.props.source,
+	              component: _Labeled2.default,
+	              label: input.props.label,
+	              resource: resource,
+	              record: record,
+	              basePath: basePath
+	            }),
+	            input
+	          )
+	        );
+	      })
+	    ),
+	    _react2.default.createElement(
+	      _Toolbar.Toolbar,
+	      null,
+	      _react2.default.createElement(
+	        _Toolbar.ToolbarGroup,
+	        null,
+	        _react2.default.createElement(_button.SaveButton, null)
+	      )
+	    )
+	  );
+	};
+	
+	RecordForm.propTypes = {
+	  children: _react.PropTypes.node,
+	  handleSubmit: _react.PropTypes.func,
+	  record: _react.PropTypes.object,
+	  resource: _react.PropTypes.string,
+	  basePath: _react.PropTypes.string
+	};
+	
+	exports.default = (0, _reduxForm.reduxForm)({
+	  form: 'record-form',
+	  validate: validateForm
+	})(RecordForm);
+
+/***/ },
+/* 931 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(311);
+	
+	var _Card = __webpack_require__(735);
+	
+	var _inflection = __webpack_require__(721);
+	
+	var _inflection2 = _interopRequireDefault(_inflection);
+	
+	var _Title = __webpack_require__(765);
+	
+	var _Title2 = _interopRequireDefault(_Title);
+	
+	var _ListButton = __webpack_require__(755);
+	
+	var _ListButton2 = _interopRequireDefault(_ListButton);
+	
+	var _dataActions = __webpack_require__(174);
+	
+	var _RecordForm = __webpack_require__(930);
+	
+	var _RecordForm2 = _interopRequireDefault(_RecordForm);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// eslint-disable-line import/no-named-as-default
+	
+	var Create = function (_Component) {
+	    _inherits(Create, _Component);
+	
+	    function Create() {
+	        var _ref;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, Create);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Create.__proto__ || Object.getPrototypeOf(Create)).call.apply(_ref, [this].concat(args))), _this), _this.handleSubmit = function (record) {
+	            return _this.props.crudCreate(_this.props.resource, record, _this.getBasePath());
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    _createClass(Create, [{
+	        key: 'getBasePath',
+	        value: function getBasePath() {
+	            var location = this.props.location;
+	
+	            return location.pathname.split('/').slice(0, -1).join('/');
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props,
+	                title = _props.title,
+	                children = _props.children,
+	                isLoading = _props.isLoading,
+	                resource = _props.resource,
+	                validation = _props.validation;
+	
+	            var basePath = this.getBasePath();
+	            return _react2.default.createElement(
+	                _Card.Card,
+	                { style: { margin: '2em', opacity: isLoading ? 0.8 : 1 } },
+	                _react2.default.createElement(
+	                    _Card.CardActions,
+	                    { style: { zIndex: 2, display: 'inline-block', float: 'right' } },
+	                    _react2.default.createElement(_ListButton2.default, { basePath: basePath })
+	                ),
+	                _react2.default.createElement(_Card.CardTitle, { title: _react2.default.createElement(_Title2.default, { title: title, defaultTitle: 'Create ' + _inflection2.default.humanize(_inflection2.default.singularize(resource)) }) }),
+	                _react2.default.createElement(
+	                    _RecordForm2.default,
+	                    {
+	                        onSubmit: this.handleSubmit,
+	                        resource: resource,
+	                        basePath: basePath,
+	                        validation: validation,
+	                        record: {}
+	                    },
+	                    children
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Create;
+	}(_react.Component);
+	
+	Create.propTypes = {
+	    children: _react.PropTypes.node,
+	    crudCreate: _react.PropTypes.func.isRequired,
+	    isLoading: _react.PropTypes.bool.isRequired,
+	    location: _react.PropTypes.object.isRequired,
+	    params: _react.PropTypes.object.isRequired,
+	    resource: _react.PropTypes.string.isRequired,
+	    title: _react.PropTypes.any,
+	    validation: _react.PropTypes.func
+	};
+	
+	Create.defaultProps = {
+	    data: {}
+	};
+	
+	function mapStateToProps(state) {
+	    return {
+	        isLoading: state.admin.loading > 0
+	    };
+	}
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, { crudCreate: _dataActions.crudCreate })(Create);
 
 /***/ }
 /******/ ]);

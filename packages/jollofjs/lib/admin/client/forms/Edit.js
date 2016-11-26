@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Card, CardTitle, CardActions } from 'material-ui/Card';
 import inflection from 'inflection';
-import Title from 'admin-on-rest/lib/layout/Title';
-import { ListButton, DeleteButton, ShowButton } from 'admin-on-rest/lib/button';
+import Title from 'admin-on-rest/lib/mui/layout/Title';
+import { ListButton, DeleteButton, ShowButton } from 'admin-on-rest/lib/mui/button';
 import { crudGetOne as crudGetOneAction, crudUpdate as crudUpdateAction } from 'admin-on-rest/lib/actions/dataActions';
 import RecordForm from './RecordForm'; // eslint-disable-line import/no-named-as-default
 

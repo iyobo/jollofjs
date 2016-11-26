@@ -3,7 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { getConstraintsFunctionFromFunctionOrObject } from 'admin-on-rest/lib/util/validate';
 import { SaveButton } from 'admin-on-rest/lib/mui/button';
-import Labeled from 'admin-on-rest/lib/input/Labeled';
+import Labeled from 'admin-on-rest/lib/mui/input/Labeled';
 
 /**
  * @example
@@ -50,41 +50,46 @@ export const validateForm = (values, { children, validation }) => {
     return errors;
 };
 
-export const RecordForm = ({ children, handleSubmit, record, resource, basePath }) => (
-    <form onSubmit={handleSubmit} enctype="multipart/form-data">
-        <div style={{ padding: '0 1em 1em 1em' }}>
-            {React.Children.map(children, input => (
-                <div key={input.props.source}>
-                    { input.props.includesLabel ?
-                        <Field
-                            {...input.props}
-                            name={input.props.source}
-                            component={input.type}
-                            resource={resource}
-                            record={record}
-                            basePath={basePath}
-                        />
-                        :
-                        <Field
-                            {...input.props}
-                            name={input.props.source}
-                            component={Labeled}
-                            label={input.props.label}
-                            resource={resource}
-                            record={record}
-                            basePath={basePath}
-                        >{ input }</Field>
-                    }
-                </div>
-            ))}
-        </div>
-        <Toolbar>
-            <ToolbarGroup>
-                <SaveButton />
-            </ToolbarGroup>
-        </Toolbar>
-    </form>
-);
+export const RecordForm = ({ children, handleSubmit, record, resource, basePath }) => {
+
+	React.Children.forEach(children, input => {
+		console.log('React Child', children, input)
+	})
+
+	return ( <form onSubmit={handleSubmit} encType="multipart/form-data">
+		<div style={{padding: '0 1em 1em 1em'}}>
+			{React.Children.map(children, input => (
+				<div key={input.props.source}>
+					{ input.props.includesLabel ?
+						<Field
+							{...input.props}
+							name={input.props.source}
+							component={input.type}
+							resource={resource}
+							record={record}
+							basePath={basePath}
+						/>
+						:
+						<Field
+							{...input.props}
+							name={input.props.source}
+							component={Labeled}
+							label={input.props.label}
+							resource={resource}
+							record={record}
+							basePath={basePath}
+						>{ input }</Field>
+					}
+				</div>
+			))}
+		</div>
+		<Toolbar>
+			<ToolbarGroup>
+				<SaveButton />
+			</ToolbarGroup>
+		</Toolbar>
+	</form>)
+};
 
 RecordForm.propTypes = {
     children: PropTypes.node,
