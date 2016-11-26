@@ -52,9 +52,9 @@ export const validateForm = (values, { children, validation }) => {
 
 export const RecordForm = ({ children, handleSubmit, record, resource, basePath }) => {
 
-	React.Children.forEach(children, input => {
-		console.log('React Child', children, input)
-	})
+	// React.Children.forEach(children, input => {
+	// 	console.log('React Child', children, input)
+	// })
 
 	return ( <form onSubmit={handleSubmit} encType="multipart/form-data">
 		<div style={{padding: '0 1em 1em 1em'}}>

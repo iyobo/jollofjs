@@ -94214,6 +94214,7 @@
 			value: function onFileAdded(evt) {
 				var _this2 = this;
 	
+				evt.preventDefault();
 				var file = evt.target.files[0];
 				var reader = new FileReader();
 	
@@ -94224,12 +94225,12 @@
 					if (file.type.indexOf('image') === -1) preview = '/jollofstatic/doc.png';
 	
 					_this2.setState(_extends({}, _this2.state, { file: file, preview: preview }));
-					_this2.props.record[_this2.props.source] = file;
-					_this2.props.input.value = file;
+					// this.props.record[this.props.source] = file;
+					// this.props.input.value = file;
 	
 					console.log('file uploaded', _this2.props);
 	
-					// this.props.onChange(evt);
+					_this2.props.input.onChange(file);
 				}, false);
 	
 				if (file) {
@@ -94293,7 +94294,7 @@
 				return _react2.default.createElement(
 					'div',
 					{ className: 'fileInput' },
-					_react2.default.createElement('input', { key: this.state.key, type: 'file', name: this.props.key,
+					_react2.default.createElement('input', { type: 'file', name: this.props.key,
 						onChange: this.onFileAdded.bind(this) }),
 					preview
 				);
@@ -104144,9 +104145,9 @@
 	      basePath = _ref5.basePath;
 	
 	
-	  _react2.default.Children.forEach(children, function (input) {
-	    console.log('React Child', children, input);
-	  });
+	  // React.Children.forEach(children, input => {
+	  // 	console.log('React Child', children, input)
+	  // })
 	
 	  return _react2.default.createElement(
 	    'form',
