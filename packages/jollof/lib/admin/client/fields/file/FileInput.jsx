@@ -24,7 +24,6 @@ export class FileInput extends Component {
 		let file = evt.target.files[ 0 ]
 		var reader = new FileReader();
 
-
 		reader.addEventListener("load", () => {
 			// console.log('file', file);
 
@@ -33,6 +32,13 @@ export class FileInput extends Component {
 				preview = '/jollofstatic/doc.png';
 
 			this.setState({...this.state, file: file, preview: preview});
+			this.props.record[this.props.source] = file;
+			this.props.input.value = file;
+
+			console.log('file uploaded', this.props);
+
+			// this.props.onChange(evt);
+
 		}, false);
 
 		if (file) {
@@ -89,6 +95,8 @@ export class FileInput extends Component {
 }
 
 FileInput.propTypes = {
+	input: PropTypes.object,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
 	source: PropTypes.string.isRequired,
-	record: PropTypes.object,
 };

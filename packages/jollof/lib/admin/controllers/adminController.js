@@ -101,7 +101,9 @@ module.exports = {
 	create: function*( modelName ) {
 		//get schema
 		try {
-			this.body = yield models[ modelName ].create(this.request.body)
+			console.log(this.request.body)
+			const res =  yield models[ modelName ].create(this.request.body);
+			this.body = res;
 		} catch (err) {
 			log.err(err.stack);
 			this.throw(err);
@@ -111,7 +113,8 @@ module.exports = {
 	//Update
 	update: function*( modelName, id ) {
 		try {
-			const res = yield models[ modelName ].update({id: id}, this.request.body)
+			console.log(this.request.body)
+			const res = yield models[ modelName ].update({id: id}, this.request.body);
 			this.body = res;
 		} catch (err) {
 			log.err(err.stack);

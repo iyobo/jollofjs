@@ -6,8 +6,6 @@ import {render} from 'react-dom';
 import {simpleRestClient, jsonServerRestClient, Admin, Resource} from 'admin-on-rest';
 import {
 	List,
-	Edit,
-	Create,
 	Show,
 	Datagrid,
 	DateField,
@@ -25,9 +23,12 @@ import {
 	Delete
 } from 'admin-on-rest/lib/mui';
 import PostIcon from 'material-ui/svg-icons/action/book';
+import Edit from "./forms/Edit";
+import Create from "./forms/Create";
 const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
+
 
 function buildViewFields(structure){
 	return _.map(structure, ( v, k )=> {
@@ -43,7 +44,7 @@ function buildViewFields(structure){
 				return <DateField key={k} source={k}/>
 				break;
 			default:
-				return <div></div>
+				return <div key={k} source={k}></div>
 				return;
 				break;
 

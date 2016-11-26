@@ -1,4 +1,4 @@
-import { queryParameters, fetchJson } from 'admin-on-rest/lib/util/fetch';
+import {queryParameters, fetchJson} from './fetch';
 import {
 	GET_LIST,
 	GET_MATCHING,
@@ -10,7 +10,37 @@ import {
 	DELETE,
 } from "admin-on-rest/lib/rest/types";
 
-let jollofApiUrl='';
+let jollofApiUrl = '';
+
+/**
+ * Process the entiti's data and return appropriate AJAx body.
+ * Wether formdata or json string.
+ * @param data
+ */
+function processOutBody( data ) {
+
+	//First check to see if data has any files
+	for (let k in data) {
+		if (data[ k ] instanceof File) {
+			var hasFile = true;
+		}
+	}
+
+	//
+	if (!hasFile) {
+		console.log('no file', data);
+		return JSON.stringify(data);
+	} else {
+		console.log('file present', data);
+		let formData = new FormData();
+		for (let k in data) {
+			formData.append(k, data[ k ])
+		}
+
+		return formData;
+	}
+}
+
 
 /**
  * Maps admin-on-rest queries to a simple REST API
@@ -26,7 +56,7 @@ let jollofApiUrl='';
  * CREATE       => POST http://my.api.url/posts/123
  * DELETE       => DELETE http://my.api.url/posts/123
  */
-export default (apiUrl, httpClient = fetchJson) => {
+export default ( apiUrl, httpClient = fetchJson ) => {
 	jollofApiUrl = apiUrl;
 	/**
 	 * Upstream to Server
@@ -35,18 +65,18 @@ export default (apiUrl, httpClient = fetchJson) => {
 	 * @param {Object} params The REST request params, depending on the type
 	 * @returns {Object} { url, options } The HTTP request parameters
 	 */
-	const convertRESTRequestToHTTP = (type, resource, params) => {
+	const convertRESTRequestToHTTP = ( type, resource, params ) => {
 
-		console.log(type,resource,params)
+		console.log(type, resource, params)
 		let url = '';
 		const options = {};
 		switch (type) {
 			case GET_LIST: {
-				const { page, perPage } = params.pagination;
-				const { field, order } = params.sort;
+				const {page, perPage} = params.pagination;
+				const {field, order} = params.sort;
 				const query = {
-					sort: JSON.stringify([field, order]),
-					range: JSON.stringify([(page - 1) * perPage, (page * perPage) - 1]),
+					sort: JSON.stringify([ field, order ]),
+					range: JSON.stringify([ (page - 1) * perPage, (page * perPage) - 1 ]),
 					filter: JSON.stringify(params.filter),
 				};
 				url = `${apiUrl}/${resource}?${queryParameters(query)}`;
@@ -64,14 +94,14 @@ export default (apiUrl, httpClient = fetchJson) => {
 				break;
 			case GET_MANY: {
 				const query = {
-					filter: JSON.stringify({ id: params.ids }),
+					filter: JSON.stringify({id: params.ids}),
 				};
 				url = `${apiUrl}/${resource}?${queryParameters(query)}`;
 				break;
 			}
 			case GET_MANY_REFERENCE: {
 				const query = {
-					filter: JSON.stringify({ [params.target]: params.id }),
+					filter: JSON.stringify({[params.target]: params.id}),
 				};
 				url = `${apiUrl}/${resource}?${queryParameters(query)}`;
 				break;
@@ -79,12 +109,12 @@ export default (apiUrl, httpClient = fetchJson) => {
 			case UPDATE:
 				url = `${apiUrl}/${resource}/${params.id}`;
 				options.method = 'PUT';
-				options.body = JSON.stringify(params.data);
+				options.body = processOutBody(params.data);
 				break;
 			case CREATE:
 				url = `${apiUrl}/${resource}`;
 				options.method = 'POST';
-				options.body = JSON.stringify(params.data);
+				options.body = processOutBody(params.data);
 				break;
 			case DELETE:
 				url = `${apiUrl}/${resource}/${params.id}`;
@@ -93,7 +123,7 @@ export default (apiUrl, httpClient = fetchJson) => {
 			default:
 				throw new Error(`Unsupported fetch action type ${type}`);
 		}
-		return { url, options };
+		return {url, options};
 	};
 
 	/**
@@ -104,9 +134,9 @@ export default (apiUrl, httpClient = fetchJson) => {
 	 * @param {Object} params The REST request params, depending on the type
 	 * @returns {Object} REST response
 	 */
-	const convertHTTPResponseToREST = (response, type, resource, params) => {
-		const { headers, json } = response;
-		console.log({response,type,resource,params});
+	const convertHTTPResponseToREST = ( response, type, resource, params ) => {
+		const {headers, json} = response;
+		// console.log({response, type, resource, params});
 		switch (type) {
 			case GET_LIST:
 				return {
@@ -124,8 +154,9 @@ export default (apiUrl, httpClient = fetchJson) => {
 	 * @param {Object} payload Request parameters. Depends on the request type
 	 * @returns {Promise} the Promise for a REST response
 	 */
-	return (type, resource, params) => {
-		const { url, options } = convertRESTRequestToHTTP(type, resource, params);
+	return ( type, resource, params ) => {
+		const {url, options} = convertRESTRequestToHTTP(type, resource, params);
+
 		return httpClient(url, options)
 			.then(response => convertHTTPResponseToREST(response, type, resource, params));
 	};
