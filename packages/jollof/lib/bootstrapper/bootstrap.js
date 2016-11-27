@@ -20,6 +20,8 @@ const jollof = require('jollof');
 const subdomain = jollof.router.subdomain;
 let serverApp;
 const formidable = require('koa-formidable')
+var kBetterBody = require('koa-better-body')
+var kBody = require('koa-body')
 
 function* loadModels(){
 	for(let m in data.models){
@@ -76,6 +78,8 @@ module.exports.bootServer = function (overWriteFn) {
 			//Set'em up------------------------------------------------------
 			serverApp = new koa();
 
+			// serverApp.use(kBody());
+			serverApp.use(kBetterBody());
 
 			//Sessions
 			serverApp.keys = jollof.config.crypto.secrets;
@@ -100,7 +104,7 @@ module.exports.bootServer = function (overWriteFn) {
 
 
 			//forms
-			serverApp.use(require('koa-body')());
+
 			serverApp.use(require('koa-validate')());
 
 			//contoller/router

@@ -1,3 +1,4 @@
+
 export const fetchJson = (url, options = {}) => {
 
     const requestHeaders = options.headers || new Headers({
@@ -5,16 +6,15 @@ export const fetchJson = (url, options = {}) => {
     });
 
 	//To form or not to form
-	if (options && options.body && options.body instanceof FormData) {
-        requestHeaders.set('Content-Type', 'multipart/form-data');
-    }
-    else{
+	if (!(options && options.body && options.body instanceof FormData)) {
 		requestHeaders.set('Content-Type', 'application/json');
 	}
 
     if (options.user && options.user.authenticated && options.user.token) {
         requestHeaders.set('Authorization', options.user.token);
     }
+
+
 
     return fetch(url, { ...options, headers: requestHeaders })
         .then(response => response.text().then(text => ({

@@ -102152,8 +102152,7 @@
 	 * Wether formdata or json string.
 	 * @param data
 	 */
-	function processOutBody(data) {
-	
+	function processOutBody(options, data) {
 		//First check to see if data has any files
 		for (var k in data) {
 			if (data[k] instanceof File) {
@@ -102164,15 +102163,14 @@
 		//
 		if (!hasFile) {
 			console.log('no file', data);
-			return JSON.stringify(data);
+			options.body = JSON.stringify(data);
 		} else {
 			console.log('file present', data);
 			var formData = new FormData();
 			for (var _k in data) {
 				formData.append(_k, data[_k]);
 			}
-	
-			return formData;
+			options.body = formData;
 		}
 	}
 	
@@ -102255,12 +102253,12 @@
 				case _types.UPDATE:
 					url = apiUrl + '/' + resource + '/' + params.id;
 					options.method = 'PUT';
-					options.body = processOutBody(params.data);
+					processOutBody(options, params.data);
 					break;
 				case _types.CREATE:
 					url = apiUrl + '/' + resource;
 					options.method = 'POST';
-					options.body = processOutBody(params.data);
+					processOutBody(options, params.data);
 					break;
 				case _types.DELETE:
 					url = apiUrl + '/' + resource + '/' + params.id;
@@ -103817,9 +103815,7 @@
 	    });
 	
 	    //To form or not to form
-	    if (options && options.body && options.body instanceof FormData) {
-	        requestHeaders.set('Content-Type', 'multipart/form-data');
-	    } else {
+	    if (!(options && options.body && options.body instanceof FormData)) {
 	        requestHeaders.set('Content-Type', 'application/json');
 	    }
 	
