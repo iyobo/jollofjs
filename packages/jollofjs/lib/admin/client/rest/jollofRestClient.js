@@ -17,8 +17,7 @@ let jollofApiUrl = '';
  * Wether formdata or json string.
  * @param data
  */
-function processOutBody( data ) {
-
+function processOutBody( options, data ) {
 	//First check to see if data has any files
 	for (let k in data) {
 		if (data[ k ] instanceof File) {
@@ -29,16 +28,16 @@ function processOutBody( data ) {
 	//
 	if (!hasFile) {
 		console.log('no file', data);
-		return JSON.stringify(data);
+		options.body= JSON.stringify(data);
 	} else {
 		console.log('file present', data);
 		let formData = new FormData();
 		for (let k in data) {
 			formData.append(k, data[ k ])
 		}
-
-		return formData;
+		options.body= formData;
 	}
+
 }
 
 
@@ -109,12 +108,12 @@ export default ( apiUrl, httpClient = fetchJson ) => {
 			case UPDATE:
 				url = `${apiUrl}/${resource}/${params.id}`;
 				options.method = 'PUT';
-				options.body = processOutBody(params.data);
+				processOutBody(options,params.data);
 				break;
 			case CREATE:
 				url = `${apiUrl}/${resource}`;
 				options.method = 'POST';
-				options.body = processOutBody(params.data);
+				processOutBody(options, params.data);
 				break;
 			case DELETE:
 				url = `${apiUrl}/${resource}/${params.id}`;

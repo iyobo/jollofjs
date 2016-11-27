@@ -362,6 +362,11 @@ module.exports.modelize = function ( schema ) {
 
 			yield this._preSave(this);
 
+
+			//FILE CHECK!
+
+
+
 			//validate
 			yield this.validate();
 

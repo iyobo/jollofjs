@@ -101,8 +101,13 @@ module.exports = {
 	create: function*( modelName ) {
 		//get schema
 		try {
-			console.log(this.request.body)
-			const res =  yield models[ modelName ].create(this.request.body);
+			// console.log('body',this.request.body)    // if buffer or text
+			// console.log('files',this.request.files)   // if multipart or urlencoded
+			// console.log('fields',this.request.fields)
+
+			const payload = this.request.fields;
+
+			const res =  yield models[ modelName ].create(payload);
 			this.body = res;
 		} catch (err) {
 			log.err(err.stack);
@@ -113,8 +118,13 @@ module.exports = {
 	//Update
 	update: function*( modelName, id ) {
 		try {
-			console.log(this.request.body)
-			const res = yield models[ modelName ].update({id: id}, this.request.body);
+			// console.log('body',this.request.body)    // if buffer or text
+			// console.log('files',this.request.files)   // if multipart or urlencoded
+			// console.log('fields',this.request.fields)
+
+			const payload = this.request.fields;
+
+			const res = yield models[ modelName ].update({id: id}, payload);
 			this.body = res;
 		} catch (err) {
 			log.err(err.stack);
