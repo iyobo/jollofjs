@@ -94225,10 +94225,8 @@
 					if (file.type.indexOf('image') === -1) preview = '/jollofstatic/doc.png';
 	
 					_this2.setState(_extends({}, _this2.state, { file: file, preview: preview }));
-					// this.props.record[this.props.source] = file;
-					// this.props.input.value = file;
 	
-					console.log('file uploaded', _this2.props);
+					// console.log('file uploaded', this.props);
 	
 					_this2.props.input.onChange(file);
 				}, false);
@@ -94246,7 +94244,7 @@
 		}, {
 			key: 'onPreviewClick',
 			value: function onPreviewClick() {
-				this.setState(_extends({}, this.state, { file: null, preview: null, key: uuid() }));
+				this.setState(_extends({}, this.state, { file: null, preview: null, key: uuid(), fieldValue: '' }));
 			}
 		}, {
 			key: 'render',
@@ -94285,7 +94283,8 @@
 								'div',
 								{ className: 'wrapText pad-5' },
 								_react2.default.createElement(_FlatButton2.default, { label: 'Delete', secondary: true,
-									onClick: this.onPreviewClick.bind(this), className: 'clickable' })
+									onClick: this.onPreviewClick.bind(this),
+									className: 'clickable' })
 							)
 						)
 					);
@@ -94295,7 +94294,9 @@
 					'div',
 					{ className: 'fileInput' },
 					_react2.default.createElement('input', { type: 'file', name: this.props.key,
-						onChange: this.onFileAdded.bind(this) }),
+						onChange: this.onFileAdded.bind(this),
+						value: this.state.fieldValue
+					}),
 					preview
 				);
 			}
