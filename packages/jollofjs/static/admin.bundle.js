@@ -94168,9 +94168,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _delete = __webpack_require__(752);
+	var _insertDriveFile = __webpack_require__(932);
 	
-	var _delete2 = _interopRequireDefault(_delete);
+	var _insertDriveFile2 = _interopRequireDefault(_insertDriveFile);
 	
 	var _FlatButton = __webpack_require__(717);
 	
@@ -94191,18 +94191,20 @@
 	var FileInput = exports.FileInput = function (_Component) {
 		_inherits(FileInput, _Component);
 	
-		function FileInput(props) {
+		function FileInput() {
 			_classCallCheck(this, FileInput);
 	
-			var _this = _possibleConstructorReturn(this, (FileInput.__proto__ || Object.getPrototypeOf(FileInput)).call(this, props));
-	
-			_this.state = {
-				key: uuid()
-			};
-			return _this;
+			return _possibleConstructorReturn(this, (FileInput.__proto__ || Object.getPrototypeOf(FileInput)).apply(this, arguments));
 		}
 	
 		_createClass(FileInput, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				this.state = {
+					key: uuid()
+				};
+			}
+		}, {
 			key: 'derivePreviewStyle',
 			value: function derivePreviewStyle(path) {
 				return {
@@ -94222,7 +94224,6 @@
 					// console.log('file', file);
 	
 					var preview = reader.result;
-					if (file.type.indexOf('image') === -1) preview = '/jollofstatic/doc.png';
 	
 					_this2.setState(_extends({}, _this2.state, { file: file, preview: preview }));
 	
@@ -94244,7 +94245,8 @@
 		}, {
 			key: 'onPreviewClick',
 			value: function onPreviewClick() {
-				this.setState(_extends({}, this.state, { file: null, preview: null, key: uuid(), fieldValue: '' }));
+				this.setState(_extends({}, this.state, { file: null, preview: null, key: uuid() }));
+				this.props.input.onChange('');
 			}
 		}, {
 			key: 'render',
@@ -94254,16 +94256,21 @@
 					'div',
 					null,
 					'Upload a File to see Preview...'
-				);
+				);var previewImage = _react2.default.createElement('img', { src: this.state.preview, className: 'fileImage' });
 	
 				if (this.state.preview) {
+	
+					var previewImage = _react2.default.createElement('img', { src: this.state.preview, className: 'fileImage' });
+					if (this.state.file.type.indexOf('image') === -1) //if not an image
+						previewImage = _react2.default.createElement(_insertDriveFile2.default, { className: 'fileImage' });
+	
 					preview = _react2.default.createElement(
 						'div',
 						{ className: 'filePreview row' },
 						_react2.default.createElement(
 							'div',
 							{ className: 'col-md-3' },
-							_react2.default.createElement('img', { src: this.state.preview, className: 'fileImage' })
+							previewImage
 						),
 						_react2.default.createElement(
 							'div',
@@ -94294,8 +94301,8 @@
 					'div',
 					{ className: 'fileInput' },
 					_react2.default.createElement('input', { type: 'file', name: this.props.key,
-						onChange: this.onFileAdded.bind(this),
-						value: this.state.fieldValue
+						key: this.state.key,
+						onChange: this.onFileAdded.bind(this)
 					}),
 					preview
 				);
@@ -104336,6 +104343,43 @@
 	}
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, { crudCreate: _dataActions.crudCreate })(Create);
+
+/***/ },
+/* 932 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(685);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(694);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var EditorInsertDriveFile = function EditorInsertDriveFile(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z' })
+	  );
+	};
+	EditorInsertDriveFile = (0, _pure2.default)(EditorInsertDriveFile);
+	EditorInsertDriveFile.displayName = 'EditorInsertDriveFile';
+	EditorInsertDriveFile.muiName = 'SvgIcon';
+	
+	exports.default = EditorInsertDriveFile;
 
 /***/ }
 /******/ ]);

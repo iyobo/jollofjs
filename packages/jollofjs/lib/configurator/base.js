@@ -82,8 +82,8 @@ module.exports = {
 		defaultEngine: 'local',
 		engines: {
 			local: {
-				rootPath: os.tmpdir(),
-				urlPrefix: null //Leave as null/undefined to specify that no url access
+				privateRoot: os.tmpdir(), //Where to store private files
+				publicRoot: os.tmpdir(), //Where to store public files that can be accessed by the internet (e.g. like in a CMS)
 			},
 			s3: {}
 		}
