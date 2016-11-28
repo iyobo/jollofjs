@@ -2,14 +2,13 @@ import React, {PropTypes, Component} from 'react';
 var Dropzone = require('react-dropzone');
 const uuid = require('uuid');
 const _ = require('lodash');
-import deleteIcon from 'material-ui/svg-icons/action/delete';
+import EditorInsertDriveFile from 'material-ui/svg-icons/editor/insert-drive-file';
 import FlatButton from 'material-ui/FlatButton';
 
 export class FileInput extends Component {
-	constructor( props ) {
-		super(props)
+	componentWillMount( ) {
 		this.state = {
-			key: uuid()
+			key: uuid(),
 		}
 	}
 
@@ -29,8 +28,6 @@ export class FileInput extends Component {
 			// console.log('file', file);
 
 			var preview = reader.result;
-			if (file.type.indexOf('image') === -1)
-				preview = '/jollofstatic/doc.png';
 
 			this.setState({...this.state, file: file, preview: preview});
 
@@ -50,27 +47,25 @@ export class FileInput extends Component {
 	 * @param file
 	 */
 	onPreviewClick() {
-		this.setState({...this.state, file: null, preview: null, key: uuid(), fieldValue: ''});
+		this.setState({...this.state, file: null, preview: null, key: uuid()});
+		this.props.input.onChange('');
 	}
 
 	render() {
 
-		var preview = <div>Upload a File to see Preview...</div>;
+		var preview = <div>Upload a File to see Preview...</div>;var previewImage = <img src={this.state.preview} className="fileImage"/>
 
 		if (this.state.preview) {
+
+			var previewImage = <img src={this.state.preview} className="fileImage"/>
+			if (this.state.file.type.indexOf('image') === -1) //if not an image
+				previewImage = <EditorInsertDriveFile className="fileImage" />;
+
 			preview = (
 				<div className="filePreview row">
-					{/*<div className="col-md-5">*/}
-					{/*<div className="clickable image"*/}
-					{/*onClick={this.onPreviewClick.bind(this)}*/}
-					{/*style={this.derivePreviewStyle(this.state.preview)}>*/}
-					{/*<div className="overlay">*/}
-					{/*<span className="x">X</span>*/}
-					{/*</div>*/}
-					{/*</div>*/}
-					{/*</div>*/}
+
 					<div className="col-md-3">
-						<img src={this.state.preview} className="fileImage"/>
+						{previewImage}
 					</div>
 					<div className="col-md-9">
 						<div className="wrapText pad-5 bold">{this.state.file.name}</div>
@@ -87,8 +82,8 @@ export class FileInput extends Component {
 		return (
 			<div className="fileInput">
 				<input type="file" name={this.props.key}
+					   key={this.state.key}
 					   onChange={this.onFileAdded.bind(this)}
-					   value={this.state.fieldValue}
 				/>
 				{preview}
 			</div>
