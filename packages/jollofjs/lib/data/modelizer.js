@@ -8,7 +8,7 @@ const joiValidatePromise = Promise.promisify(joi.validate);
 const stringUtil = require('../util/stringUtil');
 const config = require('../configurator');
 const log = require('../log');
-
+const jfs = require('../filestorage');
 /**
  * Here we use the adapter to setup the collection this Model represents
  * @param adapter
@@ -106,11 +106,11 @@ module.exports.modelize = function ( schema ) {
 			return schema;
 		}
 
-		static * findById( id, params ={}) {
+		static * findById( id, params = {} ) {
 			const res = yield adapter.findById(collectionName, id, params || {});
-			if(params.raw){
+			if (params.raw) {
 				return res;
-			}else{
+			} else {
 				return Model.instantiate(res);
 			}
 
@@ -164,13 +164,13 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * find( criteria, params ={}) {
+		static * find( criteria, params = {} ) {
 			const res = yield adapter.find(collectionName, Model._scrubCriteria(criteria), params || {});
 
-			if(params.raw){
+			if (params.raw) {
 				return res;
-			}else{
-				res.items =Model.instantiate(res.items);
+			} else {
+				res.items = Model.instantiate(res.items);
 				return res;
 			}
 
@@ -182,12 +182,12 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * findOne( criteria, params ={}) {
+		static * findOne( criteria, params = {} ) {
 
 			const res = yield adapter.findOne(collectionName, Model._scrubCriteria(criteria), params);
-			if(params.raw){
+			if (params.raw) {
 				return res;
-			}else{
+			} else {
 				return Model.instantiate(res);
 			}
 		}
@@ -198,20 +198,20 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * update( criteria, data, params ={}) {
+		static * update( criteria, data, params = {} ) {
 			const g = yield adapter.update(collectionName, Model._scrubCriteria(criteria), data, params);
 			return g;
 		}
 
 		/**
 		 *
-		 * @param criteria
+		 * @param data
 		 * @param params
 		 * @returns {*}
 		 */
-		static * create( data, params ={}) {
+		static * persist( data, params = {} ) {
 
-			const newItem= new Model(data)
+			const newItem = new Model(data)
 			yield newItem.save()
 			return newItem.display()
 		}
@@ -237,7 +237,7 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * remove( criteria, params ={}) {
+		static * remove( criteria, params = {} ) {
 			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params || {});
 		}
 
@@ -247,7 +247,7 @@ module.exports.modelize = function ( schema ) {
 		 * @param params
 		 * @returns {*}
 		 */
-		static * removeOne( criteria, params ={}) {
+		static * removeOne( criteria, params = {} ) {
 			params = params || {};
 			params.limit = 1;
 			return yield adapter.remove(collectionName, Model._scrubCriteria(criteria), params);
@@ -347,6 +347,37 @@ module.exports.modelize = function ( schema ) {
 			}
 		}
 
+		/**
+		 * - Run through each field, and if any is an actual File:
+		 * - yield to Appropriate File storage engine
+		 * - save result as file field
+		 * -
+		 */
+		* convertFields( collection ) {
+			for (let k in collection) {
+				const v = collection[ k ]
+				const type = typeof v;
+
+				//if array
+				if (Array.isArray(v)) {
+					/**
+					 * Determine what kind of array this is. File fields come in as arrays too.
+					 */
+					if (v.length > 0 && v[ 0 ]._writeStream) {
+						//if array is an array of files, store it's first value
+						log.debug('storing file...')
+						collection[ k ] = yield jfs.store(v[ 0 ])
+					} else {
+						//else traverse the array
+						yield this.convertFields(collection[ k ])
+					}
+				}
+				else if (type === 'object')//if object
+				{
+					yield this.convertFields(collection[ k ]);
+				}
+			}
+		}
 
 		/**
 		 * Persists the model object in the DB
@@ -362,10 +393,8 @@ module.exports.modelize = function ( schema ) {
 
 			yield this._preSave(this);
 
-
-			//FILE CHECK!
-
-
+			//Convert fields
+			yield this.convertFields(this._data);
 
 			//validate
 			yield this.validate();
@@ -416,7 +445,7 @@ module.exports.modelize = function ( schema ) {
 			let disp = _.assign(this._ids, this._data);
 
 			// Convert id field to id
-			disp['id'] = disp[adapter.idField];
+			disp[ 'id' ] = disp[ adapter.idField ];
 
 			return disp;
 		}

@@ -1,6 +1,8 @@
 /**
  * Created by iyobo on 2016-11-07.
  */
+const os = require('os');
+const path = require('path');
 /**
  * These are your base app configs.
  * Every one of your environment config files inherit the values here.
@@ -14,15 +16,15 @@ module.exports = {
 		host: '0.0.0.0',
 	},
 
-	admin:{
+	admin: {
 		enabled: true,
 		port: 8009,
-		auth:{
+		auth: {
 			adminFlag: 'isAdmin', //if session.user exists, check for this flag to signify user is admin
 		}
 	},
 
-	domains:{
+	domains: {
 		default: 'http://localhost:3333',
 	},
 
@@ -39,15 +41,15 @@ module.exports = {
 			url: 'http://jollofuser:jollofpassword@localhost:8529',
 			databaseName: 'jollofdb',
 		},
-		rethinkdb:{
+		rethinkdb: {
 			host: 'localhost',
 			port: '28015',
 			user: 'jollofuser',
 			password: 'jollofpassword',
 			dbname: 'jollofdb'
 		},
-		mongodb:{
-			url:'mongodb://localhost:27017/jollofdb'
+		mongodb: {
+			url: 'mongodb://localhost:27017/jollofdb'
 		}
 	},
 
@@ -68,13 +70,24 @@ module.exports = {
 
 	nunjucks: {
 		ext: 'nunj',
-		path: ['app/views','node_modules/jollof/lib/admin/views'], //from project root
+		path: [ 'app/views', 'node_modules/jollof/lib/admin/views' ], //from project root
 		nunjucksConfig: {
 			//see https://mozilla.github.io/nunjucks/api.html#configure
 			noCache: false,
 			autoescape: false
 		},
 	},
+
+	fileStorage: {
+		defaultEngine: 'local',
+		engines: {
+			local: {
+				rootPath: os.tmpdir(),
+				urlPrefix: null //Leave as null/undefined to specify that no url access
+			},
+			s3: {}
+		}
+	}
 
 
 }

@@ -103,11 +103,11 @@ module.exports = {
 		try {
 			// console.log('body',this.request.body)    // if buffer or text
 			// console.log('files',this.request.files)   // if multipart or urlencoded
-			// console.log('fields',this.request.fields)
+			console.log('fields',this.request.fields)
 
 			const payload = this.request.fields;
 
-			const res =  yield models[ modelName ].create(payload);
+			const res =  yield models[ modelName ].persist(payload);
 			this.body = res;
 		} catch (err) {
 			log.err(err.stack);
@@ -120,11 +120,11 @@ module.exports = {
 		try {
 			// console.log('body',this.request.body)    // if buffer or text
 			// console.log('files',this.request.files)   // if multipart or urlencoded
-			// console.log('fields',this.request.fields)
+			console.log('fields',this.request.fields)
 
 			const payload = this.request.fields;
 
-			const res = yield models[ modelName ].update({id: id}, payload);
+			const res = yield models[ modelName ].persist( payload);
 			this.body = res;
 		} catch (err) {
 			log.err(err.stack);

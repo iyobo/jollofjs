@@ -33,10 +33,8 @@ export class FileInput extends Component {
 				preview = '/jollofstatic/doc.png';
 
 			this.setState({...this.state, file: file, preview: preview});
-			// this.props.record[this.props.source] = file;
-			// this.props.input.value = file;
 
-			console.log('file uploaded', this.props);
+			// console.log('file uploaded', this.props);
 
 			this.props.input.onChange(file);
 
@@ -52,7 +50,7 @@ export class FileInput extends Component {
 	 * @param file
 	 */
 	onPreviewClick() {
-		this.setState({...this.state, file: null, preview: null, key: uuid()});
+		this.setState({...this.state, file: null, preview: null, key: uuid(), fieldValue: ''});
 	}
 
 	render() {
@@ -78,7 +76,8 @@ export class FileInput extends Component {
 						<div className="wrapText pad-5 bold">{this.state.file.name}</div>
 						<div className="wrapText pad-5">{Math.round(this.state.file.size / 1024)} KB</div>
 						<div className="wrapText pad-5"><FlatButton label="Delete" secondary={true}
-																	onClick={this.onPreviewClick.bind(this)} className="clickable"/></div>
+																	onClick={this.onPreviewClick.bind(this)}
+																	className="clickable"/></div>
 					</div>
 
 				</div>
@@ -88,7 +87,9 @@ export class FileInput extends Component {
 		return (
 			<div className="fileInput">
 				<input type="file" name={this.props.key}
-					   onChange={this.onFileAdded.bind(this)}/>
+					   onChange={this.onFileAdded.bind(this)}
+					   value={this.state.fieldValue}
+				/>
 				{preview}
 			</div>
 		);
