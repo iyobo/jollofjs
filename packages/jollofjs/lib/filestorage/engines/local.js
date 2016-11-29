@@ -15,7 +15,7 @@ module.exports = new class LocalFileStorage {
 	 * @param metaData
 	 * @param opts
 	 */
-	* store( file, opts ) {
+	* store( file, opts={} ) {
 
 		//Determine indexing prefix
 		let prefix = '';
@@ -25,7 +25,8 @@ module.exports = new class LocalFileStorage {
 		}
 
 		//Determine path
-		let newPath = path.join(config.fileStorage.engines.local.publicRoot, prefix, file.name + '__' + uuid());
+		const rootPath = opts.private? config.fileStorage.engines.local.privateRoot: config.fileStorage.engines.local.publicRoot;
+		let newPath = path.join(rootPath, prefix, file.name + '__' + uuid());
 		log.debug('Saving file '+file.name+' as '+newPath);
 		yield fs.move(file.path, newPath);
 
