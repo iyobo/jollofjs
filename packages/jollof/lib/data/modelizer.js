@@ -374,7 +374,8 @@ module.exports.modelize = function ( schema ) {
 
 						//Get meta opts
 						const opts = structure[k]._meta;
-						opts.prefix = path.join(schema.name,k);
+						opts.modelName = schema.name;
+						opts.fieldName = k;
 
 						collection[ k ] = yield jfs.store(v[ 0 ], opts)
 					} else {
