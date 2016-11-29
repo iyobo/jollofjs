@@ -11,7 +11,7 @@ class FileStorage {
 
 	* store( file, opts = {} ) {
 		try {
-			let engineName = opts.engine || config.fileStorage.defaultEngine;
+			let engineName = opts.engineOverride || config.fileStorage.defaultEngine;
 			let engine = require(path.join(__dirname, 'engines', engineName));
 			if (!engine) {
 				log.warn(`No such engine name: ${engineName}. Defaulting to local`)
