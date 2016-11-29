@@ -347,13 +347,17 @@ module.exports.modelize = function ( schema ) {
 			}
 		}
 
+		getMeta(metaName, fieldStack){
+
+		}
+
 		/**
 		 * - Run through each field, and if any is an actual File:
 		 * - yield to Appropriate File storage engine
 		 * - save result as file field
 		 * -
 		 */
-		* convertFields( collection ) {
+		* convertFields( collection, structure) {
 			for (let k in collection) {
 				const v = collection[ k ]
 				const type = typeof v;
@@ -365,16 +369,22 @@ module.exports.modelize = function ( schema ) {
 					 */
 					if (v.length > 0 && v[ 0 ]._writeStream) {
 						//if array is an array of files, store it's first value
+						const s = schema;
 						log.debug('storing file...')
-						collection[ k ] = yield jfs.store(v[ 0 ])
+
+						//Get meta opts
+						const opts = structure[k]._meta;
+						opts.prefix = path.join(schema.name,k);
+
+						collection[ k ] = yield jfs.store(v[ 0 ], opts)
 					} else {
 						//else traverse the array
-						yield this.convertFields(collection[ k ])
+						yield this.convertFields(collection[ k ], structureStack)
 					}
 				}
 				else if (type === 'object')//if object
 				{
-					yield this.convertFields(collection[ k ]);
+					yield this.convertFields(collection[ k ], structureStack);
 				}
 			}
 		}
@@ -394,7 +404,7 @@ module.exports.modelize = function ( schema ) {
 			yield this._preSave(this);
 
 			//Convert fields
-			yield this.convertFields(this._data);
+			yield this.convertFields(this._data, schema.structure);
 
 			//validate
 			yield this.validate();

@@ -3,6 +3,7 @@
  */
 const os = require('os');
 const path = require('path');
+const appPaths = require('../../appPaths');
 /**
  * These are your base app configs.
  * Every one of your environment config files inherit the values here.
@@ -82,8 +83,8 @@ module.exports = {
 		defaultEngine: 'local',
 		engines: {
 			local: {
-				privateRoot: os.tmpdir(), //Where to store private files
-				publicRoot: os.tmpdir(), //Where to store public files that can be accessed by the internet (e.g. like in a CMS)
+				privateRoot: path.join(appPaths.appRoot,'uploads','private'), //Where to store private files
+				publicRoot: path.join(appPaths.appRoot,'uploads','public') //Where to store public files that can be accessed by the internet (e.g. like in a CMS)
 			},
 			s3: {}
 		}

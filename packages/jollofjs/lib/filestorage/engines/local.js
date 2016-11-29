@@ -19,12 +19,13 @@ module.exports = new class LocalFileStorage {
 
 		//Determine indexing prefix
 		let prefix = '';
-		for (let i = 0; (i < file.name.length && i < 3); i++) {
-			prefix = file.name[ i ] + path.sep;
+		const lo = file.name.toLowerCase();
+		for (let i = 0; (i < lo.length && i < 2); i++) {
+			prefix += lo[ i ] + path.sep;
 		}
 
 		//Determine path
-		let newPath = path.join(config.fileStorage.engines.local.rootPath, prefix, file.name + '__' + uuid());
+		let newPath = path.join(config.fileStorage.engines.local.publicRoot, prefix, file.name + '__' + uuid());
 		log.debug('Saving file '+file.name+' as '+newPath);
 		yield fs.move(file.path, newPath);
 

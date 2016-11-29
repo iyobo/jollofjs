@@ -72,7 +72,7 @@ function buildUpdateFields(structure){
 					if (v._meta[ 0 ].widget) {
 						switch (v._meta[ 0 ].widget) {
 							case 'file':
-								return <FileInput key={k} source={k}/>
+								return <FileInput key={k} source={k} />
 							default:
 								return <TextInput key={k} source={k}/>
 						}
