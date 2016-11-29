@@ -88,11 +88,6 @@ module.exports.bootServer = function (overWriteFn) {
 				// store: require("koa-generic-session/lib/memory_store")
 			}));
 
-			serverApp.use(kerror({
-				engine: 'nunjucks',
-				template: appPaths.appRoot + '/app/views/error.nunj'
-			}));
-
 			//Make session variables accesible to View renderers
 			serverApp.use(function*( next) {
 				this.state.session = this.session;
@@ -102,9 +97,13 @@ module.exports.bootServer = function (overWriteFn) {
 				return yield next;
 			});
 
+			serverApp.use(kerror({
+				engine: 'nunjucks',
+				template: appPaths.appRoot + '/app/views/error.nunj'
+			}));
+
 
 			//forms
-
 			serverApp.use(require('koa-validate')());
 
 			//contoller/router
@@ -115,6 +114,7 @@ module.exports.bootServer = function (overWriteFn) {
 
 			//Internal jollof statics
 			serverApp.use(serve({rootDir: 'node_modules/jollof/static', rootPath: '/jollofstatic'}));
+			serverApp.use(serve({rootDir: 'node_modules/jollof/uploads/public', rootPath: jollof.config.fileStorage.engines.local.basePublicUrl }));
 
 
 

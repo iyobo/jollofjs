@@ -18,15 +18,11 @@ module.exports = new class LocalFileStorage {
 	* store( file, opts={} ) {
 
 		//Determine indexing prefix
-		let prefix = '';
-		const lo = file.name.toLowerCase();
-		for (let i = 0; (i < lo.length && i < 2); i++) {
-			prefix += lo[ i ] + path.sep;
-		}
+		const hash = uuid();
 
 		//Determine path
 		const rootPath = opts.private? config.fileStorage.engines.local.privateRoot: config.fileStorage.engines.local.publicRoot;
-		let newPath = path.join(rootPath, prefix, file.name + '__' + uuid());
+		let newPath = path.join(rootPath, hash[0], hash[1], hash+'__'+file.name);
 		log.debug('Saving file '+file.name+' as '+newPath);
 		yield fs.move(file.path, newPath);
 
@@ -39,6 +35,9 @@ module.exports = new class LocalFileStorage {
 			path: newPath,
 		};
 
+		if(!opts.private){
+			resp.url = config.fileStorage.engines.local.basePublicUrl+'/'+ [hash[0], hash[1], hash+'__'+file.name].join('/');
+		}
 
 
 		return resp;

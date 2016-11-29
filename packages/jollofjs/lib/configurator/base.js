@@ -84,7 +84,8 @@ module.exports = {
 		engines: {
 			local: {
 				privateRoot: path.join(appPaths.appRoot,'uploads','private'), //Where to store private files
-				publicRoot: path.join(appPaths.appRoot,'uploads','public') //Where to store public files that can be accessed by the internet (e.g. like in a CMS)
+				publicRoot: path.join(appPaths.appRoot,'uploads','public'), //Where to store public files that can be accessed by the internet (e.g. like in a CMS)
+				basePublicUrl: '/jollofuploads'
 			},
 			s3: {}
 		}
