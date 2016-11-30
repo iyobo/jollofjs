@@ -52,3 +52,11 @@
 .bold{
     font-weight: 400;
 }
+
+.list{
+    max-width: 100px;
+}
+
+.single{
+    font-size: 20px;
+}

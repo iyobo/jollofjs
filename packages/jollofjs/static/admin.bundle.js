@@ -93945,27 +93945,62 @@
 	var _ = __webpack_require__(905);
 	
 	
+	//---SHOW/VIEW
+	function determineSpecialViewField(k, v, formFactor) {
+		if (v._meta.length > 0) {
+			// console.log('resource builder is processing special field', k, v);
+			//This requires a special field type
+			if (v._meta[0].widget) {
+				switch (v._meta[0].widget) {
+					case 'file':
+						return _react2.default.createElement(_FileField.FileField, { key: k, source: k, formFactor: formFactor });
+					default:
+						return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+				}
+			} else {
+				return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+			}
+		} else {
+			return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+		}
+	}
+	
+	function determineViewField(k, v, formFactor) {
+		switch (v._type) {
+			case 'string':
+				return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+				break;
+			case 'number':
+				return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+				break;
+			case 'date':
+				return _react2.default.createElement(_mui.DateField, { key: k, source: k });
+				break;
+			case 'object':
+				//This could be a nested object, array, or custom type.
+				return determineSpecialViewField(k, v, formFactor);
+	
+				break;
+			case 'alternatives':
+				//This could be anything
+				return determineSpecialViewField(k, v, formFactor);
+				break;
+			default:
+				return _react2.default.createElement(_mui.TextField, { key: k, source: k });
+				break;
+		}
+	}
+	
 	function buildViewFields(structure) {
+		var formFactor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'list';
+	
 		return _.map(structure, function (v, k) {
 			// console.log('k',k,'v',v);
-			switch (v._type) {
-				case 'string':
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-				case 'number':
-					return _react2.default.createElement(_mui.TextField, { key: k, source: k });
-					break;
-				case 'date':
-					return _react2.default.createElement(_mui.DateField, { key: k, source: k });
-					break;
-				default:
-					return _react2.default.createElement('div', { key: k, source: k });
-					return;
-					break;
-	
-			}
+			return determineViewField(k, v, formFactor);
 		});
 	}
+	
+	//---INPUT
 	
 	function determineSpecialInputfield(k, v) {
 		if (v._meta.length > 0) {
@@ -94023,6 +94058,7 @@
 	
 		//for each schema field, create array of elements
 		var modelViewFields = buildViewFields(schema.structure);
+		var modelShowFields = buildViewFields(schema.structure, 'single');
 	
 		//For create and Edit
 		var modelUpdateFields = buildUpdateFields(schema.structure);
@@ -94056,7 +94092,7 @@
 				_mui.Show,
 				_extends({ title: "Viewing " + schema.name }, props),
 				_react2.default.createElement(_mui.TextField, { source: 'id' }),
-				modelViewFields,
+				modelShowFields,
 				_react2.default.createElement(_mui.TextField, { source: 'dateCreated' }),
 				_react2.default.createElement(_mui.TextField, { source: 'lastUpdated' })
 			);
@@ -94624,23 +94660,42 @@
 	var FileField = exports.FileField = function FileField(_ref) {
 		var _ref$record = _ref.record,
 		    record = _ref$record === undefined ? {} : _ref$record,
-		    source = _ref.source;
+		    source = _ref.source,
+		    formFactor = _ref.formFactor;
 	
 	
 		var file = record[source];
 	
 		if (file) {
+			console.log('showing file', file);
+			var path = file.url ? file.url : 'javascript:null;';
+	
+			if (file.url && file.type.indexOf('image') > -1) {
+				return _react2.default.createElement(
+					'a',
+					{ href: path },
+					_react2.default.createElement('img', { src: path, className: formFactor })
+				);
+			} else {
+				return _react2.default.createElement(
+					'a',
+					{ href: path },
+					_react2.default.createElement('i', { className: "fa fa-file fa-lg" })
+				);
+			}
+		} else {
 			return _react2.default.createElement(
-				'a',
-				{ href: file.url },
-				file.name
+				'div',
+				null,
+				' '
 			);
 		}
 	};
 	
 	FileField.propTypes = {
 		source: _react.PropTypes.string.isRequired,
-		record: _react.PropTypes.object
+		record: _react.PropTypes.object,
+		formFactor: _react.PropTypes.string
 	};
 
 /***/ },
