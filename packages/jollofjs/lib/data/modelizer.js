@@ -369,8 +369,6 @@ module.exports.modelize = function ( schema ) {
 					 */
 					if (v.length > 0 && v[ 0 ]._writeStream) {
 						//if array is an array of files, store it's first value
-						const s = schema;
-						log.debug('storing file...')
 
 						//Get meta opts
 						const opts = structure[k]._meta;
