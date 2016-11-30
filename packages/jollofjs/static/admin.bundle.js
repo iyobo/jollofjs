@@ -94679,8 +94679,11 @@
 		_createClass(FileInput, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
+				var field = this.props.record[this.props.source];
 				this.state = {
-					key: uuid()
+					key: uuid(),
+					preview: field.url,
+					file: field
 				};
 				console.log('File field record[source]', this.props.record[this.props.source]);
 			}
