@@ -6,14 +6,14 @@ import EditorInsertDriveFile from 'material-ui/svg-icons/editor/insert-drive-fil
 import FlatButton from 'material-ui/FlatButton';
 
 export class FileInput extends Component {
-	componentWillMount( ) {
-		const field = this.props.record[this.props.source];
+	componentWillMount() {
+		const field = this.props.record[ this.props.source ];
 		this.state = {
 			key: uuid(),
-			preview: field.url,
+			preview: field ? field.url : null,
 			file: field
 		}
-		console.log('File field record[source]',this.props.record[this.props.source])
+		// console.log('File field record[source]',this.props.record[this.props.source])
 
 	}
 
@@ -65,7 +65,7 @@ export class FileInput extends Component {
 
 			var previewImage = <img src={this.state.preview} className="fileImage"/>
 			if (this.state.file.type.indexOf('image') === -1) //if not an image
-				previewImage = <EditorInsertDriveFile className="fileImage" />;
+				previewImage = <EditorInsertDriveFile className="fileImage"/>;
 
 			preview = (
 				<div className="filePreview row">

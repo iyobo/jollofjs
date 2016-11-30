@@ -93967,42 +93967,55 @@
 		});
 	}
 	
+	function determineSpecialInputfield(k, v) {
+		if (v._meta.length > 0) {
+			// console.log('resource builder is processing special field', k, v);
+			//This requires a special field type
+			if (v._meta[0].widget) {
+				switch (v._meta[0].widget) {
+					case 'file':
+						return _react2.default.createElement(_FileInput.FileInput, { key: k, source: k });
+					default:
+						return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				}
+			} else {
+				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+			}
+		} else {
+			return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+		}
+	}
+	
+	function determineInputField(k, v) {
+		switch (v._type) {
+			case 'string':
+				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				break;
+			case 'number':
+				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				break;
+			case 'date':
+				return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
+				break;
+			case 'object':
+				//This could be a nested object, array, or custom type.
+				return determineSpecialInputfield(k, v);
+	
+				break;
+			case 'alternatives':
+				//This could be anything
+				return determineSpecialInputfield(k, v);
+				break;
+			default:
+				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				break;
+		}
+	}
+	
 	function buildUpdateFields(structure) {
 		return _.map(structure, function (v, k) {
 			// console.log('k', k, 'v', v);
-			switch (v._type) {
-				case 'string':
-					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					break;
-				case 'number':
-					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					break;
-				case 'date':
-					return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
-					break;
-				case 'object':
-					//This could either be a nested object, array, or custom type.
-					if (v._meta.length > 0) {
-						//This requires a special field type
-						if (v._meta[0].widget) {
-							switch (v._meta[0].widget) {
-								case 'file':
-									return _react2.default.createElement(_FileInput.FileInput, { key: k, source: k });
-								default:
-									return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-							}
-						} else {
-							return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-						}
-					} else {
-						return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					}
-	
-					break;
-				default:
-					return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
-					break;
-			}
+			return determineInputField(k, v);
 		});
 	}function buildResource(schema) {
 	
@@ -94682,10 +94695,10 @@
 				var field = this.props.record[this.props.source];
 				this.state = {
 					key: uuid(),
-					preview: field.url,
+					preview: field ? field.url : null,
 					file: field
 				};
-				console.log('File field record[source]', this.props.record[this.props.source]);
+				// console.log('File field record[source]',this.props.record[this.props.source])
 			}
 		}, {
 			key: 'derivePreviewStyle',
