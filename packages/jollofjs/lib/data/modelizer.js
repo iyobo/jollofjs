@@ -380,12 +380,12 @@ module.exports.modelize = function ( schema ) {
 						collection[ k ] = yield jfs.store(v[ 0 ], opts)
 					} else {
 						//else traverse the array
-						yield this.convertFields(collection[ k ], structureStack)
+						yield this.convertFields(collection[ k ], structure[k])
 					}
 				}
 				else if (type === 'object')//if object
 				{
-					yield this.convertFields(collection[ k ], structureStack);
+					yield this.convertFields(collection[ k ], structure[k]);
 				}
 			}
 		}
