@@ -94667,7 +94667,6 @@
 		var file = record[source];
 	
 		if (file) {
-			console.log('showing file', file);
 			var path = file.url ? file.url : 'javascript:null;';
 	
 			if (file.url && file.type.indexOf('image') > -1) {
