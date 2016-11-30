@@ -15,6 +15,7 @@ const fileSchema={
 		path: joi.string(),
 		url: joi.string(),
 		key: joi.string(),
+
 		engine: joi.string().default('local')
 	}).meta({widget:'file'})
 
