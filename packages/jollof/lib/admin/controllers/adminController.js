@@ -97,15 +97,22 @@ module.exports = {
 		}
 	},
 
-	//Create
+	/**
+	 * Create
+	 * The whole point of create is to Persist new data, regardless of whether or not it already has an Id.
+	 * @param modelName
+	 */
 	create: function*( modelName ) {
 		//get schema
 		try {
 			// console.log('body',this.request.body)    // if buffer or text
 			// console.log('files',this.request.files)   // if multipart or urlencoded
-			console.log('fields',this.request.fields)
+			// console.log('fields',this.request.fields)
 
 			const payload = this.request.fields;
+
+
+			delete payload['id'];
 
 			const res =  yield models[ modelName ].persist(payload);
 			this.body = res;
@@ -116,11 +123,11 @@ module.exports = {
 	},
 
 	//Update
-	update: function*( modelName, id ) {
+	update: function*( modelName ) {
 		try {
 			// console.log('body',this.request.body)    // if buffer or text
 			// console.log('files',this.request.files)   // if multipart or urlencoded
-			console.log('fields',this.request.fields)
+			// console.log('fields',this.request.fields)
 
 			const payload = this.request.fields;
 

@@ -3,7 +3,8 @@
  */
 const appPaths = require("../../appPaths");
 const co = require('co');
-const log = require('../log')
+const log = require('../log');
+const path = require('path');
 
 const data = require('../data');
 const IO = require('koa-socket')
@@ -23,8 +24,8 @@ const formidable = require('koa-formidable')
 var kBetterBody = require('koa-better-body')
 var kBody = require('koa-body')
 
-function* loadModels(){
-	for(let m in data.models){
+function* loadModels() {
+	for (let m in data.models) {
 		const modelClass = data.models[ m ];
 		try {
 			yield modelClass.setup();
@@ -40,7 +41,7 @@ function* loadModels(){
  * @param fn
  * @returns {*}
  */
-module.exports.boot = function (fn) {
+module.exports.boot = function ( fn ) {
 	return co(function*() {
 		try {
 
@@ -48,22 +49,22 @@ module.exports.boot = function (fn) {
 			yield loadModels();
 
 			//Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
-			log.info("[Jollof] Starting Jollof app... \n APPROOT: "+appPaths.appRoot);
+			log.info("[Jollof] Starting Jollof app... \n APPROOT: " + appPaths.appRoot);
 
 			//Run the application
 			return yield fn(process.argv.slice(2));
-		}catch(err){
+		} catch (err) {
 			log.error(err.stack)
 		}
 
-	}).catch(function (err) {
+	}).catch(function ( err ) {
 		log.error("[bootstrapper] Gracefully handled exception...")
 		log.error(err.stack)
 		process.exit(1)
 	})
 }
 
-module.exports.bootServer = function (overWriteFn) {
+module.exports.bootServer = function ( overWriteFn ) {
 	return co(function*() {
 		try {
 
@@ -71,7 +72,7 @@ module.exports.bootServer = function (overWriteFn) {
 			yield loadModels();
 
 			//Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
-			log.info("[Jollof] Starting Jollof Server app... \n APPROOT: "+appPaths.appRoot);
+			log.info("[Jollof] Starting Jollof Server app... \n APPROOT: " + appPaths.appRoot);
 
 			//Run the application
 
@@ -89,7 +90,7 @@ module.exports.bootServer = function (overWriteFn) {
 			}));
 
 			//Make session variables accesible to View renderers
-			serverApp.use(function*( next) {
+			serverApp.use(function*( next ) {
 				this.state.session = this.session;
 				this.state.sessionId = this.sessionId;
 				this.state.env = jollof.config.env;
@@ -113,9 +114,11 @@ module.exports.bootServer = function (overWriteFn) {
 			serverApp.use(serve({rootDir: 'static', rootPath: '/static'}));
 
 			//Internal jollof statics
-			serverApp.use(serve({rootDir: 'node_modules/jollof/static', rootPath: '/jollofstatic'}));
-			serverApp.use(serve({rootDir: 'node_modules/jollof/uploads/public', rootPath: jollof.config.fileStorage.engines.local.basePublicUrl }));
-
+			serverApp.use(serve({rootDir: path.join('node_modules', 'jollof', 'static'), rootPath: '/jollofstatic'}));
+			serverApp.use(serve({
+				rootDir: jollof.config.fileStorage.engines.local.publicRoot,
+				rootPath: jollof.config.fileStorage.engines.local.basePublicUrl
+			}));
 
 
 			//Subdomain Routing
@@ -131,8 +134,6 @@ module.exports.bootServer = function (overWriteFn) {
 
 			//add nunjuck filters/extensions
 			jollof.view.setupFilters(serverApp.context.render.env);
-
-
 
 
 			//If Admin is enabled
@@ -166,11 +167,11 @@ module.exports.bootServer = function (overWriteFn) {
 			// }
 
 			return serverApp;
-		}catch(err){
+		} catch (err) {
 			log.error(err.stack)
 		}
 
-	}).catch(function (err) {
+	}).catch(function ( err ) {
 		log.error("[bootstrapper] Gracefully handled exception...")
 		log.error(err.stack)
 		process.exit(1)
