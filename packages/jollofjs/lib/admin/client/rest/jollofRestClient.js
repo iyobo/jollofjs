@@ -66,7 +66,7 @@ export default ( apiUrl, httpClient = fetchJson ) => {
 	 */
 	const convertRESTRequestToHTTP = ( type, resource, params ) => {
 
-		console.log(type, resource, params)
+		// console.log(type, resource, params)
 		let url = '';
 		const options = {};
 		switch (type) {
