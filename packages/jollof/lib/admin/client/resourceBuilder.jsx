@@ -160,7 +160,7 @@ export function buildResource( schema ) {
 	// Views
 	const PostFilter = ( props ) => (
 		<Filter {...props}>
-			<TextInput label="Search" source="q" alwaysOn/>
+			{/*<TextInput label="Search" source="q" alwaysOn/>*/}
 			{/*<ReferenceInput label="User" source="userId" reference="users" allowEmpty>*/}
 			{/*<SelectInput optionText="name" />*/}
 			{/*</ReferenceInput>*/}

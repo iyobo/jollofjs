@@ -94065,11 +94065,7 @@
 	
 		// Views
 		var PostFilter = function PostFilter(props) {
-			return _react2.default.createElement(
-				_mui.Filter,
-				props,
-				_react2.default.createElement(_mui.TextInput, { label: 'Search', source: 'q', alwaysOn: true })
-			);
+			return _react2.default.createElement(_mui.Filter, props);
 		};
 		var modelList = function modelList(props) {
 			return _react2.default.createElement(
@@ -102799,7 +102795,7 @@
 	  */
 		var convertRESTRequestToHTTP = function convertRESTRequestToHTTP(type, resource, params) {
 	
-			console.log(type, resource, params);
+			// console.log(type, resource, params)
 			var url = '';
 			var options = {};
 			switch (type) {
