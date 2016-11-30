@@ -5,9 +5,11 @@ export const FileField = ( {record = {}, source} ) => {
 
 	let file = record[ source ];
 
-	return (
-		<a href={file.url}>{file.name}</a>
-	)
+	if(file) {
+		return (
+			<a href={file.url}>{file.name}</a>
+		)
+	}
 };
 
 FileField.propTypes = {

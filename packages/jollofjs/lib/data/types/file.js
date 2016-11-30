@@ -25,16 +25,3 @@ const fileSchema = {
 }
 
 module.exports = registry.registerType(fileSchema);
-
-//array version
-// name: 'File',
-// 	structure: joi.array().items(joi.object().keys({
-// 	name: joi.string().required(),
-// 	size: joi.number(),
-// 	type: joi.string(),
-//
-// 	path: joi.string(),
-// 	url: joi.string(),
-// 	key: joi.string(),
-// 	engine: joi.string().default('local')
-// })).meta({widget: 'file'})

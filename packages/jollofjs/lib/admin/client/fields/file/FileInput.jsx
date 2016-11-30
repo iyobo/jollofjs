@@ -65,7 +65,7 @@ export class FileInput extends Component {
 
 			var previewImage = <img src={this.state.preview} className="fileImage"/>
 			if (this.state.file.type.indexOf('image') === -1) //if not an image
-				previewImage = <EditorInsertDriveFile className="fileImage"/>;
+				previewImage = <i className="fa fa-lg fa-file" />
 
 			preview = (
 				<div className="filePreview row">
