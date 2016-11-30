@@ -25,6 +25,7 @@
     </style>
     <link href="/jollofstatic/flexboxgrid.min.css" rel="stylesheet" type="text/css" >
     <link href="/jollofstatic/admin.css" rel="stylesheet" type="text/css" >
+    <link href="/jollofstatic/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" >
     <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css" >
 </head>
 <body>

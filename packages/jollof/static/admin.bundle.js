@@ -94629,11 +94629,13 @@
 	
 		var file = record[source];
 	
-		return _react2.default.createElement(
-			'a',
-			{ href: file.url },
-			file.name
-		);
+		if (file) {
+			return _react2.default.createElement(
+				'a',
+				{ href: file.url },
+				file.name
+			);
+		}
 	};
 	
 	FileField.propTypes = {
@@ -94758,7 +94760,7 @@
 	
 					var previewImage = _react2.default.createElement('img', { src: this.state.preview, className: 'fileImage' });
 					if (this.state.file.type.indexOf('image') === -1) //if not an image
-						previewImage = _react2.default.createElement(_insertDriveFile2.default, { className: 'fileImage' });
+						previewImage = _react2.default.createElement('i', { className: 'fa fa-lg fa-file' });
 	
 					preview = _react2.default.createElement(
 						'div',
