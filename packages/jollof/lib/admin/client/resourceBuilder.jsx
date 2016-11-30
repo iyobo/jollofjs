@@ -29,30 +29,65 @@ const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
 
+//---SHOW/VIEW
+function determineSpecialViewField( k, v, formFactor ) {
+	if (v._meta.length > 0) {
+		// console.log('resource builder is processing special field', k, v);
+		//This requires a special field type
+		if (v._meta[ 0 ].widget) {
+			switch (v._meta[ 0 ].widget) {
+				case 'file':
+					return <FileField key={k} source={k} formFactor={formFactor} />
+				default:
+					return <TextField key={k} source={k}/>
+			}
+		}
+		else {
+			return <TextField key={k} source={k}/>
+		}
+	}
+	else {
+		return <TextField key={k} source={k}/>
+	}
+}
 
-function buildViewFields( structure ) {
+function determineViewField( k, v, formFactor ) {
+	switch (v._type) {
+		case 'string':
+			return <TextField key={k} source={k}/>
+			break;
+		case 'number':
+			return <TextField key={k} source={k}/>
+			break;
+		case 'date':
+			return <DateField key={k} source={k}/>
+			break;
+		case 'object':
+			//This could be a nested object, array, or custom type.
+			return determineSpecialViewField(k, v, formFactor)
+
+			break;
+		case 'alternatives':
+			//This could be anything
+			return determineSpecialViewField(k, v, formFactor)
+			break;
+		default:
+			return <TextField key={k} source={k}/>
+			break;
+	}
+}
+
+function buildViewFields( structure, formFactor = 'list' ) {
 	return _.map(structure, ( v, k )=> {
 		// console.log('k',k,'v',v);
-		switch (v._type) {
-			case 'string':
-				return <TextField key={k} source={k}/>
-				break;
-			case 'number':
-				return <TextField key={k} source={k}/>
-				break;
-			case 'date':
-				return <DateField key={k} source={k}/>
-				break;
-			default:
-				return <div key={k} source={k}></div>
-				return;
-				break;
-
-		}
+		return determineViewField(k, v, formFactor);
 	});
 }
 
-function determineSpecialInputfield(k,v){
+
+//---INPUT
+
+function determineSpecialInputfield( k, v ) {
 	if (v._meta.length > 0) {
 		// console.log('resource builder is processing special field', k, v);
 		//This requires a special field type
@@ -86,12 +121,12 @@ function determineInputField( k, v ) {
 			break;
 		case 'object':
 			//This could be a nested object, array, or custom type.
-			return determineSpecialInputfield(k,v)
+			return determineSpecialInputfield(k, v)
 
 			break;
 		case 'alternatives':
 			//This could be anything
-			return determineSpecialInputfield(k,v)
+			return determineSpecialInputfield(k, v)
 			break;
 		default:
 			return <TextInput key={k} source={k}/>
@@ -117,6 +152,7 @@ export function buildResource( schema ) {
 
 	//for each schema field, create array of elements
 	let modelViewFields = buildViewFields(schema.structure);
+	let modelShowFields = buildViewFields(schema.structure, 'single');
 
 	//For create and Edit
 	let modelUpdateFields = buildUpdateFields(schema.structure);
@@ -145,7 +181,7 @@ export function buildResource( schema ) {
 	const modelShow = ( props ) => (
 		<Show title={"Viewing " + schema.name} {...props}>
 			<TextField source="id"/>
-			{modelViewFields}
+			{modelShowFields}
 			<TextField source="dateCreated"/>
 			<TextField source="lastUpdated"/>
 		</Show>
