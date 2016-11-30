@@ -33,6 +33,8 @@ module.exports = new class LocalFileStorage {
 			size: file.size,
 			type: file.type,
 
+			key: hash,
+
 			engine: 'local',
 			path: newPath,
 		};
