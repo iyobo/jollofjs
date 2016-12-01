@@ -27,6 +27,7 @@ import Edit from "./forms/Edit";
 import Create from "./forms/Create";
 import {MapInput} from "./fields/map/MapInput";
 import {MapField} from "./fields/map/MapField";
+import {ArrayField} from "./fields/array/ArrayField";
 const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
@@ -80,6 +81,11 @@ function determineViewField( k, v, formFactor ) {
 		case 'alternatives':
 			//This could be anything
 			return determineSpecialViewField(k, v, formFactor)
+			break;
+		case 'array':
+			//This could be an array of anything
+			return <ArrayField key={k} source={k} formFactor={formFactor} />
+
 			break;
 		default:
 			return <TextField key={k} source={k}/>
@@ -165,7 +171,7 @@ function buildUpdateFields( structure ) {
  */
 export function buildResource( schema ) {
 
-	// console.log(schema);
+	console.log(schema);
 
 	//for each schema field, create array of elements
 	let modelViewFields = buildViewFields(schema.structure);
