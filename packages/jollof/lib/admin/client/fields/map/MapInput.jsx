@@ -101,8 +101,7 @@ export class MapInput extends Component {
 		newInput[ 'latitude' ] = place.geometry.location.lat();
 
 		//Change map and marker
-		this.state.map.setCenter(place.geometry.location);
-		this.state.marker.setPosition(place.geometry.location);
+		this.setGeo(place.geometry.location);
 
 		//Clear search field
 		this.state.searchField.value = '';
@@ -112,8 +111,18 @@ export class MapInput extends Component {
 
 	}
 
+	setGeo( latlng ) {
+		this.state.map.setCenter(latlng);
+		this.state.marker.setPosition(latlng);
+	}
+
+
 	onMarkerDragged( evt ) {
 		console.log('Marker dragged ', evt);
+		const latlng = evt.latLng;
+		this.state.map.setCenter(latlng);
+		this.props.input.onChange({...this.props.input.value, latitude: latlng.lat(), longitude: latlng.lng()})
+
 	}
 
 	onTextChanged( evt ) {
