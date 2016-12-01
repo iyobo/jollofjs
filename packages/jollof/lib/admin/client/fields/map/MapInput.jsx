@@ -26,7 +26,7 @@ const fieldMap = {
 };
 
 function deduceFullAddressString(values){
-	return `${values.address} #${values.address2}, ${values.city}, ${values.state} ${values.postalCode}, ${values.country}} `
+	return `${values.address} ${values.address2? '#'+values.address2:''}, ${values.city}, ${values.state} ${values.postalCode}, ${values.country}} `
 }
 
 export class MapInput extends Component {
