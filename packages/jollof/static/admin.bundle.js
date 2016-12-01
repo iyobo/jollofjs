@@ -94688,6 +94688,16 @@
 	var uuid = __webpack_require__(900);
 	var _ = __webpack_require__(902);
 	
+	
+	var emptyAddress = {
+		address: '',
+		address2: '',
+		city: '',
+		state: '',
+		postalCode: '',
+		country: ''
+	};
+	
 	var MapInput = exports.MapInput = function (_Component) {
 		_inherits(MapInput, _Component);
 	
@@ -94774,7 +94784,7 @@
 					postal_code: 'postalCode'
 				};
 	
-				var newInput = {};
+				var newInput = _extends({}, emptyAddress);
 	
 				//Fields
 				for (var i = 0; i < place.address_components.length; i++) {

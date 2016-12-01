@@ -11,14 +11,14 @@ const locationSchema={
 	name: 'Location',
 	structure: joi.object().keys({
 		address: joi.string().required(),
-		address2: joi.string(),
+		address2: joi.string().allow(''),
 		city: joi.string().required(),
 		state: joi.string().required(),
-		postalCode: joi.string(),
+		postalCode: joi.string().allow(''),
 		country: joi.string().required(),
 		longitude: joi.number().required(),
 		latitude: joi.number().required(),
-		full: joi.string(),
+		full: joi.string().allow(''),
 	}).meta({widget:'map'})
 
 }
