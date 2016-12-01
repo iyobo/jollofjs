@@ -89,8 +89,15 @@ module.exports = {
 			},
 			s3: {}
 		}
-	}
+	},
 
+	thirdParty:{
+		google:{
+			maps:{
+				apiKey: ''
+			}
+		}
+	}
 
 }
 

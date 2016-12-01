@@ -19,14 +19,26 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
-    <link href="/jollofstatic/flexboxgrid.min.css" rel="stylesheet" type="text/css" >
-    <link href="/jollofstatic/admin.css" rel="stylesheet" type="text/css" >
-    <link href="/jollofstatic/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" >
-    <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css" >
+    <link href="/jollofstatic/flexboxgrid.min.css" rel="stylesheet" type="text/css">
+    <link href="/jollofstatic/admin.css" rel="stylesheet" type="text/css">
+    <link href="/jollofstatic/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css">
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous">
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ config.thirdParty.google.maps.apiKey }}&libraries=places">
+    </script>
 </head>
 <body>
 <div id="root">
