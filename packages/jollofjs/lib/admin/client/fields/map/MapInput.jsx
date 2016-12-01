@@ -80,7 +80,6 @@ export class MapInput extends Component {
 		};
 
 		let newInput = {}
-		this.props.input.onChange(newInput);
 
 
 		//Fields
@@ -94,7 +93,6 @@ export class MapInput extends Component {
 
 		//address
 		newInput[ 'address' ] = place.name;
-		newInput[ 'full' ] = place.formatted_address;
 
 		//lat long
 		newInput[ 'longitude' ] = place.geometry.location.lng();
@@ -105,6 +103,9 @@ export class MapInput extends Component {
 
 		//Clear search field
 		this.state.searchField.value = '';
+
+		//set full prior to save
+		newInput[ 'full' ] = this.deduceFullAddressString(newInput);
 
 		//Persist
 		this.props.input.onChange(newInput);
@@ -125,8 +126,23 @@ export class MapInput extends Component {
 
 	}
 
-	onTextChanged( evt ) {
-		console.log('address fields changed', evt.target)
+	onTextChanged( name , evt, value) {
+
+		//update field in value, and then update full.
+
+		const values = {...this.props.input.value }
+		values[name] = value
+
+		//full
+		values['full'] = this.deduceFullAddressString(values);
+
+
+		this.props.input.onChange(values)
+
+	}
+
+	deduceFullAddressString(values){
+		return `${values.address} ${values.address2}, ${values.city}, ${values.state} ${values.postalCode}, ${values.country}} `
 	}
 
 
