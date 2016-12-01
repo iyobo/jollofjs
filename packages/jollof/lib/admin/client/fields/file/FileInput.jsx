@@ -57,7 +57,6 @@ export class FileInput extends Component {
 
 	render() {
 
-
 		var preview = <div>Upload a File to see Preview...</div>;
 		var previewImage = <img src={this.state.preview} className="fileImage"/>
 

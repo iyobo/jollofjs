@@ -93936,6 +93936,10 @@
 	
 	var _Create2 = _interopRequireDefault(_Create);
 	
+	var _MapInput = __webpack_require__(933);
+	
+	var _MapField = __webpack_require__(934);
+	
 	var _FileField = __webpack_require__(899);
 	
 	var _FileInput = __webpack_require__(900);
@@ -93946,6 +93950,12 @@
 	
 	
 	//---SHOW/VIEW
+	/**
+	 * @param k
+	 * @param v
+	 * @param formFactor
+	 * @returns {XML}
+	 */
 	function determineSpecialViewField(k, v, formFactor) {
 		if (v._meta.length > 0) {
 			// console.log('resource builder is processing special field', k, v);
@@ -93954,6 +93964,8 @@
 				switch (v._meta[0].widget) {
 					case 'file':
 						return _react2.default.createElement(_FileField.FileField, { key: k, source: k, formFactor: formFactor });
+					case 'map':
+						return _react2.default.createElement(_MapField.MapField, { key: k, source: k, formFactor: formFactor });
 					default:
 						return _react2.default.createElement(_mui.TextField, { key: k, source: k });
 				}
@@ -94001,7 +94013,12 @@
 	}
 	
 	//---INPUT
-	
+	/**
+	 *
+	 * @param k
+	 * @param v
+	 * @returns {XML}
+	 */
 	function determineSpecialInputfield(k, v) {
 		if (v._meta.length > 0) {
 			// console.log('resource builder is processing special field', k, v);
@@ -94010,6 +94027,8 @@
 				switch (v._meta[0].widget) {
 					case 'file':
 						return _react2.default.createElement(_FileInput.FileInput, { key: k, source: k });
+					case 'map':
+						return _react2.default.createElement(_MapInput.MapInput, { key: k, source: k });
 					default:
 						return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
 				}
@@ -104449,6 +104468,293 @@
 	  };
 	};
 
+
+/***/ },
+/* 933 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.MapInput = undefined;
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TextField = __webpack_require__(774);
+	
+	var _TextField2 = _interopRequireDefault(_TextField);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var uuid = __webpack_require__(903);
+	var _ = __webpack_require__(905);
+	
+	var MapInput = exports.MapInput = function (_Component) {
+		_inherits(MapInput, _Component);
+	
+		function MapInput() {
+			_classCallCheck(this, MapInput);
+	
+			return _possibleConstructorReturn(this, (MapInput.__proto__ || Object.getPrototypeOf(MapInput)).apply(this, arguments));
+		}
+	
+		_createClass(MapInput, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				// console.log('Map component on mount...', this.props);
+				var key = uuid();
+	
+				this.state = {
+					key: key,
+					marker: null,
+					mapId: 'map_' + key,
+					searchId: 'search_' + key,
+					map: null,
+					values: this.props.input.value || {}
+				};
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				this.initMap();
+			}
+		}, {
+			key: 'initMap',
+			value: function initMap() {
+				//First, find the long lat
+				var lat = this.props.input.value.latitude ? this.props.input.value.latitude : 0;
+				var lng = this.props.input.value.longitude ? this.props.input.value.longitude : 0;
+	
+				// Map
+				var map = new google.maps.Map(document.getElementById(this.state.mapId), {
+					zoom: 16,
+					center: { lat: lat, lng: lng }
+				});
+	
+				var marker = new google.maps.Marker({
+					map: map,
+					draggable: true,
+					animation: google.maps.Animation.DROP,
+					position: { lat: lat, lng: lng }
+				});
+				marker.addListener('dragend', this.onMarkerDragged.bind(this));
+	
+				// Searchbar
+				var searchField = document.getElementById(this.state.searchId);
+	
+				var autocomplete = new google.maps.places.Autocomplete(searchField, { types: ['geocode'] });
+	
+				// When the user selects an address from the dropdown, populate the address
+				// fields in the form.
+				autocomplete.addListener('place_changed', this.onSearchSelected.bind(this));
+				google.maps.event.addDomListener(searchField, 'keydown', function (e) {
+					if (e.keyCode == 13) {
+						e.preventDefault();
+					}
+				});
+	
+				this.setState(_extends({}, this.state, { map: map, marker: marker, autocomplete: autocomplete, searchField: searchField }));
+			}
+		}, {
+			key: 'onSearchSelected',
+			value: function onSearchSelected() {
+				var place = this.state.autocomplete.getPlace();
+	
+				// console.log('search selected', place);
+				var lengthMap = {
+					locality: 'short_name',
+					administrative_area_level_1: 'long_name',
+					country: 'long_name',
+					postal_code: 'short_name'
+				};
+	
+				var fieldMap = {
+					locality: 'city',
+					administrative_area_level_1: 'state',
+					country: 'country',
+					postal_code: 'postalCode'
+				};
+	
+				var newInput = {};
+				this.props.input.onChange(newInput);
+	
+				//Fields
+				for (var i = 0; i < place.address_components.length; i++) {
+					var addressType = place.address_components[i].types[0];
+					if (lengthMap[addressType]) {
+						var val = place.address_components[i][lengthMap[addressType]];
+						newInput[fieldMap[addressType]] = val;
+					}
+				}
+	
+				//address
+				newInput['address'] = place.name;
+				newInput['full'] = place.formatted_address;
+	
+				//lat long
+				newInput['longitude'] = place.geometry.location.lng();
+				newInput['latitude'] = place.geometry.location.lat();
+	
+				//Change map and marker
+				this.state.map.setCenter(place.geometry.location);
+				this.state.marker.setPosition(place.geometry.location);
+	
+				//Clear search field
+				this.state.searchField.value = '';
+	
+				//Persist
+				this.props.input.onChange(newInput);
+			}
+		}, {
+			key: 'onMarkerDragged',
+			value: function onMarkerDragged(evt) {
+				console.log('Marker dragged ', evt);
+			}
+		}, {
+			key: 'onTextChanged',
+			value: function onTextChanged(evt) {
+				console.log('address fields changed', evt.target);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-12 col-sm-12' },
+							_react2.default.createElement(_TextField2.default, {
+								id: this.state.searchId,
+								placeholder: 'Search for a place...',
+								fullWidth: true
+							})
+						)
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-6 col-sm-12 ' },
+							_react2.default.createElement(
+								'div',
+								{ key: this.state.key, id: this.state.mapId, className: 'jollofMap' },
+								'loading map...'
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-6 col-sm-12 ' },
+							_react2.default.createElement(_TextField2.default, {
+								name: 'address',
+								value: this.props.input.value.address,
+								onChange: this.onTextChanged.bind(this, 'address'),
+								floatingLabelText: 'Address',
+								fullWidth: true }),
+							_react2.default.createElement(_TextField2.default, {
+								name: 'address2',
+								value: this.props.input.value.address2,
+								onChange: this.onTextChanged.bind(this, 'address2'),
+								floatingLabelText: 'Apt / Unit',
+								fullWidth: true }),
+							_react2.default.createElement(_TextField2.default, {
+								name: 'city',
+								value: this.props.input.value.city,
+								onChange: this.onTextChanged.bind(this, 'city'),
+								floatingLabelText: 'City',
+								fullWidth: true }),
+							_react2.default.createElement(_TextField2.default, {
+								name: 'state',
+								value: this.props.input.value.state,
+								onChange: this.onTextChanged.bind(this, 'state'),
+								floatingLabelText: 'State',
+								fullWidth: true }),
+							_react2.default.createElement(_TextField2.default, {
+								name: 'postalCode',
+								value: this.props.input.value.postalCode,
+								onChange: this.onTextChanged.bind(this, 'postalCode'),
+								floatingLabelText: 'Postal Code',
+								fullWidth: true }),
+							_react2.default.createElement(_TextField2.default, {
+								name: 'country',
+								value: this.props.input.value.country,
+								onChange: this.onTextChanged.bind(this, 'country'),
+								floatingLabelText: 'Country',
+								fullWidth: true })
+						)
+					)
+				);
+			}
+		}]);
+	
+		return MapInput;
+	}(_react.Component);
+	
+	MapInput.propTypes = {
+		input: _react.PropTypes.object,
+		label: _react.PropTypes.string,
+		onChange: _react.PropTypes.func,
+		source: _react.PropTypes.string.isRequired
+	};
+
+/***/ },
+/* 934 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.MapField = undefined;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	//R
+	var MapField = exports.MapField = function MapField(_ref) {
+		var _ref$record = _ref.record,
+		    record = _ref$record === undefined ? {} : _ref$record,
+		    source = _ref.source,
+		    formFactor = _ref.formFactor;
+	
+		var loc = record[source];
+	
+		return _react2.default.createElement(
+			'div',
+			null,
+			' ',
+			loc ? loc.full : '--',
+			' '
+		);
+	};
+	
+	MapField.propTypes = {
+		source: _react.PropTypes.string.isRequired,
+		record: _react.PropTypes.object,
+		formFactor: _react.PropTypes.string
+	};
 
 /***/ }
 /******/ ]);

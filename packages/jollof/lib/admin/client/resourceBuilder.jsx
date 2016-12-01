@@ -25,11 +25,19 @@ import {
 import PostIcon from 'material-ui/svg-icons/action/book';
 import Edit from "./forms/Edit";
 import Create from "./forms/Create";
+import {MapInput} from "./fields/map/MapInput";
+import {MapField} from "./fields/map/MapField";
 const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
 
 //---SHOW/VIEW
+/**
+ * @param k
+ * @param v
+ * @param formFactor
+ * @returns {XML}
+ */
 function determineSpecialViewField( k, v, formFactor ) {
 	if (v._meta.length > 0) {
 		// console.log('resource builder is processing special field', k, v);
@@ -38,6 +46,8 @@ function determineSpecialViewField( k, v, formFactor ) {
 			switch (v._meta[ 0 ].widget) {
 				case 'file':
 					return <FileField key={k} source={k} formFactor={formFactor} />
+				case 'map':
+					return <MapField key={k} source={k} formFactor={formFactor} />
 				default:
 					return <TextField key={k} source={k}/>
 			}
@@ -86,7 +96,12 @@ function buildViewFields( structure, formFactor = 'list' ) {
 
 
 //---INPUT
-
+/**
+ *
+ * @param k
+ * @param v
+ * @returns {XML}
+ */
 function determineSpecialInputfield( k, v ) {
 	if (v._meta.length > 0) {
 		// console.log('resource builder is processing special field', k, v);
@@ -95,6 +110,8 @@ function determineSpecialInputfield( k, v ) {
 			switch (v._meta[ 0 ].widget) {
 				case 'file':
 					return <FileInput key={k} source={k}/>
+				case 'map':
+					return <MapInput key={k} source={k}/>
 				default:
 					return <TextInput key={k} source={k}/>
 			}

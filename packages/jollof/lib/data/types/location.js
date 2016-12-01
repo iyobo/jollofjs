@@ -17,8 +17,9 @@ const locationSchema={
 		postalCode: joi.string(),
 		country: joi.string().required(),
 		longitude: joi.number().required(),
-		latitude: joi.number().required()
-	}).meta({widget:'map', foo:'bar'})
+		latitude: joi.number().required(),
+		full: joi.string(),
+	}).meta({widget:'map'})
 
 }
 
