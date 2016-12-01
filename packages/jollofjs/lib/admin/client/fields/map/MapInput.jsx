@@ -11,6 +11,23 @@ const emptyAddress={
 	postalCode: '',
 	country: ''
 }
+const lengthMap = {
+	locality: 'short_name',
+	administrative_area_level_1: 'long_name',
+	country: 'long_name',
+	postal_code: 'short_name'
+};
+
+const fieldMap = {
+	locality: 'city',
+	administrative_area_level_1: 'state',
+	country: 'country',
+	postal_code: 'postalCode'
+};
+
+function deduceFullAddressString(values){
+	return `${values.address} #${values.address2}, ${values.city}, ${values.state} ${values.postalCode}, ${values.country}} `
+}
 
 export class MapInput extends Component {
 	componentWillMount() {
@@ -74,19 +91,7 @@ export class MapInput extends Component {
 		var place = this.state.autocomplete.getPlace();
 
 		// console.log('search selected', place);
-		var lengthMap = {
-			locality: 'short_name',
-			administrative_area_level_1: 'long_name',
-			country: 'long_name',
-			postal_code: 'short_name'
-		};
 
-		var fieldMap = {
-			locality: 'city',
-			administrative_area_level_1: 'state',
-			country: 'country',
-			postal_code: 'postalCode'
-		};
 
 		let newInput = {...emptyAddress}
 
@@ -114,7 +119,7 @@ export class MapInput extends Component {
 		this.state.searchField.value = '';
 
 		//set full prior to save
-		newInput[ 'full' ] = this.deduceFullAddressString(newInput);
+		newInput[ 'full' ] = deduceFullAddressString(newInput);
 
 		//Persist
 		this.props.input.onChange(newInput);
@@ -128,7 +133,7 @@ export class MapInput extends Component {
 
 
 	onMarkerDragged( evt ) {
-		console.log('Marker dragged ', evt);
+		// console.log('Marker dragged ', evt);
 		const latlng = evt.latLng;
 		this.state.map.setCenter(latlng);
 		this.props.input.onChange({...this.props.input.value, latitude: latlng.lat(), longitude: latlng.lng()})
@@ -143,16 +148,14 @@ export class MapInput extends Component {
 		values[name] = value
 
 		//full
-		values['full'] = this.deduceFullAddressString(values);
+		values['full'] = deduceFullAddressString(values);
 
 
 		this.props.input.onChange(values)
 
 	}
 
-	deduceFullAddressString(values){
-		return `${values.address} ${values.address2}, ${values.city}, ${values.state} ${values.postalCode}, ${values.country}} `
-	}
+
 
 
 	render() {
