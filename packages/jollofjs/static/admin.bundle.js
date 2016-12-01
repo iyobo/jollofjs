@@ -93942,6 +93942,8 @@
 	
 	var _ArrayField = __webpack_require__(935);
 	
+	var _ArrayInput = __webpack_require__(936);
+	
 	var _FileField = __webpack_require__(904);
 	
 	var _FileInput = __webpack_require__(905);
@@ -94027,15 +94029,17 @@
 	 * @returns {XML}
 	 */
 	function determineSpecialInputfield(k, v) {
+		var componentOnly = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+	
 		if (v._meta.length > 0) {
 			// console.log('resource builder is processing special field', k, v);
 			//This requires a special field type
 			if (v._meta[0].widget) {
 				switch (v._meta[0].widget) {
 					case 'file':
-						return _react2.default.createElement(_FileInput.FileInput, { key: k, source: k });
+						if (!componentOnly) return _react2.default.createElement(_FileInput.FileInput, { key: k, source: k });else return _FileInput.FileInput;
 					case 'map':
-						return _react2.default.createElement(_MapInput.MapInput, { key: k, source: k });
+						if (!componentOnly) return _react2.default.createElement(_MapInput.MapInput, { key: k, source: k });else return _MapInput.MapInput;
 					default:
 						return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
 				}
@@ -94048,27 +94052,35 @@
 	}
 	
 	function determineInputField(k, v) {
+		var componentOnly = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+	
 		switch (v._type) {
 			case 'string':
-				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				if (!componentOnly) return _react2.default.createElement(_mui.TextInput, { key: k, source: k });else return _mui.TextInput;
 				break;
 			case 'number':
-				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				if (!componentOnly) return _react2.default.createElement(_mui.TextInput, { key: k, source: k });else return _mui.TextInput;
 				break;
 			case 'date':
-				return _react2.default.createElement(_mui.DateInput, { key: k, source: k });
+				if (!componentOnly) return _react2.default.createElement(_mui.DateInput, { key: k, source: k });else return _mui.DateInput;
 				break;
 			case 'object':
 				//This could be a nested object, array, or custom type.
-				return determineSpecialInputfield(k, v);
-	
+				return determineSpecialInputfield(k, v, componentOnly);
 				break;
 			case 'alternatives':
 				//This could be anything
-				return determineSpecialInputfield(k, v);
+				return determineSpecialInputfield(k, v, componentOnly);
+				break;
+			case 'array':
+				//This could be an array of anything
+				var component = determineInputField(k, v._inner.items[0], true);
+				// console.log('array component', k, component);
+				return _react2.default.createElement(_ArrayInput.ArrayInput, { key: k, source: k, itemComponent: component });
+	
 				break;
 			default:
-				return _react2.default.createElement(_mui.TextInput, { key: k, source: k });
+				if (!componentOnly) return _react2.default.createElement(_mui.TextInput, { key: k, source: k });else return _mui.TextInput;
 				break;
 		}
 	}
@@ -94080,7 +94092,7 @@
 		});
 	}function buildResource(schema) {
 	
-		console.log(schema);
+		// console.log(schema);
 	
 		//for each schema field, create array of elements
 		var modelViewFields = buildViewFields(schema.structure);
@@ -104836,6 +104848,131 @@
 		source: _react.PropTypes.string.isRequired,
 		record: _react.PropTypes.object,
 		formFactor: _react.PropTypes.string
+	};
+
+/***/ },
+/* 936 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ArrayInput = undefined;
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _IconButton = __webpack_require__(659);
+	
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+	
+	var _add = __webpack_require__(750);
+	
+	var _add2 = _interopRequireDefault(_add);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var uuid = __webpack_require__(900);
+	var _ = __webpack_require__(902);
+	
+	/**
+	 * handles array of given field
+	 */
+	var ArrayInput = exports.ArrayInput = function (_Component) {
+		_inherits(ArrayInput, _Component);
+	
+		function ArrayInput() {
+			_classCallCheck(this, ArrayInput);
+	
+			return _possibleConstructorReturn(this, (ArrayInput.__proto__ || Object.getPrototypeOf(ArrayInput)).apply(this, arguments));
+		}
+	
+		_createClass(ArrayInput, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				console.log('Array component on mount...', this.props);
+				var key = uuid();
+	
+				this.state = {
+					key: key
+				};
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {}
+		}, {
+			key: 'onAddItem',
+			value: function onAddItem(evt) {
+				var items = this.props.input.value === '' ? [] : this.props.input.value;
+				items.push('');
+				this.props.input.onChange(items); //???aa
+			}
+		}, {
+			key: 'onRemoveItem',
+			value: function onRemoveItem(evt, index) {
+				var items = this.props.input.value === '' ? [] : this.props.input.value;
+				items.splice(index, 1);
+				this.props.input.onChange(items);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
+	
+				var Item = this.props.itemComponent;
+	
+				// let items = [
+				// 	<Item key={uuid()} source={1} {...this.props.options}/>,
+				// 	<Item key={uuid()} source={2} {...this.props.options}/>,
+				// 	<Item key={uuid()} source={3} {...this.props.options}/>
+				// ]
+	
+				var items = this.props.input.value.map ? this.props.input.value.map(function (v) {
+					return _react2.default.createElement(Item, _extends({ key: v, source: v }, _this2.props.options));
+				}) : [];
+	
+				return _react2.default.createElement(
+					'div',
+					null,
+					items,
+					_react2.default.createElement(
+						'div',
+						{ className: '' },
+						_react2.default.createElement(
+							_IconButton2.default,
+							{ onClick: this.onAddItem.bind(this) },
+							_react2.default.createElement(_add2.default, null)
+						)
+					)
+				);
+			}
+		}]);
+	
+		return ArrayInput;
+	}(_react.Component);
+	
+	ArrayInput.propTypes = {
+		input: _react.PropTypes.object,
+		itemComponent: _react.PropTypes.any,
+		label: _react.PropTypes.string,
+		onChange: _react.PropTypes.func,
+		source: _react.PropTypes.string.isRequired,
+		options: _react.PropTypes.any,
+		meta: _react.PropTypes.object,
+		name: _react.PropTypes.string
 	};
 
 /***/ }

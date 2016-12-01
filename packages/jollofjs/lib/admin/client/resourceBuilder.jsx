@@ -28,6 +28,7 @@ import Create from "./forms/Create";
 import {MapInput} from "./fields/map/MapInput";
 import {MapField} from "./fields/map/MapField";
 import {ArrayField} from "./fields/array/ArrayField";
+import {ArrayInput} from "./fields/array/ArrayInput";
 const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
@@ -46,9 +47,9 @@ function determineSpecialViewField( k, v, formFactor ) {
 		if (v._meta[ 0 ].widget) {
 			switch (v._meta[ 0 ].widget) {
 				case 'file':
-					return <FileField key={k} source={k} formFactor={formFactor} />
+					return <FileField key={k} source={k} formFactor={formFactor}/>
 				case 'map':
-					return <MapField key={k} source={k} formFactor={formFactor} />
+					return <MapField key={k} source={k} formFactor={formFactor}/>
 				default:
 					return <TextField key={k} source={k}/>
 			}
@@ -84,7 +85,7 @@ function determineViewField( k, v, formFactor ) {
 			break;
 		case 'array':
 			//This could be an array of anything
-			return <ArrayField key={k} source={k} formFactor={formFactor} />
+			return <ArrayField key={k} source={k} formFactor={formFactor}/>
 
 			break;
 		default:
@@ -108,16 +109,22 @@ function buildViewFields( structure, formFactor = 'list' ) {
  * @param v
  * @returns {XML}
  */
-function determineSpecialInputfield( k, v ) {
+function determineSpecialInputfield( k, v, componentOnly = false ) {
 	if (v._meta.length > 0) {
 		// console.log('resource builder is processing special field', k, v);
 		//This requires a special field type
 		if (v._meta[ 0 ].widget) {
 			switch (v._meta[ 0 ].widget) {
 				case 'file':
-					return <FileInput key={k} source={k}/>
+					if (!componentOnly)
+						return <FileInput key={k} source={k}/>
+					else
+						return FileInput;
 				case 'map':
-					return <MapInput key={k} source={k}/>
+					if (!componentOnly)
+						return <MapInput key={k} source={k}/>
+					else
+						return MapInput
 				default:
 					return <TextInput key={k} source={k}/>
 			}
@@ -131,28 +138,46 @@ function determineSpecialInputfield( k, v ) {
 	}
 }
 
-function determineInputField( k, v ) {
+function determineInputField( k, v, componentOnly = false ) {
 	switch (v._type) {
 		case 'string':
-			return <TextInput key={k} source={k}/>
+			if (!componentOnly)
+				return <TextInput key={k} source={k}/>
+			else
+				return TextInput;
 			break;
 		case 'number':
-			return <TextInput key={k} source={k}/>
+			if (!componentOnly)
+				return <TextInput key={k} source={k}/>
+			else
+				return TextInput;
 			break;
 		case 'date':
-			return <DateInput key={k} source={k}/>
+			if (!componentOnly)
+				return <DateInput key={k} source={k}/>
+			else
+				return DateInput;
 			break;
 		case 'object':
 			//This could be a nested object, array, or custom type.
-			return determineSpecialInputfield(k, v)
-
+			return determineSpecialInputfield(k, v, componentOnly)
 			break;
 		case 'alternatives':
 			//This could be anything
-			return determineSpecialInputfield(k, v)
+			return determineSpecialInputfield(k, v, componentOnly)
+			break;
+		case 'array':
+			//This could be an array of anything
+			const component = determineInputField(k, v._inner.items[ 0 ], true);
+			// console.log('array component', k, component);
+			return <ArrayInput key={k} source={k} itemComponent={component}/>
+
 			break;
 		default:
-			return <TextInput key={k} source={k}/>
+			if (!componentOnly)
+				return <TextInput key={k} source={k}/>
+			else
+				return TextInput;
 			break;
 	}
 }
@@ -171,7 +196,7 @@ function buildUpdateFields( structure ) {
  */
 export function buildResource( schema ) {
 
-	console.log(schema);
+	// console.log(schema);
 
 	//for each schema field, create array of elements
 	let modelViewFields = buildViewFields(schema.structure);
