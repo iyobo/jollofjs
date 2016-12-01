@@ -3,6 +3,15 @@ const uuid = require('uuid');
 const _ = require('lodash');
 import TextField from 'material-ui/TextField';
 
+const emptyAddress={
+	address:'',
+	address2: '',
+	city: '',
+	state:'',
+	postalCode: '',
+	country: ''
+}
+
 export class MapInput extends Component {
 	componentWillMount() {
 		// console.log('Map component on mount...', this.props);
@@ -79,7 +88,7 @@ export class MapInput extends Component {
 			postal_code: 'postalCode'
 		};
 
-		let newInput = {}
+		let newInput = {...emptyAddress}
 
 
 		//Fields
