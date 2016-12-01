@@ -93940,6 +93940,8 @@
 	
 	var _MapField = __webpack_require__(903);
 	
+	var _ArrayField = __webpack_require__(935);
+	
 	var _FileField = __webpack_require__(904);
 	
 	var _FileInput = __webpack_require__(905);
@@ -93996,6 +93998,11 @@
 			case 'alternatives':
 				//This could be anything
 				return determineSpecialViewField(k, v, formFactor);
+				break;
+			case 'array':
+				//This could be an array of anything
+				return _react2.default.createElement(_ArrayField.ArrayField, { key: k, source: k, formFactor: formFactor });
+	
 				break;
 			default:
 				return _react2.default.createElement(_mui.TextField, { key: k, source: k });
@@ -94073,7 +94080,7 @@
 		});
 	}function buildResource(schema) {
 	
-		// console.log(schema);
+		console.log(schema);
 	
 		//for each schema field, create array of elements
 		var modelViewFields = buildViewFields(schema.structure);
@@ -104788,6 +104795,48 @@
 	  };
 	};
 
+
+/***/ },
+/* 935 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ArrayField = undefined;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	//R
+	var ArrayField = exports.ArrayField = function ArrayField(_ref) {
+		var _ref$record = _ref.record,
+		    record = _ref$record === undefined ? {} : _ref$record,
+		    source = _ref.source,
+		    formFactor = _ref.formFactor;
+	
+		var val = record[source];
+		var len = val && val.length ? val.length : null;
+	
+		return _react2.default.createElement(
+			'div',
+			null,
+			' ',
+			len ? '[ ' + len + ' item' + (len > 1 ? 's' : '') + ' ]' : '[]',
+			' '
+		);
+	};
+	
+	ArrayField.propTypes = {
+		source: _react.PropTypes.string.isRequired,
+		record: _react.PropTypes.object,
+		formFactor: _react.PropTypes.string
+	};
 
 /***/ }
 /******/ ]);
