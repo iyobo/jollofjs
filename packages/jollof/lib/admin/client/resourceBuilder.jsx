@@ -29,6 +29,7 @@ import {MapInput} from "./fields/map/MapInput";
 import {MapField} from "./fields/map/MapField";
 import {ArrayField} from "./fields/array/ArrayField";
 import {ArrayInput} from "./fields/array/ArrayInput";
+import {FormFactor} from "./forms/FormFactor";
 const _ = require('lodash');
 import {FileField} from './fields/file/FileField'
 import {FileInput} from './fields/file/FileInput'
@@ -94,7 +95,7 @@ function determineViewField( k, v, formFactor ) {
 	}
 }
 
-function buildViewFields( structure, formFactor = 'list' ) {
+function buildViewFields( structure, formFactor = FormFactor.LIST ) {
 	return _.map(structure, ( v, k )=> {
 		// console.log('k',k,'v',v);
 		return determineViewField(k, v, formFactor);
@@ -199,8 +200,8 @@ export function buildResource( schema ) {
 	// console.log(schema);
 
 	//for each schema field, create array of elements
-	let modelViewFields = buildViewFields(schema.structure);
-	let modelShowFields = buildViewFields(schema.structure, 'single');
+	let modelListFields = buildViewFields(schema.structure, FormFactor.LIST);
+	let modelSingleShowFields = buildViewFields(schema.structure, FormFactor.SINGLE);
 
 	//For create and Edit
 	let modelUpdateFields = buildUpdateFields(schema.structure);
@@ -218,7 +219,7 @@ export function buildResource( schema ) {
 		<List {...props} filter={PostFilter}>
 			<Datagrid>
 				<TextField source="id"/>
-				{modelViewFields}
+				{modelListFields}
 				<EditButton/>
 				<ShowButton />
 				<DeleteButton />
@@ -229,7 +230,7 @@ export function buildResource( schema ) {
 	const modelShow = ( props ) => (
 		<Show title={"Viewing " + schema.name} {...props}>
 			<TextField source="id"/>
-			{modelShowFields}
+			{modelSingleShowFields}
 			<TextField source="dateCreated"/>
 			<TextField source="lastUpdated"/>
 		</Show>
