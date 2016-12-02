@@ -102476,7 +102476,7 @@
 		_createClass(ArrayInput, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				console.log('Array component on mount...', this.props);
+				// console.log('Array component on mount...', this.props);
 				var key = uuid();
 	
 				var items = [];
@@ -102497,7 +102497,7 @@
 				this.setState({ items: items });
 				this.props.input.onChange(items);
 	
-				console.log('this.state.items', items);
+				// console.log('this.state.items', items)
 			}
 		}, {
 			key: 'onAddItem',
@@ -102524,7 +102524,7 @@
 				//Some inputs have issues with ordering
 				var value = v || evt;
 	
-				console.log('Changing (i,value)', i, value, evt);
+				// console.log('Changing (i,value)',i, value, evt);
 				var items = [].concat(_toConsumableArray(this.state.items));
 	
 				items[i] = value;
@@ -102552,7 +102552,7 @@
 	
 				var items = this.state.items.map(function (v, i) {
 	
-					console.log('v', v);
+					// console.log('v',v)
 	
 					var options = { id: _this2.state.key + '_' + i };
 					var input = _extends({}, _this2.props.input, {
