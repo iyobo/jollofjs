@@ -25,7 +25,7 @@ let arrayItemActionStyle = {
 
 export class ArrayInput extends Component {
 	componentWillMount() {
-		console.log('Array component on mount...', this.props);
+		// console.log('Array component on mount...', this.props);
 		const key = uuid();
 
 		let items = [];
@@ -47,7 +47,7 @@ export class ArrayInput extends Component {
 		this.setState({items: items});
 		this.props.input.onChange(items);
 
-		console.log('this.state.items', items)
+		// console.log('this.state.items', items)
 	}
 
 	onAddItem( evt ) {
@@ -71,7 +71,7 @@ export class ArrayInput extends Component {
 		//Some inputs have issues with ordering
 		let value = v || evt
 
-		console.log('Changing (i,value)',i, value, evt);
+		// console.log('Changing (i,value)',i, value, evt);
 		let items = [ ...this.state.items ];
 
 		items[ i ] = value;
@@ -102,7 +102,7 @@ export class ArrayInput extends Component {
 
 		let items = this.state.items.map(( v, i )=> {
 
-			console.log('v',v)
+			// console.log('v',v)
 
 			let options = {id: this.state.key + '_' + i}
 			let input = {
