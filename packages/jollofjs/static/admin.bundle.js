@@ -102464,9 +102464,13 @@
 				console.log('Array component on mount...', this.props);
 				var key = uuid();
 	
+				var items = [];
+	
+				if (Array.isArray(this.props.input.value)) items = this.props.input.value;
+	
 				this.state = {
 					key: key,
-					items: []
+					items: items
 				};
 			}
 		}, {
@@ -102478,7 +102482,7 @@
 				this.setState({ items: items });
 				this.props.input.onChange(items);
 	
-				console.log('this.state.items', this.state.items);
+				console.log('this.state.items', items);
 			}
 		}, {
 			key: 'onAddItem',
@@ -102499,8 +102503,12 @@
 			}
 		}, {
 			key: 'onChildChange',
-			value: function onChildChange(evt, i) {
+			value: function onChildChange(i, evt, value) {
+				console.log(i, value);
 				var items = [].concat(_toConsumableArray(this.state.items));
+	
+				items[i] = value;
+				this._updateItems(items);
 			}
 		}, {
 			key: 'onChildBlur',
@@ -102520,7 +102528,7 @@
 				var _this2 = this;
 	
 				var Item = this.props.itemComponent;
-				var meta = { touched: _react2.default.createElement('div', null), error: null };
+				var meta = { touched: null, error: null };
 	
 				var items = this.state.items.map(function (v, i) {
 	
