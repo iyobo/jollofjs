@@ -56,17 +56,22 @@ export class ArrayInput extends Component {
 		this._updateItems(items);
 	}
 
-	onRemoveItem( evt, index ) {
+	onRemoveItem( index, evt ) {
 		let items = [ ...this.state.items ];
 
+		// console.log('removing ',index);
 		//remove index
 		items.splice(index, 1);
 
 		this._updateItems(items);
 	}
 
-	onChildChange( i, evt, value ) {
-		console.log(i, value);
+	onChildChange( i, evt, v ) {
+
+		//Some inputs have issues with ordering
+		let value = v || evt
+
+		console.log('Changing (i,value)',i, value, evt);
 		let items = [ ...this.state.items ];
 
 		items[ i ] = value;
@@ -97,6 +102,8 @@ export class ArrayInput extends Component {
 
 		let items = this.state.items.map(( v, i )=> {
 
+			console.log('v',v)
+
 			let options = {id: this.state.key + '_' + i}
 			let input = {
 				...this.props.input,
@@ -122,7 +129,7 @@ export class ArrayInput extends Component {
 						</span>
 					</div>
 					<div className="col-md-11">
-						<Item options={options} {...this.props} source={v} meta={meta} input={input} label=""/>
+						<Item options={options} {...this.props} source={''+i} meta={meta} input={input} label=""/>
 					</div>
 				</div>
 			)

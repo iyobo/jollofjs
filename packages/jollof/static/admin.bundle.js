@@ -102508,9 +102508,10 @@
 			}
 		}, {
 			key: 'onRemoveItem',
-			value: function onRemoveItem(evt, index) {
+			value: function onRemoveItem(index, evt) {
 				var items = [].concat(_toConsumableArray(this.state.items));
 	
+				// console.log('removing ',index);
 				//remove index
 				items.splice(index, 1);
 	
@@ -102518,8 +102519,12 @@
 			}
 		}, {
 			key: 'onChildChange',
-			value: function onChildChange(i, evt, value) {
-				console.log(i, value);
+			value: function onChildChange(i, evt, v) {
+	
+				//Some inputs have issues with ordering
+				var value = v || evt;
+	
+				console.log('Changing (i,value)', i, value, evt);
 				var items = [].concat(_toConsumableArray(this.state.items));
 	
 				items[i] = value;
@@ -102546,6 +102551,8 @@
 				var meta = { touched: null, error: null };
 	
 				var items = this.state.items.map(function (v, i) {
+	
+					console.log('v', v);
 	
 					var options = { id: _this2.state.key + '_' + i };
 					var input = _extends({}, _this2.props.input, {
@@ -102579,7 +102586,7 @@
 						_react2.default.createElement(
 							'div',
 							{ className: 'col-md-11' },
-							_react2.default.createElement(Item, _extends({ options: options }, _this2.props, { source: v, meta: meta, input: input, label: '' }))
+							_react2.default.createElement(Item, _extends({ options: options }, _this2.props, { source: '' + i, meta: meta, input: input, label: '' }))
 						)
 					);
 				});
