@@ -13,9 +13,14 @@ export class ArrayInput extends Component {
 		console.log('Array component on mount...', this.props);
 		const key = uuid();
 
+		let items = [];
+
+		if(Array.isArray(this.props.input.value))
+			items = this.props.input.value;
+
 		this.state = {
 			key: key,
-			items: []
+			items: items
 		}
 	}
 
@@ -27,7 +32,7 @@ export class ArrayInput extends Component {
 		this.setState({items:items});
 		this.props.input.onChange(items);
 
-		console.log('this.state.items', this.state.items)
+		console.log('this.state.items', items)
 	}
 
 	onAddItem( evt ) {
@@ -45,10 +50,12 @@ export class ArrayInput extends Component {
 		this._updateItems(items);
 	}
 
-	onChildChange( evt, i ) {
-		let items =  [ ...this.state.items]
+	onChildChange( i, evt,value) {
+		console.log(i,value);
+		let items =  [ ...this.state.items];
 
-
+		items[i] = value;
+		this._updateItems(items);
 	}
 
 	onChildBlur( evt, i ) {
@@ -70,7 +77,7 @@ export class ArrayInput extends Component {
 
 	render() {
 		const Item = this.props.itemComponent;
-		let meta = {touched: <div></div>, error: null};
+		let meta = {touched: null, error: null};
 
 
 		let items = this.state.items.map(( v, i )=> {
