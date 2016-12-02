@@ -102446,9 +102446,24 @@
 	var uuid = __webpack_require__(900);
 	var _ = __webpack_require__(902);
 	
+	
 	/**
 	 * handles array of given field
 	 */
+	var arrayItemCountStyle = {
+		'fontWeight': 600,
+		'fontSize': '20px',
+		color: '#dedede',
+		'fontStyle': 'italic',
+		float: 'left',
+		paddingTop: '12px'
+	};
+	
+	var arrayItemActionStyle = {
+		display: 'inline-flex',
+		padding: '5px'
+	};
+	
 	var ArrayInput = exports.ArrayInput = function (_Component) {
 		_inherits(ArrayInput, _Component);
 	
@@ -102539,19 +102554,33 @@
 						onBlur: _this2.onChildBlur.bind(_this2, i),
 						onDragStart: _this2.onDragStart.bind(_this2, i),
 						onDrop: _this2.onDrop.bind(_this2, i),
-						onFocus: _this2.onFocus.bind(_this2, i)
+						onFocus: _this2.onFocus.bind(_this2, i),
+						name: _this2.props.input.name + '_' + i
 	
 					});
 	
 					return _react2.default.createElement(
 						'div',
-						{ key: options.id },
+						{ key: options.id, className: 'row' },
 						_react2.default.createElement(
-							_IconButton2.default,
-							{ onClick: _this2.onRemoveItem.bind(_this2, i) },
-							_react2.default.createElement(_remove2.default, null)
+							'div',
+							{ className: 'col-md-1 ', style: arrayItemActionStyle },
+							_react2.default.createElement(
+								_IconButton2.default,
+								{ onClick: _this2.onRemoveItem.bind(_this2, i) },
+								_react2.default.createElement(_remove2.default, { color: 'red' })
+							),
+							_react2.default.createElement(
+								'span',
+								{ style: arrayItemCountStyle },
+								i + 1
+							)
 						),
-						_react2.default.createElement(Item, _extends({ options: options }, _this2.props, { source: v, meta: meta, input: input }))
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-11' },
+							_react2.default.createElement(Item, _extends({ options: options }, _this2.props, { source: v, meta: meta, input: input, label: '' }))
+						)
 					);
 				});
 	
