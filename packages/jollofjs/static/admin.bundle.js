@@ -93944,6 +93944,8 @@
 	
 	var _ArrayInput = __webpack_require__(905);
 	
+	var _FormFactor = __webpack_require__(938);
+	
 	var _FileField = __webpack_require__(906);
 	
 	var _FileInput = __webpack_require__(907);
@@ -94013,7 +94015,7 @@
 	}
 	
 	function buildViewFields(structure) {
-		var formFactor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'list';
+		var formFactor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _FormFactor.FormFactor.LIST;
 	
 		return _.map(structure, function (v, k) {
 			// console.log('k',k,'v',v);
@@ -94095,8 +94097,8 @@
 		// console.log(schema);
 	
 		//for each schema field, create array of elements
-		var modelViewFields = buildViewFields(schema.structure);
-		var modelShowFields = buildViewFields(schema.structure, 'single');
+		var modelListFields = buildViewFields(schema.structure, _FormFactor.FormFactor.LIST);
+		var modelSingleShowFields = buildViewFields(schema.structure, _FormFactor.FormFactor.SINGLE);
 	
 		//For create and Edit
 		var modelUpdateFields = buildUpdateFields(schema.structure);
@@ -94113,7 +94115,7 @@
 					_mui.Datagrid,
 					null,
 					_react2.default.createElement(_mui.TextField, { source: 'id' }),
-					modelViewFields,
+					modelListFields,
 					_react2.default.createElement(_mui.EditButton, null),
 					_react2.default.createElement(_mui.ShowButton, null),
 					_react2.default.createElement(_mui.DeleteButton, null)
@@ -94126,7 +94128,7 @@
 				_mui.Show,
 				_extends({ title: "Viewing " + schema.name }, props),
 				_react2.default.createElement(_mui.TextField, { source: 'id' }),
-				modelShowFields,
+				modelSingleShowFields,
 				_react2.default.createElement(_mui.TextField, { source: 'dateCreated' }),
 				_react2.default.createElement(_mui.TextField, { source: 'lastUpdated' })
 			);
@@ -102377,6 +102379,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var arrayItemCountStyle = {
+		'fontWeight': 600,
+		'fontSize': '20px',
+		color: '#dedede',
+		'fontStyle': 'italic'
+	};
 	//R
 	var ArrayField = exports.ArrayField = function ArrayField(_ref) {
 		var _ref$record = _ref.record,
@@ -102387,13 +102395,48 @@
 		var val = record[source];
 		var len = val && val.length ? val.length : null;
 	
-		return _react2.default.createElement(
+		if (formFactor === 'list') return _react2.default.createElement(
 			'div',
 			null,
 			' ',
 			len ? '[ ' + len + ' item' + (len > 1 ? 's' : '') + ' ]' : '[]',
 			' '
-		);
+		);else {
+			if (len && len > 0) {
+				var items = val.map(function (t, i) {
+					return _react2.default.createElement(
+						'div',
+						{ key: i, className: 'row', style: { padding: '5px' } },
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-1', style: arrayItemCountStyle },
+							i + 1
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'col-md-11' },
+							JSON.stringify(t)
+						)
+					);
+				});
+	
+				return _react2.default.createElement(
+					'div',
+					null,
+					items
+				);
+			} else {
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'i',
+						null,
+						'No items'
+					)
+				);
+			}
+		}
 	};
 	
 	ArrayField.propTypes = {
@@ -105110,6 +105153,23 @@
 	ContentRemove.muiName = 'SvgIcon';
 	
 	exports.default = ContentRemove;
+
+/***/ },
+/* 938 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * Created by iyobo on 2016-12-02.
+	 */
+	var FormFactor = exports.FormFactor = {
+	  LIST: 'list',
+	  SINGLE: 'single'
+	};
 
 /***/ }
 /******/ ]);
