@@ -7,13 +7,13 @@ import FlatButton from 'material-ui/FlatButton';
 
 export class FileInput extends Component {
 	componentWillMount() {
-		const field = this.props.record[ this.props.source ];
+		const field = this.props.input.value;
 		this.state = {
 			key: uuid(),
 			preview: field ? field.url : null,
 			file: field
 		}
-		// console.log('File field record[source]',this.props.record[this.props.source])
+		// console.log('File field props',this.props)
 
 	}
 

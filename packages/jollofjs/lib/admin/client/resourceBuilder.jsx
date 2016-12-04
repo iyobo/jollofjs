@@ -31,9 +31,10 @@ import {ArrayField} from "./fields/array/ArrayField";
 import {ArrayInput} from "./fields/array/ArrayInput";
 import {FormFactor} from "./forms/FormFactor";
 const _ = require('lodash');
-import {FileField} from './fields/file/FileField'
-import {FileInput} from './fields/file/FileInput'
-
+import {FileField} from './fields/file/FileField';
+import {FileInput} from './fields/file/FileInput';
+import BooleanField from './fields/boolean/BooleanField';
+import BooleanInput from './fields/boolean/BooleanInput';
 //---SHOW/VIEW
 /**
  * @param k
@@ -74,6 +75,9 @@ function determineViewField( k, v, formFactor ) {
 			break;
 		case 'date':
 			return <DateField key={k} source={k}/>
+			break;
+		case 'boolean':
+			return <BooleanField key={k} source={k}/>
 			break;
 		case 'object':
 			//This could be a nested object, array, or custom type.
@@ -158,6 +162,12 @@ function determineInputField( k, v, componentOnly = false ) {
 				return <DateInput key={k} source={k}/>
 			else
 				return DateInput;
+			break;
+		case 'boolean':
+			if (!componentOnly)
+				return <BooleanInput key={k} source={k}/>
+			else
+				return BooleanInput;
 			break;
 		case 'object':
 			//This could be a nested object, array, or custom type.

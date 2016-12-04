@@ -13,29 +13,96 @@ import {
 let jollofApiUrl = '';
 
 /**
+ * Checks if payload has any files
+ * @param collection
+ * @param hasFileResponse
+ */
+function checkForFiles( collection ) {
+	let result = false;
+	for (let k in collection) {
+		const val = collection[ k ];
+
+		if (!val) continue;
+
+		// console.log('checking for file', k, val);
+		if (val instanceof File) {
+			console.log('isFile');
+			return true;
+		}
+		else if (Array.isArray(val)) {
+			// console.log('isArray')
+			if(checkForFiles(val)) return true;
+
+		}
+		else if (typeof val === 'object') {
+			// console.log('isObject')
+			if(checkForFiles(val)) return true;
+		}
+	}
+	return result;
+}
+
+function appendRecursively( formData, collection, parentkey , parentIsArray) {
+	for (let k in collection) {
+		const val = collection[ k ];
+
+		console.log('AppendFile recursively ', k, val)
+
+		if (val instanceof File) {
+			let mkey = (parentkey ? parentkey + '.' : '') + k;
+
+			if(parentIsArray)
+				mkey = parentkey
+			else
+				mkey = k
+
+			formData.append(mkey, val)
+		}
+		else if (val && (Array.isArray(val))) {
+
+			let mkey = '';
+			if(parentIsArray) {
+				mkey =parentkey + '[]'; //parentKey can/should never be empty if parentISarray
+			}else{
+				mkey = (parentkey ? parentkey + '.'+k+'[]' : k+'[]');
+			}
+
+			appendRecursively(formData, val, mkey, true);
+		}
+		else if(typeof val === 'object'){
+			let mkey = (parentkey ? parentkey + '.' : '') + k;
+			appendRecursively(formData, val, mkey, false);
+		}
+		else {
+			let mkey = (parentkey ? parentkey + '.' : '') + k;
+			formData.append(mkey, val)
+		}
+
+	}
+}
+
+/**
  * Process the entiti's data and return appropriate AJAx body.
  * Wether formdata or json string.
  * @param data
  */
 function processOutBody( options, data ) {
-	//First check to see if data has any files
-	for (let k in data) {
-		if (data[ k ] instanceof File) {
-			var hasFile = true;
-		}
-	}
+
+	/**
+	 * Recursively check all field values to see if a file is present
+	 * @param collection
+	 */
+	const hasFile = checkForFiles(data);
 
 	//
 	if (!hasFile) {
 		// console.log('no file', data);
-		options.body= JSON.stringify(data);
+		options.body = JSON.stringify(data);
 	} else {
 		console.log('file present', data);
 		let formData = new FormData();
-		for (let k in data) {
-			formData.append(k, data[ k ])
-		}
-		options.body= formData;
+		appendRecursively(formData, data);
+		options.body = formData;
 	}
 
 }
@@ -108,7 +175,7 @@ export default ( apiUrl, httpClient = fetchJson ) => {
 			case UPDATE:
 				url = `${apiUrl}/${resource}/${params.id}`;
 				options.method = 'PUT';
-				processOutBody(options,params.data);
+				processOutBody(options, params.data);
 				break;
 			case CREATE:
 				url = `${apiUrl}/${resource}`;
