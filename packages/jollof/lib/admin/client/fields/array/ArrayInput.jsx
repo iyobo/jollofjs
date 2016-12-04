@@ -25,18 +25,20 @@ let arrayItemActionStyle = {
 
 export class ArrayInput extends Component {
 	componentWillMount() {
-		// console.log('Array component on mount...', this.props);
+		console.log('Array component on mount...', this.props);
 		const key = uuid();
 
 		let items = [];
 
-		if (Array.isArray(this.props.input.value))
-			items = this.props.input.value;
+		if (this.props.input.value.length)
+			items = [...this.props.input.value];
 
 		this.state = {
 			key: key,
 			items: items
 		}
+
+		this.props.input.onChange(items);
 	}
 
 	componentDidMount() {

@@ -93950,10 +93950,17 @@
 	
 	var _FileInput = __webpack_require__(907);
 	
+	var _BooleanField = __webpack_require__(939);
+	
+	var _BooleanField2 = _interopRequireDefault(_BooleanField);
+	
+	var _BooleanInput = __webpack_require__(942);
+	
+	var _BooleanInput2 = _interopRequireDefault(_BooleanInput);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var _ = __webpack_require__(902);
-	
 	
 	//---SHOW/VIEW
 	/**
@@ -93993,6 +94000,9 @@
 				break;
 			case 'date':
 				return _react2.default.createElement(_mui.DateField, { key: k, source: k });
+				break;
+			case 'boolean':
+				return _react2.default.createElement(_BooleanField2.default, { key: k, source: k });
 				break;
 			case 'object':
 				//This could be a nested object, array, or custom type.
@@ -94065,6 +94075,9 @@
 				break;
 			case 'date':
 				if (!componentOnly) return _react2.default.createElement(_mui.DateInput, { key: k, source: k });else return _mui.DateInput;
+				break;
+			case 'boolean':
+				if (!componentOnly) return _react2.default.createElement(_BooleanInput2.default, { key: k, source: k });else return _BooleanInput2.default;
 				break;
 			case 'object':
 				//This could be a nested object, array, or custom type.
@@ -102519,17 +102532,19 @@
 		_createClass(ArrayInput, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				// console.log('Array component on mount...', this.props);
+				console.log('Array component on mount...', this.props);
 				var key = uuid();
 	
 				var items = [];
 	
-				if (Array.isArray(this.props.input.value)) items = this.props.input.value;
+				if (this.props.input.value.length) items = [].concat(_toConsumableArray(this.props.input.value));
 	
 				this.state = {
 					key: key,
 					items: items
 				};
+	
+				this.props.input.onChange(items);
 			}
 		}, {
 			key: 'componentDidMount',
@@ -102778,13 +102793,13 @@
 		_createClass(FileInput, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				var field = this.props.record[this.props.source];
+				var field = this.props.input.value;
 				this.state = {
 					key: uuid(),
 					preview: field ? field.url : null,
 					file: field
 				};
-				// console.log('File field record[source]',this.props.record[this.props.source])
+				// console.log('File field props',this.props)
 			}
 		}, {
 			key: 'derivePreviewStyle',
@@ -103399,6 +103414,8 @@
 		value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
 	var _fetch = __webpack_require__(911);
 	
 	var _types = __webpack_require__(175);
@@ -103408,17 +103425,76 @@
 	var jollofApiUrl = '';
 	
 	/**
+	 * Checks if payload has any files
+	 * @param collection
+	 * @param hasFileResponse
+	 */
+	function checkForFiles(collection) {
+		var result = false;
+		for (var k in collection) {
+			var val = collection[k];
+	
+			if (!val) continue;
+	
+			// console.log('checking for file', k, val);
+			if (val instanceof File) {
+				console.log('isFile');
+				return true;
+			} else if (Array.isArray(val)) {
+				// console.log('isArray')
+				if (checkForFiles(val)) return true;
+			} else if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object') {
+				// console.log('isObject')
+				if (checkForFiles(val)) return true;
+			}
+		}
+		return result;
+	}
+	
+	function appendRecursively(formData, collection, parentkey, parentIsArray) {
+		for (var k in collection) {
+			var val = collection[k];
+	
+			console.log('AppendFile recursively ', k, val);
+	
+			if (val instanceof File) {
+				var mkey = (parentkey ? parentkey + '.' : '') + k;
+	
+				if (parentIsArray) mkey = parentkey;else mkey = k;
+	
+				formData.append(mkey, val);
+			} else if (val && Array.isArray(val)) {
+	
+				var _mkey = '';
+				if (parentIsArray) {
+					_mkey = parentkey + '[]'; //parentKey can/should never be empty if parentISarray
+				} else {
+					_mkey = parentkey ? parentkey + '.' + k + '[]' : k + '[]';
+				}
+	
+				appendRecursively(formData, val, _mkey, true);
+			} else if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object') {
+				var _mkey2 = (parentkey ? parentkey + '.' : '') + k;
+				appendRecursively(formData, val, _mkey2, false);
+			} else {
+				var _mkey3 = (parentkey ? parentkey + '.' : '') + k;
+				formData.append(_mkey3, val);
+			}
+		}
+	}
+	
+	/**
 	 * Process the entiti's data and return appropriate AJAx body.
 	 * Wether formdata or json string.
 	 * @param data
 	 */
 	function processOutBody(options, data) {
-		//First check to see if data has any files
-		for (var k in data) {
-			if (data[k] instanceof File) {
-				var hasFile = true;
-			}
-		}
+	
+		/**
+	  * Recursively check all field values to see if a file is present
+	  * @param collection
+	  */
+		var hasFile = checkForFiles(data);
 	
 		//
 		if (!hasFile) {
@@ -103427,9 +103503,7 @@
 		} else {
 			console.log('file present', data);
 			var formData = new FormData();
-			for (var _k in data) {
-				formData.append(_k, data[_k]);
-			}
+			appendRecursively(formData, data);
 			options.body = formData;
 		}
 	}
@@ -105170,6 +105244,547 @@
 	  LIST: 'list',
 	  SINGLE: 'single'
 	};
+
+/***/ },
+/* 939 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _clear = __webpack_require__(940);
+	
+	var _clear2 = _interopRequireDefault(_clear);
+	
+	var _done = __webpack_require__(941);
+	
+	var _done2 = _interopRequireDefault(_done);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var style = {
+		display: 'block',
+		margin: 'auto'
+	};
+	
+	var BooleanField = function BooleanField(_ref) {
+		var source = _ref.source,
+		    _ref$record = _ref.record,
+		    record = _ref$record === undefined ? {} : _ref$record;
+	
+		if (record[source] === false) {
+			return _react2.default.createElement(_clear2.default, { style: style });
+		}
+	
+		if (record[source] === true) {
+			return _react2.default.createElement(_done2.default, { style: style });
+		}
+	
+		return _react2.default.createElement('span', { style: style });
+	};
+	
+	BooleanField.propTypes = {
+		source: _react.PropTypes.string.isRequired,
+		record: _react.PropTypes.object
+	};
+	
+	exports.default = BooleanField;
+
+/***/ },
+/* 940 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(685);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(694);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ContentClear = function ContentClear(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' })
+	  );
+	};
+	ContentClear = (0, _pure2.default)(ContentClear);
+	ContentClear.displayName = 'ContentClear';
+	ContentClear.muiName = 'SvgIcon';
+	
+	exports.default = ContentClear;
+
+/***/ },
+/* 941 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(685);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(694);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ActionDone = function ActionDone(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z' })
+	  );
+	};
+	ActionDone = (0, _pure2.default)(ActionDone);
+	ActionDone.displayName = 'ActionDone';
+	ActionDone.muiName = 'SvgIcon';
+	
+	exports.default = ActionDone;
+
+/***/ },
+/* 942 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Toggle = __webpack_require__(943);
+	
+	var _Toggle2 = _interopRequireDefault(_Toggle);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var styles = {
+		block: {
+			margin: '1rem 0',
+			maxWidth: 250
+		},
+		label: {
+			color: 'rgba(0, 0, 0, 0.298039)'
+		},
+		toggle: {
+			marginBottom: 16
+		}
+	};
+	
+	var BooleanInput = function BooleanInput(_ref) {
+		var input = _ref.input,
+		    label = _ref.label;
+		return _react2.default.createElement(
+			'div',
+			{ style: styles.block },
+			_react2.default.createElement(_Toggle2.default, {
+				defaultToggled: !!input.value,
+				onToggle: input.onChange,
+				labelStyle: styles.label,
+				style: styles.toggle,
+				label: label
+			})
+		);
+	};
+	
+	BooleanInput.propTypes = {
+		includesLabel: _react.PropTypes.bool.isRequired,
+		input: _react.PropTypes.object,
+		label: _react.PropTypes.string
+	};
+	
+	BooleanInput.defaultProps = {
+		includesLabel: true
+	};
+	
+	exports.default = BooleanInput;
+
+/***/ },
+/* 943 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = undefined;
+	
+	var _Toggle = __webpack_require__(944);
+	
+	var _Toggle2 = _interopRequireDefault(_Toggle);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _Toggle2.default;
+
+/***/ },
+/* 944 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends2 = __webpack_require__(183);
+	
+	var _extends3 = _interopRequireDefault(_extends2);
+	
+	var _objectWithoutProperties2 = __webpack_require__(657);
+	
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+	
+	var _getPrototypeOf = __webpack_require__(572);
+	
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+	
+	var _classCallCheck2 = __webpack_require__(576);
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _createClass2 = __webpack_require__(577);
+	
+	var _createClass3 = _interopRequireDefault(_createClass2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(578);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(601);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
+	
+	var _simpleAssign = __webpack_require__(658);
+	
+	var _simpleAssign2 = _interopRequireDefault(_simpleAssign);
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _transitions = __webpack_require__(661);
+	
+	var _transitions2 = _interopRequireDefault(_transitions);
+	
+	var _Paper = __webpack_require__(696);
+	
+	var _Paper2 = _interopRequireDefault(_Paper);
+	
+	var _EnhancedSwitch = __webpack_require__(830);
+	
+	var _EnhancedSwitch2 = _interopRequireDefault(_EnhancedSwitch);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function getStyles(props, context, state) {
+	  var disabled = props.disabled;
+	  var elementStyle = props.elementStyle;
+	  var trackSwitchedStyle = props.trackSwitchedStyle;
+	  var thumbSwitchedStyle = props.thumbSwitchedStyle;
+	  var trackStyle = props.trackStyle;
+	  var thumbStyle = props.thumbStyle;
+	  var iconStyle = props.iconStyle;
+	  var rippleStyle = props.rippleStyle;
+	  var labelStyle = props.labelStyle;
+	  var _context$muiTheme = context.muiTheme;
+	  var baseTheme = _context$muiTheme.baseTheme;
+	  var toggle = _context$muiTheme.toggle;
+	
+	
+	  var toggleSize = 20;
+	  var toggleTrackWidth = 36;
+	  var styles = {
+	    icon: {
+	      width: 36,
+	      padding: '4px 0px 6px 2px'
+	    },
+	    ripple: {
+	      top: -10,
+	      left: -10,
+	      color: state.switched ? toggle.thumbOnColor : baseTheme.palette.textColor
+	    },
+	    toggleElement: {
+	      width: toggleTrackWidth
+	    },
+	    track: {
+	      transition: _transitions2.default.easeOut(),
+	      width: '100%',
+	      height: 14,
+	      borderRadius: 30,
+	      backgroundColor: toggle.trackOffColor
+	    },
+	    thumb: {
+	      transition: _transitions2.default.easeOut(),
+	      position: 'absolute',
+	      top: 1,
+	      left: 0,
+	      width: toggleSize,
+	      height: toggleSize,
+	      lineHeight: '24px',
+	      borderRadius: '50%',
+	      backgroundColor: toggle.thumbOffColor
+	    },
+	    trackWhenSwitched: {
+	      backgroundColor: toggle.trackOnColor
+	    },
+	    thumbWhenSwitched: {
+	      backgroundColor: toggle.thumbOnColor,
+	      left: '100%'
+	    },
+	    trackWhenDisabled: {
+	      backgroundColor: toggle.trackDisabledColor,
+	      cursor: 'not-allowed'
+	    },
+	    thumbWhenDisabled: {
+	      backgroundColor: toggle.thumbDisabledColor,
+	      cursor: 'not-allowed'
+	    },
+	    label: {
+	      color: disabled ? toggle.labelDisabledColor : toggle.labelColor,
+	      width: 'calc(100% - ' + (toggleTrackWidth + 10) + 'px)',
+	      cursor: disabled ? 'not-allowed' : 'initial'
+	    }
+	  };
+	
+	  (0, _simpleAssign2.default)(styles.track, trackStyle, state.switched && styles.trackWhenSwitched, state.switched && trackSwitchedStyle, disabled && styles.trackWhenDisabled);
+	
+	  (0, _simpleAssign2.default)(styles.thumb, thumbStyle, state.switched && styles.thumbWhenSwitched, state.switched && thumbSwitchedStyle, disabled && styles.thumbWhenDisabled);
+	
+	  if (state.switched) {
+	    styles.thumb.marginLeft = 0 - styles.thumb.width;
+	  }
+	
+	  (0, _simpleAssign2.default)(styles.icon, iconStyle);
+	
+	  (0, _simpleAssign2.default)(styles.ripple, rippleStyle);
+	
+	  (0, _simpleAssign2.default)(styles.label, labelStyle);
+	
+	  (0, _simpleAssign2.default)(styles.toggleElement, elementStyle);
+	
+	  return styles;
+	}
+	
+	var Toggle = function (_Component) {
+	  (0, _inherits3.default)(Toggle, _Component);
+	
+	  function Toggle() {
+	    var _ref;
+	
+	    var _temp, _this, _ret;
+	
+	    (0, _classCallCheck3.default)(this, Toggle);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Toggle.__proto__ || (0, _getPrototypeOf2.default)(Toggle)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	      switched: false
+	    }, _this.handleStateChange = function (newSwitched) {
+	      _this.setState({
+	        switched: newSwitched
+	      });
+	    }, _this.handleToggle = function (event, isInputChecked) {
+	      if (_this.props.onToggle) {
+	        _this.props.onToggle(event, isInputChecked);
+	      }
+	    }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+	  }
+	
+	  (0, _createClass3.default)(Toggle, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _props = this.props;
+	      var toggled = _props.toggled;
+	      var defaultToggled = _props.defaultToggled;
+	      var valueLink = _props.valueLink;
+	
+	
+	      if (toggled || defaultToggled || valueLink && valueLink.value) {
+	        this.setState({
+	          switched: true
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'isToggled',
+	    value: function isToggled() {
+	      return this.refs.enhancedSwitch.isSwitched();
+	    }
+	  }, {
+	    key: 'setToggled',
+	    value: function setToggled(newToggledValue) {
+	      this.refs.enhancedSwitch.setSwitched(newToggledValue);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props2 = this.props;
+	      var defaultToggled = _props2.defaultToggled;
+	      var elementStyle = _props2.elementStyle;
+	      var onToggle = _props2.onToggle;
+	      var trackSwitchedStyle = _props2.trackSwitchedStyle;
+	      var thumbSwitchedStyle = _props2.thumbSwitchedStyle;
+	      var toggled = _props2.toggled;
+	      var other = (0, _objectWithoutProperties3.default)(_props2, ['defaultToggled', 'elementStyle', 'onToggle', 'trackSwitchedStyle', 'thumbSwitchedStyle', 'toggled']);
+	      var prepareStyles = this.context.muiTheme.prepareStyles;
+	
+	      var styles = getStyles(this.props, this.context, this.state);
+	
+	      var toggleElement = _react2.default.createElement(
+	        'div',
+	        { style: prepareStyles((0, _simpleAssign2.default)({}, styles.toggleElement)) },
+	        _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)({}, styles.track)) }),
+	        _react2.default.createElement(_Paper2.default, { style: styles.thumb, circle: true, zDepth: 1 })
+	      );
+	
+	      var enhancedSwitchProps = {
+	        ref: 'enhancedSwitch',
+	        inputType: 'checkbox',
+	        switchElement: toggleElement,
+	        rippleStyle: styles.ripple,
+	        rippleColor: styles.ripple.color,
+	        iconStyle: styles.icon,
+	        trackStyle: styles.track,
+	        thumbStyle: styles.thumb,
+	        labelStyle: styles.label,
+	        switched: this.state.switched,
+	        onSwitch: this.handleToggle,
+	        onParentShouldUpdate: this.handleStateChange,
+	        labelPosition: this.props.labelPosition
+	      };
+	
+	      if (this.props.hasOwnProperty('toggled')) {
+	        enhancedSwitchProps.checked = toggled;
+	      } else if (this.props.hasOwnProperty('defaultToggled')) {
+	        enhancedSwitchProps.defaultChecked = defaultToggled;
+	      }
+	
+	      return _react2.default.createElement(_EnhancedSwitch2.default, (0, _extends3.default)({}, other, enhancedSwitchProps));
+	    }
+	  }]);
+	  return Toggle;
+	}(_react.Component);
+	
+	Toggle.defaultProps = {
+	  defaultToggled: false,
+	  disabled: false,
+	  labelPosition: 'left'
+	};
+	Toggle.contextTypes = {
+	  muiTheme: _react.PropTypes.object.isRequired
+	};
+	process.env.NODE_ENV !== "production" ? Toggle.propTypes = {
+	  /**
+	   * Determines whether the Toggle is initially turned on.
+	   * **Warning:** This cannot be used in conjunction with `toggled`.
+	   * Decide between using a controlled or uncontrolled input element and remove one of these props.
+	   * More info: https://fb.me/react-controlled-components
+	   */
+	  defaultToggled: _react.PropTypes.bool,
+	  /**
+	   * Will disable the toggle if true.
+	   */
+	  disabled: _react.PropTypes.bool,
+	  /**
+	   * Overrides the inline-styles of the Toggle element.
+	   */
+	  elementStyle: _react.PropTypes.object,
+	  /**
+	   * Overrides the inline-styles of the Icon element.
+	   */
+	  iconStyle: _react.PropTypes.object,
+	  /**
+	   * Overrides the inline-styles of the input element.
+	   */
+	  inputStyle: _react.PropTypes.object,
+	  /**
+	   * Label for toggle.
+	   */
+	  label: _react.PropTypes.string,
+	  /**
+	   * Where the label will be placed next to the toggle.
+	   */
+	  labelPosition: _react.PropTypes.oneOf(['left', 'right']),
+	  /**
+	   * Overrides the inline-styles of the Toggle element label.
+	   */
+	  labelStyle: _react.PropTypes.object,
+	  /**
+	   * Callback function that is fired when the toggle switch is toggled.
+	   */
+	  onToggle: _react.PropTypes.func,
+	  /**
+	   * Override style of ripple.
+	   */
+	  rippleStyle: _react.PropTypes.object,
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react.PropTypes.object,
+	  /**
+	   * Override style for thumb.
+	   */
+	  thumbStyle: _react.PropTypes.object,
+	  /**
+	  * Override the inline styles for thumb when the toggle switch is toggled on.
+	  */
+	  thumbSwitchedStyle: _react.PropTypes.object,
+	  /**
+	   * Toggled if set to true.
+	   */
+	  toggled: _react.PropTypes.bool,
+	  /**
+	   * Override style for track.
+	   */
+	  trackStyle: _react.PropTypes.object,
+	  /**
+	  * Override the inline styles for track when the toggle switch is toggled on.
+	  */
+	  trackSwitchedStyle: _react.PropTypes.object,
+	  /**
+	   * ValueLink prop for when using controlled toggle.
+	   */
+	  valueLink: _react.PropTypes.object
+	} : void 0;
+	exports.default = Toggle;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }
 /******/ ]);
