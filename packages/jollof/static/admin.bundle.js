@@ -102539,10 +102539,10 @@
 	
 				if (this.props.input.value.length) items = [].concat(_toConsumableArray(this.props.input.value));
 	
-				this.state = {
+				this.setState({
 					key: key,
 					items: items
-				};
+				});
 	
 				this.props.input.onChange(items);
 			}
@@ -102554,8 +102554,6 @@
 			value: function _updateItems(items) {
 				this.setState({ items: items });
 				this.props.input.onChange(items);
-	
-				// console.log('this.state.items', items)
 			}
 		}, {
 			key: 'onAddItem',
@@ -102569,7 +102567,7 @@
 			value: function onRemoveItem(index, evt) {
 				var items = [].concat(_toConsumableArray(this.state.items));
 	
-				// console.log('removing ',index);
+				console.log('removing ', index, 'from', items);
 				//remove index
 				items.splice(index, 1);
 	
@@ -103451,25 +103449,61 @@
 		return result;
 	}
 	
+	var objectToFormData = function objectToFormData(obj, form, namespace) {
+	
+		var fd = form || new FormData();
+		var formKey;
+	
+		for (var property in obj) {
+			if (obj.hasOwnProperty(property)) {
+	
+				if (namespace) {
+					formKey = namespace + '[' + property + ']';
+				} else {
+					formKey = property;
+				}
+	
+				// if the property is an object, but not a File,
+				// use recursivity.
+				if (_typeof(obj[property]) === 'object' && !(obj[property] instanceof File)) {
+	
+					objectToFormData(obj[formKey], fd, property);
+				} else {
+	
+					// if it's a string or a File object
+					fd.append(formKey, obj[property]);
+				}
+			}
+		}
+	
+		return fd;
+	};
+	
 	function appendRecursively(formData, collection, parentkey, parentIsArray) {
 		for (var k in collection) {
 			var val = collection[k];
 	
-			console.log('AppendFile recursively ', k, val);
+			if (!val) continue;
 	
 			if (val instanceof File) {
 				var mkey = (parentkey ? parentkey + '.' : '') + k;
 	
-				if (parentIsArray) mkey = parentkey;else mkey = k;
+				// if(parentIsArray)
+				// 	mkey = parentkey
+				// else
+				// 	mkey = k
+	
+	
+				val.foo = 'bar';
 	
 				formData.append(mkey, val);
-			} else if (val && Array.isArray(val)) {
+			} else if (Array.isArray(val)) {
 	
 				var _mkey = '';
 				if (parentIsArray) {
-					_mkey = parentkey + '[]'; //parentKey can/should never be empty if parentISarray
+					_mkey = parentkey; //parentKey can/should never be empty if parentISarray
 				} else {
-					_mkey = parentkey ? parentkey + '.' + k + '[]' : k + '[]';
+					_mkey = parentkey ? parentkey + '.' + k : k;
 				}
 	
 				appendRecursively(formData, val, _mkey, true);
@@ -103504,6 +103538,8 @@
 			console.log('file present', data);
 			var formData = new FormData();
 			appendRecursively(formData, data);
+			// let formData = objectToFormData(data);
+	
 			options.body = formData;
 		}
 	}

@@ -349,70 +349,6 @@ module.exports.modelize = function ( schema ) {
 			}
 		}
 
-		getMeta(metaName, fieldStack){
-
-		}
-
-		/**
-		 * - Run through each field, and if any is an actual File:
-		 * - yield to Appropriate File storage engine
-		 * - save result as file field
-		 * -
-		 */
-		* convertFields( collection, structure, parentK) {
-			//Don't waste time converting what has no structure
-			if(parentK)
-				console.log(parentK);
-
-			// if(!structure){
-			// 	log.debug('Ignored a field due to no structure', parentK)
-			// 	return;
-			// }
-
-			for (let rawk in collection) {
-				const v = collection[ rawk ]
-				const type = typeof v;
-				let k = rawk.replace('[]','');
-
-
-				//if array
-				if (Array.isArray(v)) {
-					/**
-					 * Determine what kind of array this is. File fields come in as arrays too.
-					 */
-					if (v.length > 0 && v[ 0 ]._writeStream) {
-						//if array is an array of files (aka: a single file field), store it's first value
-
-						//Get meta opts
-						const opts = structure[k]._meta;
-						opts.modelName = schema.name;
-						opts.fieldName = k;
-
-						//Diferentiate between single field and arrayinput files, seeing as all files come in as arrays
-						if(v.length>1 && rawk.indexOf('[]')>-1){
-							collection[ k ]=[];
-							for(let i in v){
-								const storedFile = yield jfs.store(v[ i ], opts)
-								collection[k].push(storedFile);
-							}
-						}else {
-							collection[ k ] = yield jfs.store(v[ 0 ], opts)
-						}
-					} else {
-						//else traverse the array
-						yield this.convertFields(collection[ k ], structure[k], k)
-					}
-				}
-				else if (type === 'object')//if object
-				{
-					yield this.convertFields(collection[ k ], structure [k], k);
-				}
-				else{
-					null;
-				}
-			}
-		}
-
 		/**
 		 * Persists the model object in the DB
 		 * @returns {boolean}
@@ -426,9 +362,6 @@ module.exports.modelize = function ( schema ) {
 				yield this._preCreate(this);
 
 			yield this._preSave(this);
-
-			//Convert fields
-			yield this.convertFields(this._data, schema.structure);
 
 			//validate
 			yield this.validate();

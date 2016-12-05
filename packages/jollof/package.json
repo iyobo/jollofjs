@@ -29,6 +29,7 @@
     "inflection": "~1.10.0",
     "joi": "^9.2.0",
     "koa-formidable": "^1.0.0",
+    "lodash": "^4.17.2",
     "mz": "^2.6.0",
     "react": "~15.3.2",
     "react-dom": "~15.3.2",

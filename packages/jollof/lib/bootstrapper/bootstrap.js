@@ -24,6 +24,8 @@ const formidable = require('koa-formidable')
 var kBetterBody = require('koa-better-body')
 var kBody = require('koa-body')
 
+const httpUtil = require('../util/httpUtil');
+
 function* loadModels() {
 	for (let m in data.models) {
 		const modelClass = data.models[ m ];
@@ -120,6 +122,11 @@ module.exports.bootServer = function ( overWriteFn ) {
 				rootPath: jollof.config.fileStorage.engines.local.basePublicUrl
 			}));
 
+			//Better formdata parsing
+			serverApp.use(function*( next ) {
+				yield httpUtil.objectify(this);
+				return yield next;
+			});
 
 			//Subdomain Routing
 			serverApp.use(subdomain('emp', kc.router({

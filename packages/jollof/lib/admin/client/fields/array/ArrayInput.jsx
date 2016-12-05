@@ -33,10 +33,10 @@ export class ArrayInput extends Component {
 		if (this.props.input.value.length)
 			items = [...this.props.input.value];
 
-		this.state = {
+		this.setState({
 			key: key,
 			items: items
-		}
+		});
 
 		this.props.input.onChange(items);
 	}
@@ -49,7 +49,7 @@ export class ArrayInput extends Component {
 		this.setState({items: items});
 		this.props.input.onChange(items);
 
-		// console.log('this.state.items', items)
+
 	}
 
 	onAddItem( evt ) {
@@ -61,7 +61,7 @@ export class ArrayInput extends Component {
 	onRemoveItem( index, evt ) {
 		let items = [ ...this.state.items ];
 
-		// console.log('removing ',index);
+		console.log('removing ',index, 'from',items);
 		//remove index
 		items.splice(index, 1);
 
