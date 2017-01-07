@@ -139,7 +139,8 @@ var formalizeAny = function(schema, fn, sync) {
 		'default': 'Any',
 		'allowNull': ['Boolean'],
 		'errors': [ 'Object' ],
-		'custom': [ 'Function', 'Array' ]
+		'custom': [ 'Function', 'Array' ],
+		'meta': 'Any'
 	};
 
 	// Validators specific to type.
@@ -158,7 +159,8 @@ var formalizeAny = function(schema, fn, sync) {
 		if ('String' == formalizedSchema.type.name) merge(validators, {
 			'match': [ 'RegExp' ],
 			'trim': [ 'Boolean' ],
-			'enum': [ 'Array' ]
+			'enum': [ 'Array' ],
+			'range': ['String', 'Number']
 		});
 		if ('Number' == formalizedSchema.type.name) merge(validators, {
 			'range': [ 'String', 'Number' ]
