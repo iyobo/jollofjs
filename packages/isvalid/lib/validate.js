@@ -422,7 +422,7 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 
 };
 
-module.exports = function(data, schema, fn, keyPath, options) {
+module.exports = function(data, schema, keyPath, options, fn) {
 
 	if (typeof schema === 'undefined') throw new Error('Missing parameter schema.');
 	if (typeof fn === 'undefined') throw new Error('Missing parameter fn.');
