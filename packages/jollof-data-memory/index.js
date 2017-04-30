@@ -1,13 +1,12 @@
 /**
  * Created by iyobo on 2016-10-30.
  */
-const log = require('../../log');
 const co = require('co');
 const _ = require('lodash');
 const path = require('path');
 const promise = require('bluebird');
 
-const Datastore = require('nedb')
+const Datastore = require('nedb-jollof')
 
 /**
  * A Jollof Data Adapter for Memory
@@ -107,7 +106,6 @@ class JollofDataMemory {
 
             return this.decorateResponse(res);
         } catch (err) {
-            log.error(err.stack);
             throw err;
         }
     }
@@ -189,7 +187,6 @@ class JollofDataMemory {
             }
         }
         catch (err) {
-            log.error(err);
             throw err;
         }
     }

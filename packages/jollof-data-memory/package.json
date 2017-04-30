@@ -1,6 +1,6 @@
 {
   "name": "jollof-data-memory",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Default JollofJS memory adapter",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "co": "^4.6.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "nedb-jollof": "^1.0.0"
   }
 }
