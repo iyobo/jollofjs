@@ -274,11 +274,4 @@ class JollofDataMemory {
     }
 }
 
-//Export a singleton of this adapter
-let adapterSingleton;
-module.exports = (options) => {
-    if (!adapterSingleton)
-        adapterSingleton = new JollofDataMemory(options);
-
-    return adapterSingleton;
-}
+module.exports = JollofDataMemory;
