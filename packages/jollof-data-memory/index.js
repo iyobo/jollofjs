@@ -29,7 +29,7 @@ class JollofDataMemory {
      *
      * @param schema
      */
-    * configureCollection(schema) {
+    * addSchema(schema) {
 
         //options are different each time because same adapter managers multiple stores/collections
         const options = _.cloneDeep(this._connectionOptions)
@@ -40,21 +40,6 @@ class JollofDataMemory {
 
 
     /**
-     * Return an array of OTHER meta fields this database uses, besides the mainId.
-     *
-     * Jollof models do not store id fields and data in the same internal object, but keeps it
-     * seperate in order to support databases that expect Id fields be passed to them
-     * as meta seperate from the data (e.g. ArangoDB).
-     *
-     * The complete list of Id fields are used to configure the Jollof Model's accessor object.
-     * e.g So it knows modelInstance._key is a valid reference that should be forwarded to modelInstance._ids._key
-     * @returns {string[]}
-     */
-    get metafields() {
-        return []
-    }
-
-    /**
      * This is the primary Id field name to be used in all models under this adapter.
      * @returns {string}
      */
@@ -63,20 +48,55 @@ class JollofDataMemory {
     }
 
     /**
+     * These are fields that this adapter's datasource needs, but that might not relate to Jollof.
+     * Jollof might use this to know and preserve these fields.
+     *
+     * @returns {string}
+     */
+    get keepFields() {
+        return [];
+    }
+
+    /**
      * Implement this to convert jollofQL to whatever you need.
-     * @param query
      * @returns {*}
      * @private
+     * @param criteria
+     * @param options
      */
-    _processQuery(query) {
-        return query;
+    _convertFromJollof(criteria, options = {}) {
+
+        const q = {};
+        const opts = options; //In this case, jollof query options match NeDB's so it's a direct use!
+
+        function translate(cond, query) {
+            if (cond.items) {
+                const connector = cond.connector || 'and';
+
+                const childQuery = []
+                translateList(cond.items, childQuery)
+
+                query[(connector === 'and' ? '$and' : '$or')] = childQuery;
+            }
+        }
+
+        function translateList(conds, map) {
+            conds.forEach((cond, index) => {
+                translate(cond, map);
+            });
+        }
+
+        translateList(criteria, q);
+
+        return { q, opts };
     }
+
 
     /**
      * convert _id to id
      * @param res
      */
-    decorateResponse(res) {
+    _convertToJollof(res) {
         if (Array.isArray(res)) {
             res = res.map((row) => {
                 row.id = row[this.idField];
@@ -93,34 +113,6 @@ class JollofDataMemory {
         return res;
     }
 
-
-    /**
-     * Get a single item by it's id
-     * @param collectionName
-     * @param id
-     * @returns {string}
-     */
-    * findById(collectionName, id, params) {
-        try {
-            const res = yield this._db[collectionName].findOneAsync({ _id: id });
-
-            return this.decorateResponse(res);
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    /**
-     *
-     * @param collectionName
-     * @param criteria
-     * @param params
-     * @returns {*}
-     */
-    * findOne(collectionName, criteria, params) {
-        const res = yield this._db[collectionName].findOneAsync(this._processQuery(criteria));
-        return this.decorateResponse(res);
-    }
 
     /**
      *
@@ -148,11 +140,11 @@ class JollofDataMemory {
                 options.sort = opts.sort;
             }
 
-            res = yield this._db[collectionName].findOptsAsync(this._processQuery(criteria), options);
+            res = yield this._db[collectionName].findOptsAsync(this._convertFromJollof(criteria), options);
         } else {
-            res = yield this._db[collectionName].findAsync(this._processQuery(criteria));
+            res = yield this._db[collectionName].findAsync(this._convertFromJollof(criteria));
         }
-        this.decorateResponse(res);
+        this._convertToJollof(res);
         return res;
 
     }
@@ -165,31 +157,9 @@ class JollofDataMemory {
      * @returns {*}
      */
     * count(collectionName, criteria, opts) {
-        return yield this._db[collectionName].countAsync(this._processQuery(criteria));
+        return yield this._db[collectionName].countAsync(this._convertFromJollof(criteria));
     }
 
-    /**
-     *
-     * @param collectionName
-     * @param criteria
-     * @param params
-     * @returns {*}
-     */
-    * findQL(collectionName, query, opts) {
-
-        try {
-
-            const res = yield this._db[collectionName].findAsync(this._processQuery(query));
-
-            return {
-                items: this.decorateResponse(res),
-                count: res.length
-            }
-        }
-        catch (err) {
-            throw err;
-        }
-    }
 
     /**
      *
@@ -200,8 +170,8 @@ class JollofDataMemory {
      * @returns {*}
      */
     * update(collectionName, criteria, newValues, opts) {
-        opts = this._processQuery(opts);
-        return yield this._db[collectionName].updateAsync(this._processQuery(criteria), newValues);
+        opts = this._convertFromJollof(opts);
+        return yield this._db[collectionName].updateAsync(this._convertFromJollof(criteria), newValues);
     }
 
 
@@ -213,10 +183,10 @@ class JollofDataMemory {
      * @param params
      * @returns {*}
      */
-    * create(collectionName, data, params) {
+    * create(collectionName, data) {
 
         const res = yield this._db[collectionName].insertAsync(data);
-        return this.decorateResponse(res);
+        return this._convertToJollof(res);
     }
 
 
@@ -230,48 +200,10 @@ class JollofDataMemory {
     * remove(collectionName, criteria, opts) {
 
         _.merge(opts, { multi: true })
-        return yield this._db[collectionName].removeAsync(this._processQuery(criteria), opts);
+        return yield this._db[collectionName].removeAsync(this._convertFromJollof(criteria), opts);
 
     }
 
-
-    /**
-     * persists the model's current state.
-     *
-     * Each adapter is responsible for deciding whether it should be a create or an update depending on
-     * how it's database handles either.
-     *
-     * Each adapter is also responsible for setting the appropriate new values in the model.
-     * In this case, all that gets set is the _ids as this DB prefers keeping _data and _ids seperate.
-     *
-     * @param model
-     */
-    * saveModel(model) {
-        let res;
-        if (model.isPersisted()) {
-            res = yield this.update(model._collectionName, { _id: model.id }, model._data)
-        }
-        else {
-            res = yield this.create(model._collectionName, model._data);
-            model._loadData(res);
-        }
-
-        //reload data
-        console.log('adapter.save', res);
-
-        return model.display();
-    }
-
-    * removeModel(model) {
-        return yield this.remove(model._collectionName, { _id: model.id })
-    }
-
-    * runQuery(collectionName, queryFunc, params) {
-        let q = queryFunc(params);
-        const cursor = yield this._db.query(q.query)
-
-        return q.type === 'GET_ONE' ? cursor.next() : cursor.all();
-    }
 }
 
 module.exports = JollofDataMemory;
