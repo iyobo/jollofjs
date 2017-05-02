@@ -107,11 +107,10 @@ class JollofDataMemory {
                 options.sort = opts.sort;
             }
 
-            res = yield this._db[collectionName].findOptsAsync(this._convertFromJollof(criteria), options);
+            res = yield this._db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
         } else {
-            res = yield this._db[collectionName].findAsync(this._convertFromJollof(criteria));
+            res = yield this._db[collectionName].findAsync(convertConditionsFromJollof(criteria));
         }
-        convertConditionsFromJollof(res);
         return res;
 
     }
@@ -124,7 +123,7 @@ class JollofDataMemory {
      * @returns {*}
      */
     * count(collectionName, criteria, opts) {
-        return yield this._db[collectionName].countAsync(this._convertFromJollof(criteria));
+        return yield this._db[collectionName].countAsync(convertConditionsFromJollof(criteria));
     }
 
 
