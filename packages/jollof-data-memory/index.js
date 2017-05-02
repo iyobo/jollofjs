@@ -7,6 +7,7 @@ const path = require('path');
 const promise = require('bluebird');
 
 const Datastore = require('nedb-jollof')
+var convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
 
 /**
  * A Jollof Data Adapter for Memory
@@ -55,40 +56,6 @@ class JollofDataMemory {
      */
     get keepFields() {
         return [];
-    }
-
-    /**
-     * Implement this to convert jollofQL to whatever you need.
-     * @returns {*}
-     * @private
-     * @param criteria
-     * @param options
-     */
-    _convertFromJollof(criteria, options = {}) {
-
-        const q = {};
-        const opts = options; //In this case, jollof query options match NeDB's so it's a direct use!
-
-        function translate(cond, query) {
-            if (cond.items) {
-                const connector = cond.connector || 'and';
-
-                const childQuery = []
-                translateList(cond.items, childQuery)
-
-                query[(connector === 'and' ? '$and' : '$or')] = childQuery;
-            }
-        }
-
-        function translateList(conds, map) {
-            conds.forEach((cond, index) => {
-                translate(cond, map);
-            });
-        }
-
-        translateList(criteria, q);
-
-        return { q, opts };
     }
 
 
@@ -144,7 +111,7 @@ class JollofDataMemory {
         } else {
             res = yield this._db[collectionName].findAsync(this._convertFromJollof(criteria));
         }
-        this._convertToJollof(res);
+        convertConditionsFromJollof(res);
         return res;
 
     }
