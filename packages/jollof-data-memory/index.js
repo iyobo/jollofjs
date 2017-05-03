@@ -91,6 +91,7 @@ class JollofDataMemory {
     * find(collectionName, criteria, opts = {}) {
         //If we're paging
         let res;
+        //console.log('find criteria', criteria)
         if (opts) {
 
             const options = {};
