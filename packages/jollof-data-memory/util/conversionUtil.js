@@ -2,6 +2,7 @@
  * Created by iyobo on 2017-05-02.
  */
 const idField = '_id';
+const Boom = require('boom');
 
 function convertComp(comp) {
 
@@ -79,7 +80,7 @@ function translate(cond, query, parentConnector) {
 
     }
     else if (cond.items) {
-        throw new Error('Nested conditions currently unsupported in Jollof Memory Adapter')
+        throw new Boom.methodNotAllowed('Nested conditions currently unsupported in Jollof Memory Adapter')
     }
 
     return cond.connector;
