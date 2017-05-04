@@ -38,7 +38,7 @@ function convertComp(comp) {
 
 function translate(cond, query, parentConnector) {
 
-    let fieldName = cond.field==='id'? '_id': cond.field;
+    let fieldName = cond.field === 'id' ? '_id' : cond.field;
 
 
     if (!cond.items) { // if not a nest starter
@@ -56,7 +56,7 @@ function translate(cond, query, parentConnector) {
             }
 
             condBlock[fieldName] = value;
-        } else if(cond.comp === '!=' && (cond.value === null || cond.value === undefined)){
+        } else if (cond.comp === '!=' && (cond.value === null || cond.value === undefined)) {
             let value = {};
             value['$exists'] = true;
 
@@ -78,8 +78,7 @@ function translate(cond, query, parentConnector) {
         query[logical].push(condBlock);
 
     }
-    else if(cond.items)
-    {
+    else if (cond.items) {
         throw new Error('Nested conditions currently unsupported in Jollof Memory Adapter')
     }
 
@@ -107,7 +106,7 @@ exports.convertConditionsFromJollof = (conditions) => {
 
 exports.convertOptionsFromJollof = (opts) => {
 
-    if(opts.sort && opts.sort.id){
+    if (opts.sort && opts.sort.id) {
         opts.sort._id = opts.sort.id;
         delete opts.sort.id;
     }
@@ -115,7 +114,7 @@ exports.convertOptionsFromJollof = (opts) => {
     return opts;
 }
 
-exports.convertToJollof = (res) =>{
+exports.convertToJollof = (res) => {
     if (Array.isArray(res)) {
         res = res.map((row) => {
             row.id = row[idField];
