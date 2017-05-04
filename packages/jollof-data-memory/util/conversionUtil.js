@@ -1,6 +1,7 @@
 /**
  * Created by iyobo on 2017-05-02.
  */
+const idField = '_id';
 
 function convertComp(comp) {
 
@@ -25,7 +26,7 @@ function convertComp(comp) {
         case 'in':
             symbol = '$in';
             break;
-        case 'nin':
+        case 'not in':
             symbol = '$nin';
             break;
 
@@ -36,6 +37,9 @@ function convertComp(comp) {
 
 
 function translate(cond, query, parentConnector) {
+
+    let fieldName = cond.field==='id'? '_id': cond.field;
+
 
     if (!cond.items) { // if not a nest starter
 
@@ -51,12 +55,12 @@ function translate(cond, query, parentConnector) {
                 value['$exists'] = false;
             }
 
-            condBlock[cond.field] = value;
+            condBlock[fieldName] = value;
         } else if(cond.comp === '!=' && (cond.value === null || cond.value === undefined)){
             let value = {};
             value['$exists'] = true;
 
-            condBlock[cond.field] = value;
+            condBlock[fieldName] = value;
         }
         else {
             const subCondBlock = {};
@@ -64,7 +68,7 @@ function translate(cond, query, parentConnector) {
 
 
             //construct block
-            condBlock[cond.field] = subCondBlock;
+            condBlock[fieldName] = subCondBlock;
         }
 
 
@@ -74,9 +78,9 @@ function translate(cond, query, parentConnector) {
         query[logical].push(condBlock);
 
     }
-    else (cond.items)
+    else if(cond.items)
     {
-
+        throw new Error('Nested conditions currently unsupported in Jollof Memory Adapter')
     }
 
     return cond.connector;
@@ -102,5 +106,29 @@ exports.convertConditionsFromJollof = (conditions) => {
 
 
 exports.convertOptionsFromJollof = (opts) => {
+
+    if(opts.sort && opts.sort.id){
+        opts.sort._id = opts.sort.id;
+        delete opts.sort.id;
+    }
+
     return opts;
+}
+
+exports.convertToJollof = (res) =>{
+    if (Array.isArray(res)) {
+        res = res.map((row) => {
+            row.id = row[idField];
+            delete row[idField];
+
+            return row;
+        });
+    } else {
+        if (res[idField]) {
+            res.id = res[idField];
+            delete res[idField];
+        }
+    }
+
+    return res;
 }

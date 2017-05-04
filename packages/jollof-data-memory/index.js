@@ -7,6 +7,7 @@ const path = require('path');
 const promise = require('bluebird');
 
 const Datastore = require('nedb-jollof')
+var convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 var convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
 
 /**
@@ -58,29 +59,6 @@ class JollofDataMemory {
         return [];
     }
 
-
-    /**
-     * convert _id to id
-     * @param res
-     */
-    _convertToJollof(res) {
-        if (Array.isArray(res)) {
-            res = res.map((row) => {
-                row.id = row[this.idField];
-                delete row[this.idField];
-
-                return row;
-            });
-        } else {
-            if (res[this.idField]) {
-                res.id = res[this.idField];
-                delete res[this.idField];
-            }
-        }
-        return res;
-    }
-
-
     /**
      *
      * @param collectionName
@@ -112,7 +90,7 @@ class JollofDataMemory {
         } else {
             res = yield this._db[collectionName].findAsync(convertConditionsFromJollof(criteria));
         }
-        return res;
+        return convertToJollof(res);
 
     }
 
@@ -129,7 +107,7 @@ class JollofDataMemory {
 
 
     /**
-     *
+     * Return how many items were updated
      * @param collectionName
      * @param criteria
      * @param newValues
@@ -138,12 +116,14 @@ class JollofDataMemory {
      */
     * update(collectionName, criteria, newValues, opts) {
         opts = this._convertFromJollof(opts);
-        return yield this._db[collectionName].updateAsync(this._convertFromJollof(criteria), newValues);
+        const res = yield this._db[collectionName].updateAsync(this._convertFromJollof(criteria), newValues);
+        console.log('item update result', res);
+        return res;
     }
 
 
     /**
-     *
+     * Return the created item
      * @param collectionName
      * @param criteria
      * @param newValues
@@ -153,12 +133,14 @@ class JollofDataMemory {
     * create(collectionName, data) {
 
         const res = yield this._db[collectionName].insertAsync(data);
-        return this._convertToJollof(res);
+        return convertToJollof(res);
     }
 
 
     /**
      * Deletes all rows that match the criteria.
+     * Return number of items deleted
+     *
      * @param collectionName
      * @param criteria
      * @param params
