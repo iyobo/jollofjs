@@ -41,6 +41,11 @@ function translate(cond, query, parentConnector) {
 
     let fieldName = cond.field === 'id' ? '_id' : cond.field;
 
+    //We don't support elemMatch fields
+    if (fieldName.indexOf('*') > -1) {
+        throw new Boom.methodNotAllowed('Aub-array matches not supported in jollof-data-memory');
+    }
+
 
     if (!cond.items) { // if not a nest starter
 
@@ -66,7 +71,6 @@ function translate(cond, query, parentConnector) {
         else {
             const subCondBlock = {};
             subCondBlock[convertComp(cond.comp)] = cond.value;
-
 
             //construct block
             condBlock[fieldName] = subCondBlock;
