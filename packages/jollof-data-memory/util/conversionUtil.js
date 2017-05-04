@@ -43,7 +43,7 @@ function translate(cond, query, parentConnector) {
 
     //We don't support elemMatch fields
     if (fieldName.indexOf('*') > -1) {
-        throw new Boom.methodNotAllowed('Aub-array matches not supported in jollof-data-memory');
+        throw new Boom.methodNotAllowed('Sub-array matches not supported in jollof-data-memory adapter');
     }
 
 
