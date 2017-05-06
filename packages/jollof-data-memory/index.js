@@ -23,6 +23,10 @@ class JollofDataMemory {
     constructor(options) {
         this.connectionOptions = options || {};
         this.db = {};
+
+        this._Datastore = Datastore;
+        this._convertConditionsFromJollof = convertConditionsFromJollof;
+        this._convertToJollof = convertToJollof;
     }
 
 
