@@ -21,8 +21,8 @@ class JollofDataMemory {
      * @param options
      */
     constructor(options) {
-        this._connectionOptions = options || {};
-        this._db = {};
+        this.connectionOptions = options || {};
+        this.db = {};
     }
 
 
@@ -34,11 +34,13 @@ class JollofDataMemory {
     * addSchema(schema) {
 
         //options are different each time because same adapter managers multiple stores/collections
-        const options = _.cloneDeep(this._connectionOptions)
-        options.filename = path.join(this._connectionOptions.filename, schema.name + '.db')
-        this._db[schema.name] = promise.promisifyAll(new Datastore(options));
+        const options = _.cloneDeep(this.connectionOptions)
+        options.filename = path.join(this.connectionOptions.filename, schema.name + '.db')
+        this.db[schema.name] = promise.promisifyAll(new Datastore(options));
         return true;
     }
+
+
 
 
     /**
@@ -86,9 +88,9 @@ class JollofDataMemory {
                 options.sort = opts.sort;
             }
 
-            res = yield this._db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
+            res = yield this.db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
         } else {
-            res = yield this._db[collectionName].findAsync(convertConditionsFromJollof(criteria));
+            res = yield this.db[collectionName].findAsync(convertConditionsFromJollof(criteria));
         }
         return convertToJollof(res);
 
@@ -102,7 +104,7 @@ class JollofDataMemory {
      * @returns {*}
      */
     * count(collectionName, criteria, opts) {
-        return yield this._db[collectionName].countAsync(convertConditionsFromJollof(criteria));
+        return yield this.db[collectionName].countAsync(convertConditionsFromJollof(criteria));
     }
 
 
@@ -116,8 +118,8 @@ class JollofDataMemory {
      */
     * update(collectionName, criteria, newValues, opts) {
         opts = convertFromJollof(opts);
-        const res = yield this._db[collectionName].updateAsync(convertFromJollof(criteria), newValues);
-        console.log('item update result', res);
+        const res = yield this.db[collectionName].updateAsync(convertFromJollof(criteria), newValues);
+        //console.log('item update result', res);
         return res;
     }
 
@@ -132,7 +134,7 @@ class JollofDataMemory {
      */
     * create(collectionName, data) {
 
-        const res = yield this._db[collectionName].insertAsync(data);
+        const res = yield this.db[collectionName].insertAsync(data);
         return convertToJollof(res);
     }
 
@@ -149,7 +151,7 @@ class JollofDataMemory {
     * remove(collectionName, criteria, opts) {
 
         _.merge(opts, { multi: true })
-        return yield this._db[collectionName].removeAsync(convertFromJollof(criteria), opts);
+        return yield this.db[collectionName].removeAsync(convertFromJollof(criteria), opts);
 
     }
 
