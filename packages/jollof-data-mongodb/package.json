@@ -1,8 +1,8 @@
 {
   "name": "jollof-data-mongodb",
-  "version": "1.3.0",
+  "version": "0.0.1",
   "description": "JollofJS MongoDB adapter",
-  "main": "index.js",
+  "main": "jollofDataMongoDb.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
