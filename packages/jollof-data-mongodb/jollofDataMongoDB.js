@@ -27,6 +27,11 @@ class JollofDataMongoDB {
         this._convertToJollof = convertToJollof;
     }
 
+    * _reconnect() {
+        if (!this.db || !this.db.connection) {
+            this.db = yield this.db = MongoClient.connect(this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb');
+        }
+    }
 
     /**
      * Jollof will run this on boot. Place all async or 'talking to database per collection' logic here.
@@ -35,18 +40,9 @@ class JollofDataMongoDB {
      */
     * addSchema(schema) {
 
-        if(!this.db){
-            this.db = yield this.db = MongoClient.connect(this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb');
-        }
-
-        //options are different each time because same adapter managers multiple stores/collections
-        //const options = _.cloneDeep(this.connectionOptions)
-        //options.filename = path.join(this.connectionOptions.filename, schema.name + '.db')
-        //this.db[schema.name] = promise.promisifyAll(new Datastore(options));
-        //return true;
+        yield this._reconnect();
+        return true;
     }
-
-
 
 
     /**
@@ -68,6 +64,22 @@ class JollofDataMongoDB {
     }
 
     /**
+     * Return the created item
+     * @param collectionName
+     * @param criteria
+     * @param newValues
+     * @param params
+     * @returns {*}
+     */
+    * create(collectionName, data) {
+
+        yield this._reconnect();
+        const res = yield this.db.collection(collectionName).insertOne(data);
+        return convertToJollof(res.ops[0]);
+    }
+
+
+    /**
      *
      * @param collectionName
      * @param criteria
@@ -75,6 +87,7 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     * find(collectionName, criteria, opts = {}) {
+        yield this._reconnect();
         //If we're paging
         let res;
 
@@ -110,6 +123,7 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     * count(collectionName, criteria, opts) {
+        yield this._reconnect();
         return yield this.db.collection(collectionName).count(convertConditionsFromJollof(criteria));
     }
 
@@ -123,26 +137,12 @@ class JollofDataMongoDB {
      * @returns {number} - How many were updated
      */
     * update(collectionName, criteria, newValues, opts) {
+        yield this._reconnect();
         //opts = convertFromJollof(opts);
         const q = convertConditionsFromJollof(criteria);
-        const res = yield this.db.collection(collectionName).updateMany(q, {$set:newValues});
+        const res = yield this.db.collection(collectionName).updateMany(q, { $set: newValues });
         //console.log('item update result', res);
         return res.modifiedCount;
-    }
-
-
-    /**
-     * Return the created item
-     * @param collectionName
-     * @param criteria
-     * @param newValues
-     * @param params
-     * @returns {*}
-     */
-    * create(collectionName, data) {
-
-        const res = yield this.db.collection(collectionName).insertOne(data);
-        return convertToJollof(res.ops[0]);
     }
 
 
@@ -156,7 +156,7 @@ class JollofDataMongoDB {
      * @returns {number}
      */
     * remove(collectionName, criteria, opts) {
-
+        yield this._reconnect();
         _.merge(opts, { multi: true })
         const res = yield this.db.collection(collectionName).deleteMany(convertConditionsFromJollof(criteria), opts);
 
