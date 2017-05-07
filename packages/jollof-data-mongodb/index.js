@@ -1,19 +1,17 @@
 /**
  * Created by iyobo on 2016-10-30.
  */
-const co = require('co');
 const _ = require('lodash');
-const path = require('path');
-const promise = require('bluebird');
 
-const Datastore = require('nedb-jollof')
+var MongoClient = require('mongodb').MongoClient
+
 var convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 var convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
 
 /**
- * A Jollof Data Adapter for Memory
+ * A Jollof Data Adapter for MongoDB using mongoose.
  */
-class JollofDataMemory {
+class JollofDataMongoDB {
 
     /**
      * Keep constructor free of async calls.
@@ -21,10 +19,10 @@ class JollofDataMemory {
      * @param options
      */
     constructor(options) {
-        this.connectionOptions = options || {};
-        this.db = {};
 
-        this._Datastore = Datastore;
+        this.connectionOptions = options || {};
+
+        this._MongoClient = MongoClient;
         this._convertConditionsFromJollof = convertConditionsFromJollof;
         this._convertToJollof = convertToJollof;
     }
@@ -37,11 +35,15 @@ class JollofDataMemory {
      */
     * addSchema(schema) {
 
+        if(!this.db){
+            this.db = yield this.db = MongoClient.connect(this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb');
+        }
+
         //options are different each time because same adapter managers multiple stores/collections
-        const options = _.cloneDeep(this.connectionOptions)
-        options.filename = path.join(this.connectionOptions.filename, schema.name + '.db')
-        this.db[schema.name] = promise.promisifyAll(new Datastore(options));
-        return true;
+        //const options = _.cloneDeep(this.connectionOptions)
+        //options.filename = path.join(this.connectionOptions.filename, schema.name + '.db')
+        //this.db[schema.name] = promise.promisifyAll(new Datastore(options));
+        //return true;
     }
 
 
@@ -75,27 +77,27 @@ class JollofDataMemory {
     * find(collectionName, criteria, opts = {}) {
         //If we're paging
         let res;
-        //console.log('find criteria', criteria)
-        if (opts) {
 
-            const options = {};
+        let cursor = this.db.collection(collectionName).find(convertConditionsFromJollof(criteria));
+
+        if (opts) {
 
             if (opts.paging) {
                 const page = opts.paging.page || 1;
                 const limit = opts.paging.limit || 10;
                 const skip = ((page - 1) * limit);
 
-                options.paging = { skip, limit };
+                cursor = cursor.skip(skip);
+                cursor = cursor.limit(limit);
             }
 
             if (opts.sort) {
-                options.sort = opts.sort;
+                cursor = cursor.sort(opts.sort)
             }
 
-            res = yield this.db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
-        } else {
-            res = yield this.db[collectionName].findAsync(convertConditionsFromJollof(criteria));
         }
+
+        res = yield cursor.toArray();
         return convertToJollof(res);
 
     }
@@ -108,7 +110,7 @@ class JollofDataMemory {
      * @returns {*}
      */
     * count(collectionName, criteria, opts) {
-        return yield this.db[collectionName].countAsync(convertConditionsFromJollof(criteria));
+        return yield this.db.collection(collectionName).count(convertConditionsFromJollof(criteria));
     }
 
 
@@ -118,13 +120,14 @@ class JollofDataMemory {
      * @param criteria
      * @param newValues
      * @param params
-     * @returns {*}
+     * @returns {number} - How many were updated
      */
     * update(collectionName, criteria, newValues, opts) {
-        opts = convertFromJollof(opts);
-        const res = yield this.db[collectionName].updateAsync(convertFromJollof(criteria), newValues);
+        //opts = convertFromJollof(opts);
+        const q = convertConditionsFromJollof(criteria);
+        const res = yield this.db.collection(collectionName).updateMany(q, {$set:newValues});
         //console.log('item update result', res);
-        return res;
+        return res.modifiedCount;
     }
 
 
@@ -138,8 +141,8 @@ class JollofDataMemory {
      */
     * create(collectionName, data) {
 
-        const res = yield this.db[collectionName].insertAsync(data);
-        return convertToJollof(res);
+        const res = yield this.db.collection(collectionName).insertOne(data);
+        return convertToJollof(res.ops[0]);
     }
 
 
@@ -150,15 +153,17 @@ class JollofDataMemory {
      * @param collectionName
      * @param criteria
      * @param params
-     * @returns {*}
+     * @returns {number}
      */
     * remove(collectionName, criteria, opts) {
 
         _.merge(opts, { multi: true })
-        return yield this.db[collectionName].removeAsync(convertFromJollof(criteria), opts);
+        const res = yield this.db.collection(collectionName).deleteMany(convertConditionsFromJollof(criteria), opts);
+
+        return res.deletedCount;
 
     }
 
 }
 
-module.exports = JollofDataMemory;
+module.exports = JollofDataMongoDB;

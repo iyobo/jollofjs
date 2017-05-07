@@ -3,6 +3,7 @@
  */
 const idField = '_id';
 const Boom = require('boom');
+const ObjectID = require('mongodb').ObjectID;
 
 function convertComp(comp) {
 
@@ -39,7 +40,12 @@ function convertComp(comp) {
 
 function translate(cond, query, parentConnector) {
 
-    let fieldName = cond.field === 'id' ? '_id' : cond.field;
+    let fieldName = cond.field;
+
+    if(fieldName === 'id'){
+        fieldName = '_id';
+        cond.value = new ObjectID(cond.value)
+    }
 
     //We don't support elemMatch fields
     if (fieldName.indexOf('*') > -1) {
