@@ -4,7 +4,7 @@
 
 module.exports = {
 
-	env: 'development',
+    env: 'development',
 
     // Uncomment to use mongodb as Default datasource. Otherwise an in-Memory datasource will be used.
     //data: {

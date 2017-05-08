@@ -4,19 +4,26 @@
 
 module.exports = {
 
-	env: 'test',
+    env: 'test',
 
-	server: {
-		port: 3001, //Port main app runs on
-		host: '0.0.0.0',
-		hostname: 'localhost'
-	},
+    server: {
+        port: 3001, //Port main app runs on
+        host: '0.0.0.0',
+        hostname: 'localhost'
+    },
 
-	db:{
-		memory:{
-			filename: '/tmp/jolloftestdb'
-		}
-	}
+    // Uncomment to use mongodb as Default datasource. Otherwise an in-Memory datasource will be used.
+    //data: {
+    //    dataSources:{
+    //        default: {
+    //            adapter: require('jollof-data-mongodb'),
+    //            nativeType: 'mongodb',
+    //            options: {
+    //                mongoUrl: 'mongodb://localhost/jollofdb_test'
+    //            }
+    //        }
+    //    }
+    //},
 
 }
 

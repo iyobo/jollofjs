@@ -1,15 +1,6 @@
-
 var routes = {
-	// default: {
-	'/': {to: 'mainController index'},
-
-	// },
-	// emp:{
-	// 	'/': {to: 'employerController index'},
-	// }
-
-
-
+    // default: {
+    '/': { to: 'mainController index' },
 
 };
 
