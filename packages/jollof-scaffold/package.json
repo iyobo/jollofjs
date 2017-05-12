@@ -9,6 +9,7 @@
   "author": "Iyobo Eki",
   "license": "ISC",
   "dependencies": {
-    "jollof": "^0.1.0"
+    "jollof": "^0.1.0",
+    "passport-jwt": "^2.2.1"
   }
 }
