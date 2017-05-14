@@ -13,6 +13,6 @@
   "author": "Iyobo Eki",
   "license": "ISC",
   "dependencies": {
-    "koa-route": "^3.2.0"
+    "koa-router": "^7.1.1"
   }
 }

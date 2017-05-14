@@ -10,6 +10,7 @@
  */
 
 const Router = require('koa-router');
+const digestRouteMap = require('./lib/util.js').digestRouteMap;
 
 class KoaJollofRouter {
 
@@ -27,7 +28,7 @@ class KoaJollofRouter {
      */
     addRoutes(routes) {
 
-
+        digestRouteMap(this.router, routes);
 
     }
 
