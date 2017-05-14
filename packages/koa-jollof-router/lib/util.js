@@ -11,9 +11,9 @@ function isPath(it) {
 
 function makeRoute(router, method, path, flow, children) {
 
-    if(!children){
-        router = router[method](path, flow )
-    }else{
+    if (!children) {
+        router = router[method](path, flow)
+    } else {
         //has children
         let subRouter = KRouter();
         subRouter = digestRouteMap(subRouter, children)
