@@ -18,7 +18,11 @@ function makeRoute(router, method, path, flow, children) {
         let subRouter = KRouter();
         subRouter = digestRouteMap(subRouter, children)
 
-        router.use(path, subRouter.routes(), subRouter.allowedMethods());
+        if(flow)
+            router.use(path, flow, subRouter.routes(), subRouter.allowedMethods());
+        else
+            router.use(path, subRouter.routes(), subRouter.allowedMethods());
+
     }
 
 
