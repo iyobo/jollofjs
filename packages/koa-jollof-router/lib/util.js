@@ -12,11 +12,12 @@ function isPath(it) {
 exports.makeRoute= (router, method, path, flow, children) =>{
 
     if (!children) {
-        router = router[method](path, flow)
+        router = router[method](path, ...flow)
+        console.log('route:',method,path, flow.length||1)
     } else {
         //has children
         let subRouter = KRouter();
-        subRouter = digestRouteMap(subRouter, children)
+        subRouter = exports.digestRouteMap(subRouter, children)
 
         if(flow)
             router.use(path, flow, subRouter.routes(), subRouter.allowedMethods());
@@ -33,8 +34,9 @@ exports.digestRouteMap = (router, routes) => {
 
     const keys = Object.keys(routes);
 
-    for (let key in keys) {
+    for (let i in keys) {
 
+        let key = keys[i];
         const value = routes[key];
 
         //flow and children are the currently supported route fields

@@ -18,7 +18,9 @@ class KoaJollofRouter {
     constructor(routes) {
         this.router = Router();
 
-        this.addRoutes(routes);
+        if (routes) {
+            this.addRoutes(routes);
+        }
     }
 
     /**
@@ -30,10 +32,9 @@ class KoaJollofRouter {
     addRoutes(routes) {
 
         this.router = digestRouteMap(this.router, routes);
-
     }
 
-    nestRoutes(path, flow, routes){
+    nestRoutes(path, flow, routes) {
         this.router = makeRoute(this.router, '', path, flow, routes);
     }
 
@@ -42,7 +43,7 @@ class KoaJollofRouter {
      * i.e  app.use(jRouter.apply());
      */
     get routes() {
-        return this.router.routes;
+        return this.router.routes.bind(this.router);
     }
 
     /**
@@ -50,8 +51,9 @@ class KoaJollofRouter {
      * i.e  app.use(jRouter.apply());
      */
     get allowedMethods() {
-        return this.router.allowedMethods;
+        return this.router.allowedMethods.bind(this.router);
     }
+
 }
 
 
