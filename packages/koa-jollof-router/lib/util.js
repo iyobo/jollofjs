@@ -9,7 +9,7 @@ function isPath(it) {
     return it.startsWith('/')
 }
 
-function makeRoute(router, method, path, flow, children) {
+exports.makeRoute= (router, method, path, flow, children) =>{
 
     if (!children) {
         router = router[method](path, flow)
@@ -61,7 +61,7 @@ exports.digestRouteMap = (router, routes) => {
             throw new Error('No path defined for route:', key)
         }
 
-        router = makeRoute(router, method, path, flow, children);
+        router = exports.makeRoute(router, method, path, flow, children);
 
     }
 
