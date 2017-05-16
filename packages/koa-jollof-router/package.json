@@ -1,6 +1,6 @@
 {
   "name": "koa-jollof-router",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A sane router for koa2+",
   "main": "index.js",
   "scripts": {
