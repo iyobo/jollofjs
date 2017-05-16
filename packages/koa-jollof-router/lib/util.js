@@ -13,7 +13,7 @@ exports.makeRoute= (router, method, path, flow, children) =>{
 
     if (!children) {
         router = router[method](path, ...flow)
-        console.log('route:',method,path, flow.length||1)
+        //console.log('route:',method,path, flow.length||1)
     } else {
         //has children
         let subRouter = KRouter();
