@@ -10,7 +10,7 @@
  */
 
 const Router = require('koa-router');
-var makeRoute = require('./lib/util.js').makeRoute;
+const makeRoute = require('./lib/util.js').makeRoute;
 const digestRouteMap = require('./lib/util.js').digestRouteMap;
 
 class KoaJollofRouter {
