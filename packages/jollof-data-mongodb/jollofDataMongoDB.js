@@ -3,10 +3,25 @@
  */
 const _ = require('lodash');
 
-var MongoClient = require('mongodb').MongoClient
+const MongoClient = require('mongodb').MongoClient;
 
-var convertToJollof = require('./util/conversionUtil.js').convertToJollof;
-var convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
+const convertToJollof = require('./util/conversionUtil.js').convertToJollof;
+const convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
+
+const connPool = {};
+async function getConnection(url) {
+
+    if(connPool[url]){
+        return connPool[url];
+    }else{
+        const conn = await MongoClient.connect(url, {
+            poolSize: 3
+        });
+        connPool[url] = conn;
+        return conn;
+    }
+
+}
 
 /**
  * A Jollof Data Adapter for MongoDB using mongoose.
@@ -27,10 +42,11 @@ class JollofDataMongoDB {
         this._convertToJollof = convertToJollof;
     }
 
-    async _reconnect() {
-        if (!this.db || !this.db.connection) {
-            this.db = await MongoClient.connect(this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb');
-        }
+    async ensureConnection() {
+        const url = this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb';
+        const opts = this.connectionOptions.opts || {poolSize: 10};
+
+        this.db = await getConnection(url, opts);
     }
 
     /**
@@ -40,7 +56,9 @@ class JollofDataMongoDB {
      */
     async addSchema(schema) {
 
-        await this._reconnect();
+        //Because this is mongo, there is no need to do a whole lot here.
+        //Just ensure the necessary connection is cached.
+        await this.ensureConnection();
         return true;
     }
 
@@ -73,7 +91,7 @@ class JollofDataMongoDB {
      */
     async create(collectionName, data) {
 
-        await this._reconnect();
+        //await this.ensureConnection();
         const res = await this.db.collection(collectionName).insertOne(data);
         return convertToJollof(res.ops[0]);
     }
@@ -87,7 +105,7 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     async find(collectionName, criteria, opts = {}) {
-        await this._reconnect();
+        //await this.ensureConnection();
         //If we're paging
         let res;
 
@@ -123,7 +141,7 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     async count(collectionName, criteria, opts) {
-        await this._reconnect();
+        //await this.ensureConnection();
         return await this.db.collection(collectionName).count(convertConditionsFromJollof(criteria));
     }
 
@@ -137,7 +155,7 @@ class JollofDataMongoDB {
      * @returns {number} - How many were updated
      */
     async update(collectionName, criteria, newValues, opts) {
-        await this._reconnect();
+        //await this.ensureConnection();
         //opts = convertFromJollof(opts);
         const q = convertConditionsFromJollof(criteria);
         const res = await this.db.collection(collectionName).updateMany(q, { $set: newValues });
@@ -156,7 +174,7 @@ class JollofDataMongoDB {
      * @returns {number}
      */
     async remove(collectionName, criteria, opts) {
-        await this._reconnect();
+        //await this.ensureConnection();
         _.merge(opts, { multi: true })
         const res = await this.db.collection(collectionName).deleteMany(convertConditionsFromJollof(criteria), opts);
 
