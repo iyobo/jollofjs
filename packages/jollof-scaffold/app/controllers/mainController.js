@@ -4,8 +4,8 @@ const log = jollof.log;
 
 class MainController {
 
-	* index() {
-		yield this.render('index');
+	async index(ctx) {
+		await ctx.render('index');
 	}
 
 }

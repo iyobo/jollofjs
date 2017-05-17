@@ -11,8 +11,14 @@ function isPath(it) {
 
 exports.makeRoute= (router, method, path, flow, children) =>{
 
+    if(flow && !Array.isArray(flow))
+        flow = [flow];
+
     if (!children) {
-        router = router[method](path, ...flow)
+        if(flow)
+            router = router[method](path, ...flow)
+        //else
+        //    router = router[method](path, ...flow)
         //console.log('route:',method,path, flow.length||1)
     } else {
         //has children
@@ -20,7 +26,7 @@ exports.makeRoute= (router, method, path, flow, children) =>{
         subRouter = exports.digestRouteMap(subRouter, children)
 
         if(flow)
-            router.use(path, flow, subRouter.routes(), subRouter.allowedMethods());
+            router.use(path, ...flow, subRouter.routes(), subRouter.allowedMethods());
         else
             router.use(path, subRouter.routes(), subRouter.allowedMethods());
 

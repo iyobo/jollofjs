@@ -157,8 +157,6 @@ module.exports.bootServer = function (overWriteFn) {
             //server-side form validator
             serverApp.use(convert(kValidate()));
 
-            //contoller/router
-            serverApp.use(convert(kc.tools())); // optional
 
             //app statics
             serverApp.use(convert(serve({ rootDir: 'static', rootPath: '/static' })));
@@ -181,43 +179,29 @@ module.exports.bootServer = function (overWriteFn) {
                 return yield next;
             }));
 
-            ////APP ROUTES
-            //serverApp.use(convert(subdomain('*', kc.router({
-            //    routesPath: process.cwd() + '/app/routes/default.js',
-            //}))));
-
             //TODO: use this for main app router too
             let router = new Router();
 
+            ////APP ROUTES
+            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
+
             //nunjucks
+            jollof.config.nunjucks.configureEnvironment= (env) => {
+                jollof.view.setupFilters(env)
+            };
             serverApp.use( koaNunjucks(jollof.config.nunjucks));
 
             //add nunjuck filters/extensions
-            if (!JOLLOF_STANDALONE) {
-                jollof.view.setupFilters(serverApp.context.render.env);
-            }
+            //if (!JOLLOF_STANDALONE) {
+            //    jollof.view.setupFilters(serverApp.context.render.env);
+            //}
 
 
-            router.router = router.router.get('/', async function (ctx) {
-                    ctx.body = 'Hello World!';
-                }).get('/admino', async function (ctx) {
-                ctx.body = 'Hello admin!';
-            });
 
             //If Admin is enabled
             if (jollof.config.admin.enabled || JOLLOF_STANDALONE) {
-                //KEYSTONE API: ADMIN SERVER
-                // require('./admin');
-                //
-                //jollof admin
-                //serverApp.use(kc.router({
-                //    routesPath: path.join(__dirname, '..', 'admin', 'adminRoutes.js'),
-                //    constraintPath: path.join(__dirname, '..', 'admin', 'constraints', '{constraint}.js'),
-                //    controllerPath: path.join(__dirname, '..', 'admin', 'controllers', '{controller}.js'),
-                //}));
 
                 router.nestRoutes(jollof.config.admin.routePrefix, null, require('../admin/adminRoutes'))
-
             }
 
             //Give Framework user a chance to set things stuff

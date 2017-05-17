@@ -35,7 +35,7 @@ class JollofDataMemory {
      *
      * @param schema
      */
-    * addSchema(schema) {
+    async addSchema(schema) {
 
         //options are different each time because same adapter managers multiple stores/collections
         const options = _.cloneDeep(this.connectionOptions)
@@ -72,7 +72,7 @@ class JollofDataMemory {
      * @param opts
      * @returns {*}
      */
-    * find(collectionName, criteria, opts = {}) {
+    async find(collectionName, criteria, opts = {}) {
         //If we're paging
         let res;
         //console.log('find criteria', criteria)
@@ -92,9 +92,9 @@ class JollofDataMemory {
                 options.sort = opts.sort;
             }
 
-            res = yield this.db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
+            res = await this.db[collectionName].findOptsAsync(convertConditionsFromJollof(criteria), options);
         } else {
-            res = yield this.db[collectionName].findAsync(convertConditionsFromJollof(criteria));
+            res = await this.db[collectionName].findAsync(convertConditionsFromJollof(criteria));
         }
         return convertToJollof(res);
 
@@ -107,8 +107,8 @@ class JollofDataMemory {
      * @param opts
      * @returns {*}
      */
-    * count(collectionName, criteria, opts) {
-        return yield this.db[collectionName].countAsync(convertConditionsFromJollof(criteria));
+    async count(collectionName, criteria, opts) {
+        return await this.db[collectionName].countAsync(convertConditionsFromJollof(criteria));
     }
 
 
@@ -120,9 +120,9 @@ class JollofDataMemory {
      * @param params
      * @returns {*}
      */
-    * update(collectionName, criteria, newValues, opts) {
+    async update(collectionName, criteria, newValues, opts) {
         //opts = convertConditionsFromJollof(opts);
-        const res = yield this.db[collectionName].updateAsync(convertConditionsFromJollof(criteria), newValues);
+        const res = await this.db[collectionName].updateAsync(convertConditionsFromJollof(criteria), newValues);
         //console.log('item update result', res);
         return res;
     }
@@ -136,9 +136,9 @@ class JollofDataMemory {
      * @param params
      * @returns {*}
      */
-    * create(collectionName, data) {
+    async create(collectionName, data) {
 
-        const res = yield this.db[collectionName].insertAsync(data);
+        const res = await this.db[collectionName].insertAsync(data);
         return convertToJollof(res);
     }
 
@@ -152,11 +152,11 @@ class JollofDataMemory {
      * @param opts
      * @returns {*}
      */
-    * remove(collectionName, criteria, opts={}) {
+    async remove(collectionName, criteria, opts={}) {
 
         const options=_.merge(opts, { multi: true });
         const q = convertConditionsFromJollof(criteria);
-        return yield this.db[collectionName].removeAsync(q, options);
+        return await this.db[collectionName].removeAsync(q, options);
 
     }
 
