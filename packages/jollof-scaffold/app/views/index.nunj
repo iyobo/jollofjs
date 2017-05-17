@@ -2,9 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>JollofJS</title>
+    <link rel="stylesheet" href="/jollofstatic/css/animate.css"/>
+    <link rel="stylesheet" href="/jollofstatic/css/home.css"/>
 </head>
-<body>
-<h1>My Jollof App</h1>
+<body id="background">
+<header>
+    <div class="maincover">
+        <div class="title">
+            <span>Welcome to Jollof<span class="js">JS</span></span>
+        </div>
+
+        <div class="subtitle">
+            <div class="col">
+                <a href="/admin">
+                    <div class="gobox animated bounceIn">
+                        <img class="adminCog animated rotateIn" src="/jollofstatic/img/cog-256.png" width="60px"/>
+                        <span class="adminLabel animated fadeInLeft">To the Admin</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</header>
+
 </body>
 </html>
