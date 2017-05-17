@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jollof Admin</title>
+
+    <!-- Bootstrap core CSS     -->
+    <link href="/jollofstatic/lightdash/assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Animation library for notifications   -->
+    <link href="/jollofstatic/lightdash/assets/css/animate.min.css" rel="stylesheet"/>
+
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="/jollofstatic/lightdash/assets/css/light-bootstrap-dashboard.css" rel="stylesheet"/>
+
+
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="/jollofstatic/lightdash/assets/css/demo.css" rel="stylesheet" />
+
+
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <link href="/jollofstatic/lightdash/assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
+
+
+    {#Custom stuff from here#}
+    <link href="/jollofstatic/flexboxgrid.min.css" rel="stylesheet" type="text/css">
+    <link href="/jollofstatic/css/animate.css" rel="stylesheet" type="text/css">
+    <link href="/jollofstatic/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	
+	<link href="/jollofstatic/css/admin.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.0/jquery-confirm.min.css">
+    {#<link href="//cdn.muicss.com/mui-0.9.15/css/mui.min.css" rel="stylesheet" type="text/css" media="screen" />#}
+
+
+    <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css">
+
+    <script>
+		var sessionId = '{{ sessionId }}';
+    </script>
+</head>
+<body>
+
+
+
+<div id="app">
+    <router-view>
+        <span class="loadingText">Loading Jollof Admin...</span>
+        <div class="loader"></div>
+    </router-view>
+
+</div>
+
+
+<script>
+    {% if config.domains.admin %}
+	var apiRoot = "{{ config.domains.admin }}";
+    {% else %}
+	var apiRoot = "{{ config.domains.default }}";
+    {% endif %}
+
+</script>
+
+
+{#Lihgtdash files from here#}
+<!--   Core JS Files   -->
+<script src="/jollofstatic/lightdash/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+<script src="/jollofstatic/lightdash/assets/js/bootstrap.min.js" type="text/javascript"></script>
+
+<!--  Checkbox, Radio & Switch Plugins -->
+<script src="/jollofstatic/lightdash/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+
+<!--  Charts Plugin -->
+<script src="/jollofstatic/lightdash/assets/js/chartist.min.js"></script>
+
+<!--  Notifications Plugin    -->
+<script src="/jollofstatic/lightdash/assets/js/bootstrap-notify.js"></script>
+
+<!--  Google Maps Plugin    -->
+{#<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>#}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config.thirdParty.google.maps.apiKey }}&libraries=places">
+</script>
+
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+{#<script src="/jollofstatic/lightdash/assets/js/light-bootstrap-dashboard.js"></script>#}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.0/jquery-confirm.min.js"></script>
+
+<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+<script src="/jollofstatic/lightdash/assets/js/demo.js"></script>
+
+<script type="text/javascript">
+
+    var apiPrefix = '{{ config.admin.routePrefix }}';
+
+</script>
+
+<script src="/jollofstatic/bundles/admin.bundle.js"></script>
+
+</body>
+</html>

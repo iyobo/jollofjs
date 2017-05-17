@@ -1,0 +1,81 @@
+<div class="wrapper">
+    <div class="sidebar" data-color="black" data-image="/jollofstatic/img/jollof2.jpg">
+
+        <!--
+
+            Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
+            Tip 2: you can also add an image using data-image tag
+
+        -->
+
+        <div class="sidebar-wrapper">
+            <div class="logo">
+                <a href="/" class="simple-text">
+                    <i class="pe-7s-home"></i>
+                    Back to App
+                </a>
+            </div>
+
+            <ul class="nav">
+                <li>
+                    <router-link to="/dashboard">
+                        <i class="pe-7s-graph"></i>
+                        <p>Dashboard</p>
+                    </router-link>
+
+                </li>
+
+                <li v-for="m in modelSpice.models">
+                    <router-link :to="'/model/'+m.name" >
+                        <i class="pe-7s-server"></i>
+                        <p>{{m.name}}</p>
+                    </router-link>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Jollof Admin: <b>{{pageTitle}}</b></a>
+                </div>
+                <div class="collapse navbar-collapse">
+
+                    <ul class="nav navbar-nav navbar-right">
+
+                        <li>
+                            <a href="#">
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <transition name="slide-fade">
+            <router-view></router-view>
+        </transition>
+
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright pull-right">
+                    JollofJS created by <a href="http://deveki.com" target="_blank">Iyobo Eki</a>. Admin Theme by <a
+                        href="http://www.creative-tim.com">Creative Tim</a>
+                </p>
+            </div>
+        </footer>
+
+    </div>
+</div>

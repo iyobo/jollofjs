@@ -1,0 +1,98 @@
+<div class="content">
+	<div class="container-fluid">
+		<div class="row">
+
+			<div class="col-xs-12 col-sm-12 col-md-12">
+				<div class="card">
+
+					<div class="header">
+						<!--<h4 class="title">Striped Table with Hover</h4>-->
+						<div class="pull-right">
+							<a href="javascript:;" v-on:click="createItem"><i class="fa fa-plus" aria-hidden="true"></i>
+								Create</a>
+						</div>
+						<!--<p class="category">Controls coming soon</p>-->
+						<a @click="addFilter" href="javascript:;"><i class="fa fa-filter" aria-hidden="true"></i>
+							Add Filter...</a>
+						<div class="pad-5" v-for="(filter,idx) in modelSpice.query.filters">
+							<select v-model="filter[0]" class="filter-control">
+								<option v-for="field in modelSpice.active.model.fieldOrder"
+										v-bind:value="field">{{field}}</option>
+							</select>
+							<select v-model="filter[1]" class="filter-control">
+								<option v-for="val in filterOptions" v-bind:value="val">{{val}}</option>
+							</select>
+							<input type="text" v-model="filter[2]" class="filter-control">
+
+							<a href="javascript:;" v-on:click="removeFilter(idx)">remove</a>
+						</div>
+						<a href="javascript:;" v-on:click="fetchTable"><i class="fa fa-refresh" aria-hidden="true"></i>
+							Refresh</a>
+					</div>
+
+
+					<div class="content table-responsive table-full-width">
+						<ul class="pager pad-5">
+							<li class="previous"><a href="javascript:;" v-on:click="decrementPage">Previous</a></li>
+							Page {{modelSpice.query.paging.page}} / {{modelSpice.active.pageCount}} : Total Items: {{modelSpice.active.tableCount}}
+							<li class="next"><a href="javascript:;" v-on:click="incrementPage">Next</a></li>
+						</ul>
+
+						<table class="table table-hover table-striped">
+
+							<thead>
+							<tr>
+								<th></th>
+								<th v-for="fieldName in (modelSpice.active.model.fieldOrder.slice(0,5))">
+									<a href="javascript:;" v-on:click="sort(fieldName)">
+										<div>{{fieldName}} <i class="fa fa-sort-asc" aria-hidden="true" v-if="modelSpice.query.sort[fieldName]===1"></i>
+											<i class="fa fa-sort-desc" aria-hidden="true" v-if="modelSpice.query.sort[fieldName]===-1"></i>
+										</div>
+									</a>
+								</th>
+							</tr>
+							</thead>
+
+
+							<!--<data rows-->
+
+
+							<tbody>
+							<tr v-for="item in modelSpice.active.table">
+								<td>
+									<a href="javascript:;" v-on:click="deleteItem(item)">
+										<i class="fa fa-trash redText" aria-hidden="true"></i>
+									</a>
+								</td>
+								<td v-for="fieldName in (modelSpice.active.model.fieldOrder.slice(0,5))">
+									<a href="javascript:;" v-on:click="edit(item.id)" v-if="fieldName==='id'">
+										<div>
+											{{ item[fieldName] }}
+										</div>
+									</a>
+									<div v-if="fieldName !== 'id'">
+										{{ item[fieldName] }}
+									</div>
+
+								</td>
+							</tr>
+							</tbody>
+						</table>
+
+						<ul class="pager pad-5">
+							<li class="previous"><a href="javascript:;" v-on:click="decrementPage">Previous</a></li>
+							Page {{modelSpice.query.paging.page}} / {{modelSpice.active.pageCount}} : Total items: {{modelSpice.active.tableCount}}
+							<li class="next"><a href="javascript:;" v-on:click="incrementPage">Next</a></li>
+						</ul>
+
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+</div>
+
