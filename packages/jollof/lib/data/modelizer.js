@@ -389,7 +389,7 @@ exports.modelize = function (schema) {
          * @private
          */
         _loadData(data) {
-
+            this._originalData = _.clone(data);
             this._data = _.clone(data);
         }
 
@@ -427,37 +427,37 @@ exports.modelize = function (schema) {
 
         async _preSave() {
             if (schema.hooks && schema.hooks.preSave) {
-                await schema.hooks.preSave.bind(this);
+                await schema.hooks.preSave.bind(this)();
             }
         }
 
         async _preCreate() {
             if (schema.hooks && schema.hooks.preCreate) {
-                await schema.hooks.preCreate.bind(this);
+                await schema.hooks.preCreate.bind(this)();
             }
         }
 
         async _postSave() {
             if (schema.hooks && schema.hooks.postSave) {
-                await schema.hooks.postSave.bind(this);
+                await schema.hooks.postSave.bind(this)();
             }
         }
 
         async _postCreate() {
             if (schema.hooks && schema.hooks.postCreate) {
-                await schema.hooks.postCreate.bind(this);
+                await schema.hooks.postCreate.bind(this)();
             }
         }
 
         async _preRemove() {
             if (schema.hooks && schema.hooks.preRemove) {
-                await schema.hooks.preRemove.bind(this);
+                await schema.hooks.preRemove.bind(this)();
             }
         }
 
         async _postRemove() {
             if (schema.hooks && schema.hooks.post && schema.hooks.postRemove) {
-                await schema.hooks.postRemove.bind(this);
+                await schema.hooks.postRemove.bind(this)();
             }
         }
 
@@ -470,6 +470,7 @@ exports.modelize = function (schema) {
             //const res = await adapter.saveModel(this);
             //return res;
 
+
             if (this.isPersisted()) {
                 const where = jqlParser.parse(jql`id = ${this.id}`)
 
@@ -480,6 +481,7 @@ exports.modelize = function (schema) {
                 this._loadData(res);
             }
 
+            this._originalData = _.clone(this._data);
             //reload data
             //console.log('adapter.save', res);
 
@@ -532,7 +534,8 @@ exports.modelize = function (schema) {
                 //by now we should be done with preValidationData
                 delete this._preValidationData;
 
-                log.debug('ids', 'data', this._data);
+
+                //log.debug('ids', 'data', this._data);
 
                 return res;
             } catch (err) {

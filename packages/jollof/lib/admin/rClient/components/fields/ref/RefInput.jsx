@@ -62,7 +62,7 @@ export default class RefInput extends Component {
 
         if (this.props.data) {
             if (this.state.item) {
-                return this.props.data + ' - ' + this.state.item.name || this.state.item.title
+                return this.props.data + ' - ' + this.state.item.name || this.state.item.title || ''
             } else {
                 return this.props.data;
             }

@@ -5,7 +5,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin")
 const _ = require('lodash');
 
-let isProd = false;
+let isProd = process.env.NODE_ENV === 'production';
 _.each(process.argv, (arg) => {
 	if (arg === '--prod') {
 		console.log('Setting to Production Mode');
@@ -20,6 +20,12 @@ if (isProd) {
 	plugins.push(new webpack.optimize.UglifyJsPlugin());
 	plugins.push(new CommonsChunkPlugin("commons.chunk.js"));
 }
+plugins.push(function() {
+    this.plugin('watch-run', function(watching, callback) {
+        console.log('>>' + new Date());
+        callback();
+    })
+});
 
 
 module.exports = {
@@ -42,7 +48,7 @@ module.exports = {
 		filename: "[name].bundle.js"
 	},
 	devtool: "source-map",
-	// plugins: plugins,
+    plugins,
 	module: {
 		loaders: [
 			{ test: /\.html/, loader: "html-loader" },
@@ -76,13 +82,5 @@ module.exports = {
 			vue: 'vue/dist/vue.js',
             react: path.join(__dirname, 'node_modules', 'react')
 		}
-	},
-    plugins: [
-        function() {
-            this.plugin('watch-run', function(watching, callback) {
-                console.log('>>' + new Date());
-                callback();
-            })
-        }
-    ]
+	}
 };

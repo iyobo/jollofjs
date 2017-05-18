@@ -4,7 +4,8 @@
 /**
  * Created by iyobo on 2016-09-18.
  */
-const data = require('jollof').data;
+const jollof = require('jollof');
+const data = jollof.data;
 const types = data.types;
 
 //Models use names
@@ -12,28 +13,25 @@ const schema = {
     name: 'User',
     connectionName: 'default',
     structure: {
-        name: String,
-        age: Number,
+        firstName: String,
+        lastName: String,
+        name: { type: String, meta: { disableEdit: true } },
+        email: types.Email(),
+        password: {type: String, meta:{ widget:'password' }},
 
-        mig: types.Ref({ meta: { ref: 'JollofMigration', condition: '' } }),
+    },
+    hooks: {
+        preSave: async function () {
 
-        mugshot: types.File(),
-        //richy: types.RichText(),
-        any: {
-            aString: String,
-            aNumber: Number,
-            aDate: Date
-        },
-        //crono: Date,
-        logic: { type: Boolean, meta: { description: 'Do you like logic?' } },
-        //body: types.Textarea(),
-        //home: types.Location(),
-        //sightings: [types.Location()],
-        //email: types.Email(),
-        strings: [String],
+            //refresh name
+            this.name = this.firstName + ' ' + this.lastName;
 
-
-        //gallery: [types.File()]
+            //password
+            const origUser = await jollof.models.User.findById(this.id);
+            if (!origUser || origUser.password != this.password) {
+                this.password = await jollof.crypto.hash(this.password);
+            }
+        }
     },
     /**
      * Methods are convenience functions that are statically attached to a Model. e.g Foo.findNear(...)

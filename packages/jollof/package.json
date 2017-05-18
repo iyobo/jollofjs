@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha",
-    "dev": "NODE_ENV=production webpack --progress --colors --watch",
+    "dev": " webpack --progress --colors --watch",
+    "prepublish": "NODE_ENV=production webpack --progress --colors",
     "compile-jql": "cd ./lib/data/jollofql && jison jollofql.jison"
   },
   "repository": {
@@ -22,6 +23,7 @@
   "dependencies": {
     "axios": "^0.15.2",
     "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "^2.4.3",
     "bluebird": "^3.4.6",
     "boom": "^4.3.1",
     "co": "^4.6.0",

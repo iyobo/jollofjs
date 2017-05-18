@@ -12,6 +12,7 @@ import ArrayFieldInput from './array/ArrayFieldInput';
 import MapFieldInput from './map/MapFieldInput';
 import FileFieldInput from './file/FileFieldInput';
 import RefInput from './ref/RefInput';
+import PasswordInput from './password/PasswordInput';
 const _ = require('lodash');
 
 export default class FormField extends Component {
@@ -37,6 +38,8 @@ export default class FormField extends Component {
         } else if (meta.type === 'Boolean') {
             hideLabel = true;
             fieldElem = <BooleanInput {...this.props} />
+        } else if (meta.widget === 'password') {
+            fieldElem = <PasswordInput {...this.props} />
         } else if (meta.widget === 'textarea') {
             fieldElem = <TextAreaInput {...this.props} />
         } else if (meta.widget === 'ref') {
