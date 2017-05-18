@@ -17,8 +17,8 @@ exports.loggedIn = async function (ctx, next) {
     }
 
 
-    //if (JOLLOF_STANDALONE || (this.session.user && this.session.user.isAdmin)) {
-    //    // allow access only if logged in and has isAdmin flag
+    //if (JOLLOF_STANDALONE || (this.session.user && this.session.user.canViewAdmin)) {
+    //    // allow access only if logged in and has canViewAdmin flag
     //    yield next;
     //} else if (this.session.user) {
     //    //authenticated, but not authorized

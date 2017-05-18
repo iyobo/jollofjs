@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>JollofJS</title>
-    <link rel="stylesheet" href="/jollofstatic/css/animate.css"/>
-    <link rel="stylesheet" href="/jollofstatic/css/home.css"/>
+    <link rel="stylesheet" href="/static/css/animate.css"/>
+    <link rel="stylesheet" href="/static/css/home.css"/>
 </head>
 <body id="background">
 <header>

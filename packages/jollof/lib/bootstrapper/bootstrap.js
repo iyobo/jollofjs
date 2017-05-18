@@ -201,7 +201,7 @@ module.exports.bootServer = function (overWriteFn) {
             //If Admin is enabled
             if (jollof.config.admin.enabled || JOLLOF_STANDALONE) {
 
-                router.nestRoutes(jollof.config.admin.routePrefix, null, require('../admin/adminRoutes'))
+                router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
             }
 
             //Give Framework user a chance to set things stuff

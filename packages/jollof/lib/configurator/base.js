@@ -21,7 +21,12 @@ module.exports = {
 
     admin: {
         enabled: true,
-        routePrefix: '/admin'
+        routePrefix: '/admin',
+        auth: async (ctx, next) => {
+            //No auth by default
+            await next()
+        }
+
     },
 
     domains: {
