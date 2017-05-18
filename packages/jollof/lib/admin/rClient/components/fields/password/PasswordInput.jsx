@@ -40,7 +40,7 @@ export default class PasswordInput extends Component {
             this.setState(_.clone(this._defaultState));
         }
         else{
-            $.notify(this.props.name+": Password fields don't match")
+            $.notify(this.props.name+": Fields must match to confirm")
         }
 
     }
@@ -84,19 +84,17 @@ export default class PasswordInput extends Component {
         if (this.state.editMode) {
             editBox = (
                 <div>
-                    <strong>Editing Encrypted Field</strong>
-                    Enter value to change password to. BOTH fields must match or the attempt to change the password will
-                    be ignored.
+                    <strong>Editing Encrypted Field. </strong>
                     <div class="form-group">
                         <input type="text" className={"form-control"} value={this.state.p1}
                                onChange={this.onP1Change}/>
-                        <small class="form-text text-muted">Password</small>
+                        <small class="form-text text-muted">New Value</small>
                     </div>
                     <div class={"form-group " + (this.state.matching ? "has-success" : "has-danger")}>
                         <input type="text"
                                className={"form-control " + (this.state.matching ? "form-control-success" : "form-control-danger") }
                                value={this.state.p2} onChange={this.onP2Change}/>
-                        <small class="form-text text-muted">Confirm Password</small>
+                        <small class="form-text text-muted">Confirm New Value</small>
                     </div>
                     <FlatButton label='Confirm' onClick={this.onConfirm}/>
                 </div>

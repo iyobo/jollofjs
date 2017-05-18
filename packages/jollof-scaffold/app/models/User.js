@@ -18,6 +18,7 @@ const schema = {
         name: { type: String, meta: { disableEdit: true } },
         email: types.Email(),
         password: {type: String, meta:{ widget:'password' }},
+        isAdmin: Boolean
 
     },
     hooks: {
