@@ -109,6 +109,12 @@ module.exports.bootServer = function (overWriteFn) {
                 // qs: true
             });
 
+            // trust proxy
+            serverApp.proxy = true;
+
+            //Setup passport auth strategies
+            require(appPaths.appRoot+'/app/services/passport/strategies').setupStrategies(passport);
+
             //wear helmet for security
             serverApp.use(helmet());
 
@@ -128,10 +134,7 @@ module.exports.bootServer = function (overWriteFn) {
 
             //Sessions
             serverApp.keys = jollof.config.crypto.secrets;
-            serverApp.use(convert(session({
-                store: redisStore(jollof.config.sessions.redis),
-                // store: require("koa-generic-session/lib/memory_store")
-            })));
+            serverApp.use(convert(session(jollof.config, serverApp)));
 
             // add the CSRF middleware
             serverApp.use(new CSRF({
@@ -153,6 +156,7 @@ module.exports.bootServer = function (overWriteFn) {
                 this.state.sessionId = this.sessionId;
                 this.state.env = jollof.config.env;
                 this.state.config = jollof.config;
+                this.state.passport = passport;
                 return yield next;
             }));
 

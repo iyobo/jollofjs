@@ -71,7 +71,7 @@
     $('#loginform').on('submit',function(evt){
         evt.preventDefault();
         $.post('/login',$( this ).serialize(), function(data){
-            alert(data);
+
         })
     });
 
