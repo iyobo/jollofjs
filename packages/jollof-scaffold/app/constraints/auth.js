@@ -13,7 +13,7 @@ const boom = require('boom');
 exports.canViewAdmin = async (ctx, next) => {
 
     //TODO: change this to actual auth.
-    if (ctx.a) {
+    if (true) {
         console.log('Can see admin')
         await next();
     }

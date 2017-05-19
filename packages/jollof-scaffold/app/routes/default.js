@@ -1,7 +1,11 @@
 const main = require('../controllers/mainController');
+const auth = require('../controllers/authController');
 
 module.exports = {
     '/': { flow: main.index},
+    'post /login': { flow: auth.doLogin},
+    'post /signup': { flow: auth.doSignup},
+
     //'get /api/v1/resource': { flow: [auth.loggedIn, admin.models] },
     //'get /api/v1/resource/:modelName': { flow: [auth.loggedIn, admin.list] },
     //'get /api/v1/resource/:modelName/:id': { flow: [auth.loggedIn, admin.get] },

@@ -36,18 +36,19 @@
         {% else %}
             <div class="login-page">
                 <div class="form">
-                    <form class="register-form" method="post" action="/signup">
-                        {#<input type="hidden" name="_csrf" value="{{ csrf }}" />#}
-                        <input type="text" placeholder="name"/>
-                        <input type="password" placeholder="password"/>
-                        <input type="text" placeholder="email address"/>
+                    <form id="signupForm" class="register-form" >
+                        <input type="hidden" name="_csrf" value="{{ csrf }}" />
+                        <input name="firstName" type="text" placeholder="First"/>
+                        <input name="lastName" type="text" placeholder="Last"/>
+                        <input name="password" type="password" placeholder="password"/>
+                        <input name="email" type="text" placeholder="email address"/>
                         <input type="submit" class="button" value="Sign Up"/>
                         <p class="message">Already registered? <a href="javascript:;">Log In</a></p>
                     </form>
-                    <form class="login-form" method="post" action="/login">
+                    <form id="loginform" class="login-form" >
                         <input type="hidden" name="_csrf" value="{{ csrf }}" />
-                        <input type="text" placeholder="username"/>
-                        <input type="password" placeholder="password"/>
+                        <input name="username" type="text" placeholder="Email or Username"/>
+                        <input name="password" type="password" placeholder="password"/>
                         <input type="submit" class='button' value="Login" />
                         <p class="message">Not registered? <a href="javascript:;">Sign Up</a></p>
                     </form>
@@ -65,6 +66,16 @@
     $('.message a').click(function () {
         $('form').animate({ height: "toggle", opacity: "toggle" }, "medium");
     });
+
+
+    $('#loginform').on('submit',function(evt){
+        evt.preventDefault();
+        $.post('/login',$( this ).serialize(), function(data){
+            alert(data);
+        })
+    });
+
+
 </script>
 
 </body>

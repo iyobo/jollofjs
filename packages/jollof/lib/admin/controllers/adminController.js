@@ -131,7 +131,7 @@ module.exports = {
 
             const res = await models[modelName].persist(payload);
             ctx.body = res.display();
-            console.log(ctx.body);
+            //console.log(ctx.body);
         } catch (err) {
             httpUtil.handleError(ctx, err);
         }
