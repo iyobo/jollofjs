@@ -14,42 +14,45 @@
             <span>Welcome to Jollof<span class="js">JS</span></span>
         </div>
         {% if user %}
-        <div class="subtitle">
-            <div class="col">
+            <div class="subtitle">
+                <div class="col">
 
-                {% if user.isAdmin %}
-                <a href="/admin">
-                    <div class="gobox animated bounceIn">
-                        <img class="adminCog animated rotateIn" src="/jollofstatic/img/cog-256.png" width="60px"/>
-                        <span class="adminLabel animated fadeInLeft">To the Admin</span>
-                    </div>
-                </a>
-                {% else %}
-                You are logged In!
-                {% endif %}
+                    {% if user.isAdmin %}
+                        <a href="/admin">
+                            <div class="gobox animated bounceIn">
+                                <img class="adminCog animated rotateIn" src="/jollofstatic/img/cog-256.png"
+                                     width="60px"/>
+                                <span class="adminLabel animated fadeInLeft">To the Admin</span>
+                            </div>
+                        </a>
+                    {% else %}
+                        You are logged In!
+                    {% endif %}
 
-                <a href="/logout">Logout</a>
+                    <a href="/logout">Logout</a>
+                </div>
             </div>
-        </div>
 
         {% else %}
-        <div class="login-page">
-            <div class="form">
-                <form class="register-form">
-                    <input type="text" placeholder="name"/>
-                    <input type="password" placeholder="password"/>
-                    <input type="text" placeholder="email address"/>
-                    <button>create</button>
-                    <p class="message">Already registered? <a href="javascript:;">Log In</a></p>
-                </form>
-                <form class="login-form">
-                    <input type="text" placeholder="username"/>
-                    <input type="password" placeholder="password"/>
-                    <button>login</button>
-                    <p class="message">Not registered? <a href="javascript:;">Sign Up</a></p>
-                </form>
+            <div class="login-page">
+                <div class="form">
+                    <form class="register-form" method="post" action="/signup">
+                        {#<input type="hidden" name="_csrf" value="{{ csrf }}" />#}
+                        <input type="text" placeholder="name"/>
+                        <input type="password" placeholder="password"/>
+                        <input type="text" placeholder="email address"/>
+                        <input type="submit" class="button" value="Sign Up"/>
+                        <p class="message">Already registered? <a href="javascript:;">Log In</a></p>
+                    </form>
+                    <form class="login-form" method="post" action="/login">
+                        <input type="hidden" name="_csrf" value="{{ csrf }}" />
+                        <input type="text" placeholder="username"/>
+                        <input type="password" placeholder="password"/>
+                        <input type="submit" class='button' value="Login" />
+                        <p class="message">Not registered? <a href="javascript:;">Sign Up</a></p>
+                    </form>
+                </div>
             </div>
-        </div>
         {% endif %}
 
 

@@ -346,7 +346,7 @@ exports.modelize = function (schema) {
         }
 
         /**
-         * Finds one by json match
+         * Finds by json match
          * @param match json match
          * @param opts
          * @returns {Promise.<*>}

@@ -27,6 +27,8 @@ const kValidate = require('koa-better-validation');
 
 const httpUtil = require('../util/httpUtil');
 
+const CSRF = require('koa-csrf');
+
 var helmet = require('koa-helmet')
 const Router = require('koa-jollof-router');
 
@@ -131,6 +133,16 @@ module.exports.bootServer = function (overWriteFn) {
                 // store: require("koa-generic-session/lib/memory_store")
             })));
 
+            // add the CSRF middleware
+            serverApp.use(new CSRF({
+                invalidSessionSecretMessage: 'Invalid session secret',
+                invalidSessionSecretStatusCode: 403,
+                invalidTokenMessage: 'Invalid CSRF token',
+                invalidTokenStatusCode: 403,
+                excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
+                disableQuery: false
+            }));
+
 
             serverApp.use(passport.initialize());
             serverApp.use(passport.session());
@@ -179,11 +191,14 @@ module.exports.bootServer = function (overWriteFn) {
                 return yield next;
             }));
 
-            //Router
-            let router = new Router();
+            serverApp.use(async (ctx, next) => {
 
-            ////APP ROUTES
-            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
+                if (ctx.method === 'GET') {
+                    ctx.state.csrf = ctx.csrf;
+                }
+
+                return next();
+            });
 
             //nunjucks
             jollof.config.nunjucks.configureEnvironment= (env) => {
@@ -191,12 +206,11 @@ module.exports.bootServer = function (overWriteFn) {
             };
             serverApp.use( koaNunjucks(jollof.config.nunjucks));
 
-            //add nunjuck filters/extensions
-            //if (!JOLLOF_STANDALONE) {
-            //    jollof.view.setupFilters(serverApp.context.render.env);
-            //}
+            //Router
+            let router = new Router();
 
-
+            ////APP ROUTES
+            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
 
             //If Admin is enabled
             if (jollof.config.admin.enabled || JOLLOF_STANDALONE) {
@@ -204,7 +218,7 @@ module.exports.bootServer = function (overWriteFn) {
                 router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
             }
 
-            //Give Framework user a chance to set things stuff
+            //Give Framework user a chance to set things up or mount stuff
             if (overWriteFn)
                 overWriteFn(serverApp);
 
