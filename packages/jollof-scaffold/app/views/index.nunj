@@ -5,6 +5,7 @@
     <title>JollofJS</title>
     <link rel="stylesheet" href="/static/css/animate.css"/>
     <link rel="stylesheet" href="/static/css/home.css"/>
+    <link rel="stylesheet" href="/static/css/login.css"/>
 </head>
 <body id="background">
 <header>
@@ -12,21 +13,56 @@
         <div class="title">
             <span>Welcome to Jollof<span class="js">JS</span></span>
         </div>
-
+        {% if user %}
         <div class="subtitle">
             <div class="col">
+
+                {% if user.isAdmin %}
                 <a href="/admin">
                     <div class="gobox animated bounceIn">
                         <img class="adminCog animated rotateIn" src="/jollofstatic/img/cog-256.png" width="60px"/>
                         <span class="adminLabel animated fadeInLeft">To the Admin</span>
                     </div>
                 </a>
-            </div>
+                {% else %}
+                You are logged In!
+                {% endif %}
 
+                <a href="/logout">Logout</a>
+            </div>
         </div>
+
+        {% else %}
+        <div class="login-page">
+            <div class="form">
+                <form class="register-form">
+                    <input type="text" placeholder="name"/>
+                    <input type="password" placeholder="password"/>
+                    <input type="text" placeholder="email address"/>
+                    <button>create</button>
+                    <p class="message">Already registered? <a href="javascript:;">Log In</a></p>
+                </form>
+                <form class="login-form">
+                    <input type="text" placeholder="username"/>
+                    <input type="password" placeholder="password"/>
+                    <button>login</button>
+                    <p class="message">Not registered? <a href="javascript:;">Sign Up</a></p>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+
     </div>
 
 </header>
+
+<script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+    $('.message a').click(function () {
+        $('form').animate({ height: "toggle", opacity: "toggle" }, "medium");
+    });
+</script>
 
 </body>
 </html>

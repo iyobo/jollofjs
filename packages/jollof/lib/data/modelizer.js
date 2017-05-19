@@ -248,6 +248,26 @@ exports.modelize = function (schema) {
         }
 
         /**
+         * Finds one by json match
+         * @param match json match
+         * @param opts
+         * @returns {Promise.<*>}
+         */
+        static async findOneBy(match, opts = {}) {
+
+            const q = [];
+
+            _.each(match,(v,k)=>{
+                q.push(jql`${k} = ${v}`);
+            });
+
+            let res = await Model.findOne(q.join(' and '), opts);
+
+            return res;
+        }
+
+
+        /**
          * Searches for all matching items, and returns according to options.
          *
          * @param {string} queryString - A safe JQL string.
@@ -321,6 +341,25 @@ exports.modelize = function (schema) {
             if (Array.isArray(res)) {
                 res = res.length > 0 ? res[0] : {};
             }
+
+            return res;
+        }
+
+        /**
+         * Finds one by json match
+         * @param match json match
+         * @param opts
+         * @returns {Promise.<*>}
+         */
+        static async findBy(match, opts = {}) {
+
+            const q = [];
+
+            _.each(match,(v,k)=>{
+                q.push(jql`${k} = ${v}`);
+            });
+
+            let res = await Model.find(q.join(' and '), opts);
 
             return res;
         }

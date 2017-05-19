@@ -13,7 +13,7 @@ const boom = require('boom');
 exports.canViewAdmin = async (ctx, next) => {
 
     //TODO: change this to actual auth.
-    if (true) {
+    if (ctx.a) {
         console.log('Can see admin')
         await next();
     }
@@ -22,4 +22,15 @@ exports.canViewAdmin = async (ctx, next) => {
         throw new boom.notFound('Not Found')
     }
 
-}
+};
+
+/**
+ * Determines in one is logged In
+ * @param ctx
+ * @param next
+ * @returns {Promise.<void>}
+ */
+exports.loggedIn = async (ctx, next) =>{
+
+
+};

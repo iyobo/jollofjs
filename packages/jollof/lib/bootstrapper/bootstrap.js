@@ -127,7 +127,7 @@ module.exports.bootServer = function (overWriteFn) {
             //Sessions
             serverApp.keys = jollof.config.crypto.secrets;
             serverApp.use(convert(session({
-                store: redisStore(jollof.config.sessions.redis)
+                store: redisStore(jollof.config.sessions.redis),
                 // store: require("koa-generic-session/lib/memory_store")
             })));
 
@@ -173,13 +173,13 @@ module.exports.bootServer = function (overWriteFn) {
                 rootPath: jollof.config.fileStorage.engines.local.basePublicUrl
             })));
 
-            //Better formdata parsing
+            //Jollof formdata parsing
             serverApp.use(convert(function*(next) {
                 yield httpUtil.objectify(this);
                 return yield next;
             }));
 
-            //TODO: use this for main app router too
+            //Router
             let router = new Router();
 
             ////APP ROUTES
