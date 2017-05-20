@@ -54,6 +54,16 @@ module.exports = {
         overwrite: true, /** (boolean) can overwrite or not (default true) */
         httpOnly: true, /** (boolean) httpOnly or not (default true) */
         signed: true, /** (boolean) signed or not (default true) */
+
+        /**
+         * see https://www.npmjs.com/package/redis#options-is-an-object-with-the-following-possible-properties
+         * Also, only using redis directly for sessions, not as a model engine, so no model adapter needed.
+         */
+        redis: {
+            host: "127.0.0.1",
+            port: 6379,
+            db: 0
+        },
     },
 
     /**

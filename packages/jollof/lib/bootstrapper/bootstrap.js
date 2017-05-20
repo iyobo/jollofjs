@@ -134,7 +134,11 @@ module.exports.bootServer = function (overWriteFn) {
 
             //Sessions
             serverApp.keys = jollof.config.crypto.secrets;
-            serverApp.use(convert(session(jollof.config, serverApp)));
+            //serverApp.use(convert(session(jollof.config, serverApp)));
+            serverApp.use(convert(session({
+                store: redisStore(jollof.config.sessions.redis),
+                // store: require("koa-generic-session/lib/memory_store")
+            })));
 
             // add the CSRF middleware
             serverApp.use(new CSRF({
@@ -156,7 +160,7 @@ module.exports.bootServer = function (overWriteFn) {
                 this.state.sessionId = this.sessionId;
                 this.state.env = jollof.config.env;
                 this.state.config = jollof.config;
-                this.state.passport = passport;
+                this.passport = passport;
                 return yield next;
             }));
 
