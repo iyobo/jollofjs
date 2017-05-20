@@ -113,7 +113,7 @@ module.exports.bootServer = function (overWriteFn) {
             serverApp.proxy = true;
 
             //Setup passport auth strategies
-            require(appPaths.appRoot+'/app/services/passport/strategies').setupStrategies(passport);
+            require(appPaths.appRoot+'/app/services/passport/strategies').setupStrategies(serverApp, passport);
 
             //wear helmet for security
             serverApp.use(helmet());

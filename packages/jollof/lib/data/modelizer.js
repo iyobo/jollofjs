@@ -168,7 +168,7 @@ exports.modelize = function (schema) {
             const g = await adapter.addSchema(schema);
 
             //Now let the model configure it's own self against its native adapter (e.g indexes etc)
-            if(Model.native && Model.native.init){
+            if (Model.native && Model.native.init) {
                 await Model.native.init();
             }
         }
@@ -257,11 +257,31 @@ exports.modelize = function (schema) {
 
             const q = [];
 
-            _.each(match,(v,k)=>{
+            _.each(match, (v, k) => {
                 q.push(jql`${k} = ${v}`);
             });
 
             let res = await Model.findOne(q.join(' and '), opts);
+
+            return res;
+        }
+
+
+        /**
+         * Finds one by json match or creates with those values if not exist
+         *
+         * @param match json match
+         * @param opts
+         * @returns - found or created object
+         */
+        static async findOrCreate(match, opts = {}) {
+
+            let res = await Model.findOneBy(match);
+
+            if (res) {
+                res = new Model(match);
+                await res.save();
+            }
 
             return res;
         }
@@ -355,7 +375,7 @@ exports.modelize = function (schema) {
 
             const q = [];
 
-            _.each(match,(v,k)=>{
+            _.each(match, (v, k) => {
                 q.push(jql`${k} = ${v}`);
             });
 
@@ -644,7 +664,7 @@ exports.modelize = function (schema) {
     /**
      * setup methods
      */
-    _.each(schema.methods, (v, k)=>{
+    _.each(schema.methods, (v, k) => {
         Model[k] = v;
     })
 
@@ -652,7 +672,7 @@ exports.modelize = function (schema) {
     /**
      * Setup native functions
      */
-    if(schema.native){
+    if (schema.native) {
         //First grab the set of native functions by this Collection's active native type.
         // A collection can only have 1 active native type per run.
         const activeNativeFunctions = schema.native[activeNativeType];
@@ -682,7 +702,7 @@ exports.modelize = function (schema) {
         const nativeProxy = new Proxy({}, nativeProxyAcessor);
         Model.native = nativeProxy;
     }
-    else{
+    else {
         //in-case a model has static native overriden via methods
         Model.native = Model.native || {};
     }
