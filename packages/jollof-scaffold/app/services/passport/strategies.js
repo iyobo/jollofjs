@@ -43,7 +43,7 @@ exports.setupStrategies = (app, passport) => {
                  done(null, user)
 
             } else {
-                 done(null, false)
+                 done(null, null)
             }
         } catch (err) {
              done(err)

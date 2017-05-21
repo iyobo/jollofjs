@@ -84,11 +84,11 @@
             }
             else{
                 toastr.warning(data.message);
-                $('#msg').html(data.message);
+//                $('#msg').html(data.message);
             }
         }).fail(function(){
             toastr.warning('Unable to Login. Please try again later');
-            $('#msg').html('Unable to Login. Please try again later');
+//            $('#msg').html('Unable to Login. Please try again later');
         })
     });
 

@@ -2,29 +2,27 @@ const boom = require('boom');
 
 exports.doLogin = async (ctx) => {
 
-    //accomodate old tech!
-    await new Promise((resolve, reject)=> {
+    //Authenticate using the local strategy defined in app/service/passport/strategy
+    //See there for other strategies.
+    const authenticatedUser = await new Promise((resolve, reject)=> {
         ctx.passport.authenticate('local', function (err, user) {
 
             if (err) {
-                console.error(err)
-                ctx.body = new boom.internal(err.message);
-                reject();
+                reject(err);
             }
 
-            if (user === false) {
-                //ctx.status = 401;
-                ctx.body = { success: false, message: 'Invalid Credentials' };
-            } else {
-                ctx.body = { success: true };
-                ctx.login(user);
-
-            }
-            resolve();
+            resolve(user);
         })(ctx);
     });
 
+    if (authenticatedUser) {
+        ctx.body = { success: true };
+        ctx.login(authenticatedUser);
 
+    } else {
+        //ctx.status = 401;
+        ctx.body = { success: false, message: 'Invalid Credentials' };
+    }
 
 
 }
@@ -44,7 +42,7 @@ exports.logout = async (ctx) => {
  */
 //
 //exports.authFacebook = async(ctx)=>{
-//    await passport.authenticate('facebook');
+//    await ctx.passport.authenticate('facebook');
 //}
 //
 //exports.authFacebookCallback = async(ctx)=>{

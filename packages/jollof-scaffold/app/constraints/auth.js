@@ -12,9 +12,21 @@ const boom = require('boom');
  */
 exports.canViewAdmin = async (ctx, next) => {
 
-    //TODO: change this to actual auth.
+    //TODO: Also include isAdmin authorization check.
+    await exports.loggedIn(ctx, next);
+
+};
+
+/**
+ * Determines if one is logged In
+ * @param ctx
+ * @param next
+ * @returns {Promise.<void>}
+ */
+exports.loggedIn = async (ctx, next) =>{
+
     if (ctx.isAuthenticated()) {
-    //if (true) {
+        //if (true) {
         console.log('Can see admin')
         await next();
     }
@@ -22,16 +34,5 @@ exports.canViewAdmin = async (ctx, next) => {
         //If user is not authorized to use admin, throw a misleading 404 to avoid hinting.
         ctx.redirect('/');
     }
-
-};
-
-/**
- * Determines in one is logged In
- * @param ctx
- * @param next
- * @returns {Promise.<void>}
- */
-exports.loggedIn = async (ctx, next) =>{
-
 
 };
