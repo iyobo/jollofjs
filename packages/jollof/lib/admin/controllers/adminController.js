@@ -140,7 +140,7 @@ module.exports = {
     //Delete or disable
     delete: async function (ctx) {
         try {
-            const id = ctx.patams.id;
+            const id = ctx.params.id;
             const modelName = ctx.params.modelName;
             ctx.body = await models[modelName].remove(jql`id=${id}`)
         } catch (err) {

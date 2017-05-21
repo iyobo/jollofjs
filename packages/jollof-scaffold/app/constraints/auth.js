@@ -14,6 +14,7 @@ exports.canViewAdmin = async (ctx, next) => {
 
     //TODO: change this to actual auth.
     if (ctx.isAuthenticated()) {
+    //if (true) {
         console.log('Can see admin')
         await next();
     }

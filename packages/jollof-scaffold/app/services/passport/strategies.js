@@ -33,23 +33,23 @@ exports.setupStrategies = (app, passport) => {
      * The Passport Local Strategy covers checking username and password against a datasource.
      */
     const LocalStrategy = require('passport-local').Strategy
-    passport.use(new LocalStrategy( function (username, password, done) {
+    passport.use(new LocalStrategy( async function (username, password, done) {
 
         // This user object only uses Email.
         try {
-            const user =  User.findOneBy({ email: username });
+            const user =  await User.findOneBy({ email: username });
 
-            if (user &&  crypto.compare(password, user.password)) {
-                return done(null, user)
+            if (user &&  await crypto.compare(password, user.password)) {
+                 done(null, user)
 
             } else {
-                return done(null, false)
+                 done(null, false)
             }
         } catch (err) {
-            return done(err)
+             done(err)
         }
 
-    }))
+    }));
 
 
     /**

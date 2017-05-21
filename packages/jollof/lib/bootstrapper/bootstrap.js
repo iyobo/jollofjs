@@ -141,14 +141,14 @@ module.exports.bootServer = function (overWriteFn) {
             })));
 
             // add the CSRF middleware
-            serverApp.use(new CSRF({
-                invalidSessionSecretMessage: 'Invalid session secret',
-                invalidSessionSecretStatusCode: 403,
-                invalidTokenMessage: 'Invalid CSRF token',
-                invalidTokenStatusCode: 403,
-                excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
-                disableQuery: false
-            }));
+            //serverApp.use(new CSRF({
+            //    invalidSessionSecretMessage: 'Invalid session secret',
+            //    invalidSessionSecretStatusCode: 403,
+            //    invalidTokenMessage: 'Invalid CSRF token',
+            //    invalidTokenStatusCode: 403,
+            //    excludedMethods: [ 'GET', 'HEAD', 'OPTIONS','DELETE' ],
+            //    disableQuery: false
+            //}));
 
 
             serverApp.use(passport.initialize());

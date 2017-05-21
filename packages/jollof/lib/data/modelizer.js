@@ -258,10 +258,12 @@ exports.modelize = function (schema) {
             const q = [];
 
             _.each(match, (v, k) => {
-                q.push(jql`${k} = ${v}`);
+                q.push(k+jql` = ${v}`);
             });
 
-            let res = await Model.findOne(q.join(' and '), opts);
+            const qstr = q.join(' and ');
+
+            let res = await Model.findOne(qstr, opts);
 
             return res;
         }
@@ -359,7 +361,7 @@ exports.modelize = function (schema) {
             let res = await Model.find(queryString, opts);
 
             if (Array.isArray(res)) {
-                res = res.length > 0 ? res[0] : {};
+                res = res.length > 0 ? res[0] : null;
             }
 
             return res;

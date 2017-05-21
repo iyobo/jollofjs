@@ -2,22 +2,31 @@ const boom = require('boom');
 
 exports.doLogin = async (ctx) => {
 
-    ctx.passport.authenticate('local', function (err, user) {
-        if (err) {
-            ctx.body = new boom.internal(err.message);
+    //accomodate old tech!
+    await new Promise((resolve, reject)=> {
+        ctx.passport.authenticate('local', function (err, user) {
 
-        }
+            if (err) {
+                console.error(err)
+                ctx.body = new boom.internal(err.message);
+                reject();
+            }
 
-        if (user === false) {
-            //ctx.status = 401
-            ctx.body = { success: false, message: 'Invalid Credentials' }
-        } else {
-            ctx.body = { success: true }
-            return ctx.login(user)
-        }
+            if (user === false) {
+                //ctx.status = 401;
+                ctx.body = { success: false, message: 'Invalid Credentials' };
+            } else {
+                ctx.body = { success: true };
+                ctx.login(user);
+
+            }
+            resolve();
+        })(ctx);
     });
 
-    console.log('what')
+
+
+
 }
 
 exports.doSignup = async (ctx) => {

@@ -38,6 +38,7 @@
             <div class="login-page">
 
                 <div class="form">
+                    <div id="msg" style="color: orangered; padding:2px;"></div>
                     <form id="signupForm" class="register-form" >
                         <input type="hidden" name="_csrf" value="{{ csrf }}" />
                         <input name="firstName" type="text" placeholder="First"/>
@@ -83,7 +84,11 @@
             }
             else{
                 toastr.warning(data.message);
+                $('#msg').html(data.message);
             }
+        }).fail(function(){
+            toastr.warning('Unable to Login. Please try again later');
+            $('#msg').html('Unable to Login. Please try again later');
         })
     });
 
