@@ -34,7 +34,6 @@ const Router = require('koa-jollof-router');
 
 const convert = require('koa-convert') // necessary until all have been updated to support koa@2
 const passport = require('koa-passport')
-var toStringArt = require('../util/stringUtil.js').toStringArt;
 
 let modelsLoaded = false;
 
@@ -62,23 +61,17 @@ function* loadModels() {
  */
 module.exports.boot = function (fn) {
     return co(function*() {
-        try {
 
-            console.log(yield toStringArt('JollofJS'));
-            //Load models
-            yield loadModels();
+        //Load models
+        yield loadModels();
 
-            //Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
-            log.info("[Jollof] Starting Jollof app... \n APPROOT: " + appPaths.appRoot + " \n Env: " + process.env.NODE_ENV);
+        //Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
+        log.info("[Jollof] Starting Jollof Server app... \n APPROOT: " + appPaths.appRoot);
 
-            //Run the application
-            if (fn)
-                return yield fn(process.argv.slice(2));
+        //Run the application
+        if (fn)
+            return yield fn(process.argv.slice(2));
 
-            return;
-        } catch (err) {
-            log.error(err.stack)
-        }
 
     }).catch(function (err) {
         log.error("[bootstrapper] Gracefully handled exception...")
@@ -98,8 +91,6 @@ module.exports.bootServer = function (overWriteFn) {
 
         try {
 
-            console.log(yield toStringArt('JollofJS'));
-
             //Load models
             yield loadModels();
 
@@ -117,7 +108,7 @@ module.exports.bootServer = function (overWriteFn) {
             serverApp.proxy = true;
 
             //Setup passport auth strategies
-            require(appPaths.appRoot+'/app/services/passport/strategies').setupStrategies(serverApp, passport);
+            require(appPaths.appRoot + '/app/services/passport/strategies').setupStrategies(serverApp, passport);
 
             //wear helmet for security
             serverApp.use(helmet());
@@ -129,7 +120,7 @@ module.exports.bootServer = function (overWriteFn) {
             })));
 
             //koa-better-body annoyingly doesn't put fields in body. Fixes that
-            serverApp.use( convert(function*(next) {
+            serverApp.use(convert(function*(next) {
                 if (this.request.fields) {
                     this.request.body = this.request.fields;
                 }
@@ -213,10 +204,10 @@ module.exports.bootServer = function (overWriteFn) {
             });
 
             //nunjucks
-            jollof.config.nunjucks.configureEnvironment= (env) => {
+            jollof.config.nunjucks.configureEnvironment = (env) => {
                 jollof.view.setupFilters(env)
             };
-            serverApp.use( koaNunjucks(jollof.config.nunjucks));
+            serverApp.use(koaNunjucks(jollof.config.nunjucks));
 
             //Router
             let router = new Router();

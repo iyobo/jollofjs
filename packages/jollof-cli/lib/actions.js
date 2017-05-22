@@ -2,17 +2,45 @@
  * Created by iyobo on 2017-05-21.
  */
 var chalk = require('chalk');
+var path = require('path');
 
+/**
+ * Run a command in a project
+ * @param args
+ * @returns {Promise.<void>}
+ */
 exports.run = async function (args) {
 
-    console.log(args);
+    if(args._.length <= 0){
+        throw new Error('No run command specified i.e jollof run <command>')
+    }
+
+    const root = process.cwd();
+    const command = args._[0];
+
+    console.log(`Preparing to run command "${command}" at "${root}"...\n`);
+    args._ = args._.slice(1);
+
+    require(path.join(root,'commands', command ))(args);
 }
 
+/**
+ * Create/Scaffold new project
+ * @param args
+ * @returns {Promise.<void>}
+ */
 exports.new = async function (args) {
 
-    console.log('Creating new project with', args);
+    console.log('Coming soon...', args);
+
 }
 
+
+/**
+ * Show help
+ * @param args
+ * @returns {Promise.<void>}
+ */
 exports.help = async function (args) {
 
     console.log(`

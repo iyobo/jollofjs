@@ -109,7 +109,7 @@ exports.convertConditionsFromJollof = (conditions) => {
 
     translateList(conditions, query);
 
-    console.log('conditions:', conditions, 'query:', query);
+    //console.log('conditions:', conditions, 'query:', query);
 
     return query;
 }

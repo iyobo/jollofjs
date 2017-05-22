@@ -13,14 +13,3 @@ exports.capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.toStringArt = async (str) => {
-    return await new Promise((resolve, reject) => {
-        figlet(str, function(err, data) {
-            if (err) {
-                return reject(err);
-            }
-
-            return resolve(data);
-        });
-    });
-}

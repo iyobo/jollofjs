@@ -156,8 +156,6 @@ exports.modelize = function (schema) {
                 }
             }
 
-            //console.log(this._data)
-
             return thisProxy;
         }
 
@@ -543,8 +541,7 @@ exports.modelize = function (schema) {
             }
 
             this._originalData = _.clone(this._data);
-            //reload data
-            //console.log('adapter.save', res);
+
 
             return this.display();
         }

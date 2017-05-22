@@ -47,28 +47,28 @@ const schema = {
      */
     native: {
         memory: {
-            * init(){
+            async init(){
                 console.log('Memory: Finished Setting up Foo ');
             },
 
-            * pityFoo(fooName){
+            async pityFoo(fooName){
                 console.log(`memory: pity! ${fooName} context: ${this.db}`);
             },
 
-            * slapFoo(){
+            async slapFoo(){
                 console.log('memory slap', this.db)
             }
         },
         mongodb: {
-            * init(){
+            async init(){
                 console.log('MongoDB: Finished Setting up Foo ');
             },
 
-            * pityFoo(coll){
+            async pityFoo(param){
                 console.log('mongo pity!', this._adapterName)
             },
 
-            * slapFoo(){
+            async slapFoo(){
                 console.log('mongo slap', this._adapterName)
             }
         }

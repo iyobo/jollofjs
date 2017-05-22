@@ -75,7 +75,7 @@ class JollofDataMemory {
     async find(collectionName, criteria, opts = {}) {
         //If we're paging
         let res;
-        //console.log('find criteria', criteria)
+
         if (opts) {
 
             const options = {};
@@ -123,7 +123,7 @@ class JollofDataMemory {
     async update(collectionName, criteria, newValues, opts) {
         //opts = convertConditionsFromJollof(opts);
         const res = await this.db[collectionName].updateAsync(convertConditionsFromJollof(criteria), newValues);
-        //console.log('item update result', res);
+
         return res;
     }
 
