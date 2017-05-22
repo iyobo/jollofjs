@@ -14,7 +14,7 @@ exports.canViewAdmin = async (ctx, next) => {
 
     if (ctx.isAuthenticated() && ctx.state.user.isAdmin) {
         //if (true) {
-        console.log('Can see admin')
+        //console.log('Can see admin')
         await next();
     }
     else {
