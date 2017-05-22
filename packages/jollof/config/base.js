@@ -11,20 +11,20 @@ module.exports = {
     },
 
     // Uncomment to use mongodb as Default datasource. Otherwise an in-Memory datasource will be used.
-    data: {
-        dataSources: {
-            default: {
-                adapter: require('jollof-data-mongodb'),
-                nativeType: 'mongodb',
-                options: {
-                    mongoUrl: 'mongodb://localhost/jollofdb',
-                    opts: {
-                        poolSize: 5 //max connections per node process for this mongodb datasource
-                    }
-                }
-            }
-        }
-    },
+    //data: {
+    //    dataSources: {
+    //        default: {
+    //            adapter: require('jollof-data-mongodb'),
+    //            nativeType: 'mongodb',
+    //            options: {
+    //                mongoUrl: 'mongodb://localhost/jollofdb',
+    //                opts: {
+    //                    poolSize: 5 //max connections per node process for this mongodb datasource
+    //                }
+    //            }
+    //        }
+    //    }
+    //},
 
 }
 

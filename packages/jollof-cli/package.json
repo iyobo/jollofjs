@@ -1,0 +1,24 @@
+{
+  "name": "jollof-cli",
+  "version": "0.0.1",
+  "description": "The Entry point to creating and working with Jollof Projects",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jollof",
+    "cli"
+  ],
+  "preferGlobal": true,
+  "bin": {
+    "jollof": "bin/jollof-cli.js"
+  },
+  "author": "Iyobo Eki",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "figlet": "^1.2.0",
+    "minimist": "^1.2.0"
+  }
+}

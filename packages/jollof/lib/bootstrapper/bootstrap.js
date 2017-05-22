@@ -34,6 +34,7 @@ const Router = require('koa-jollof-router');
 
 const convert = require('koa-convert') // necessary until all have been updated to support koa@2
 const passport = require('koa-passport')
+var toStringArt = require('../util/stringUtil.js').toStringArt;
 
 let modelsLoaded = false;
 
@@ -63,6 +64,7 @@ module.exports.boot = function (fn) {
     return co(function*() {
         try {
 
+            console.log(yield toStringArt('JollofJS'));
             //Load models
             yield loadModels();
 
@@ -95,6 +97,8 @@ module.exports.bootServer = function (overWriteFn) {
     return co(function*() {
 
         try {
+
+            console.log(yield toStringArt('JollofJS'));
 
             //Load models
             yield loadModels();
