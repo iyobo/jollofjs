@@ -1,6 +1,6 @@
 {
   "name": "jollof-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The Entry point to creating and working with Jollof Projects",
   "main": "./lib/index.js",
   "scripts": {
