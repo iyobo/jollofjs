@@ -35,7 +35,7 @@ const schema = {
         }
     },
     /**
-     * Methods are convenience functions that are statically attached to a Model. e.g Foo.findNear(...)
+     * Methods are convenience functions that are statically attached to a Model. e.g User.findNear(...)
      */
     methods: { //
         * findNear(long1, lat1, long2, lat2){
@@ -43,29 +43,21 @@ const schema = {
         }
     },
     /**
-     * Natives are functions that you can use to access the full power of whatever native type this model's active connector belongs to.
+     * Natives are functions that you can use to access the full power of whatever native type this model's active connector belongs to. i.e. User.native.pityFoo({foo: 'bar'}).
+     *
+     * The init native function of a model will always be ran automatically after the model's adapter finishes initialization.
+     * This is generally where you want to set indexes.
      */
     native: {
-        memory: {
-            async init(){
-                console.log('Memory: Finished Setting up Foo ');
-            },
-
-            async pityFoo(fooName){
-                console.log(`memory: pity! ${fooName} context: ${this.db}`);
-            },
-
-            async slapFoo(){
-                console.log('memory slap', this.db)
-            }
-        },
         mongodb: {
             async init(){
                 console.log('MongoDB: Finished Setting up Foo ');
+
+                await this.db.collection('User').createIndex({email: 1});
             },
 
             async pityFoo(param){
-                console.log('mongo pity!', this._adapterName)
+                console.log('mongo pity!', this._adapterName, params.foo)
             },
 
             async slapFoo(){
