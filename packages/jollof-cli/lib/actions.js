@@ -64,6 +64,7 @@ exports.new = async function (args) {
     console.log(chalk.yellow('Setting table...'));
     let file = editJsonFile(path.join(destination, 'package.json'));
     file.set('name', projectName);
+    file.set('scripts.prepublish', '');
     file.save();
 
     //Now run 'npm i'
