@@ -14,18 +14,37 @@ module.exports = class extends Generator {
     }
 
     prompting() {
-        return this.prompt([{
-            type    : 'input',
-            name    : 'name',
-            message : 'Your project name',
-            default : this.appname // Default to current folder name
-        }, {
-            type    : 'confirm',
-            name    : 'cool',
-            message : 'Would you like to enable the Cool feature?'
-        }]).then((answers) => {
-            this.log('app name', answers.name);
-            this.log('cool feature', answers.cool);
+        return this.prompt([
+            {
+                type: 'input',
+                name: 'name',
+                message: 'Your project name',
+                default: this.appname // Default to current folder name
+            },
+            //{
+            //    type: 'confirm',
+            //    name: 'cool',
+            //    message: 'Would you like to enable the Cool feature?'
+            //},
+            {
+                type: 'input',
+                name: 'description',
+                message: 'Your project description?',
+                default: 'A JollofJS app'
+            }
+        ]).then((answers) => {
+            this.log('App name', answers.name);
+            this.log('Description', answers.description);
         });
     }
+
+
+    moveFiles() {
+        this.fs.copyTpl(
+            this.templatePath('index.html'),
+            this.destinationPath('public/index.html'),
+            { title: 'Templating with Yeoman' }
+        );
+    }
+
 };
