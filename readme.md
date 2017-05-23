@@ -2,7 +2,7 @@
 
 The tastiest **NodeJS Application Framework** you ever ate.
 
-![joi Logo](https://raw.github.com/iyobo/jollofjs/master/images/jollof.png)
+![jollof Logo](https://raw.github.com/iyobo/jollof/master/images/jollof.png)
 
 
 ## Key Features
