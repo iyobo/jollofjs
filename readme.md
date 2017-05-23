@@ -60,3 +60,18 @@ You are highly advised to study the structure of this new app, starting from ind
 ## Jollof Admin
 
 To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
+
+![jollof admin](https://raw.github.com/iyobo/jollof/master/images/admin.png)
+
+Editing an item in the Admin...
+
+![jollof edit](https://raw.github.com/iyobo/jollof/master/images/edit.png)
+
+
+
+The Jollof Admin is, quite frankly, the Saber's edge of all NodeJS frameworks. 
+Jollof Admin automatically creates a user interface to administer all your models, as well as in-built models.
+
+Right now, the app you created has only one model `User`.
+
+See the Jollof Wiki for how to work with Models.
