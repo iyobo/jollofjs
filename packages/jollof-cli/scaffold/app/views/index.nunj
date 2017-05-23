@@ -30,6 +30,7 @@
                         You are logged In!
                     {% endif %}
                     <br/>
+                    <br/>
                     <a href="/logout">Logout</a>
                 </div>
             </div>

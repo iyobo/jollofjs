@@ -4,6 +4,7 @@
 var chalk = require('chalk');
 var path = require('path');
 const editJsonFile = require("edit-json-file");
+const childProc = require('child_process');
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
 
@@ -46,10 +47,10 @@ exports.new = async function (args) {
     let scaffoldSource = path.join(__dirname, '..', 'scaffold');
     let destination = path.join(currentLocation, projectName);
 
-    console.log('Cooking Project: '+projectName+'...');
+    console.log('Cooking Project: ' + projectName + '...');
 
     //move scaffold files
-    console.log('Moving pots...');
+    console.log(chalk.yellow('Moving pots...'));
     await new Promise((resolve, reject) => {
         ncp(scaffoldSource, destination, function (err) {
             if (err) {
@@ -60,10 +61,31 @@ exports.new = async function (args) {
     });
 
     //exchange package.json
-    console.log('Setting table...');
-    let file = editJsonFile(path.join(destination,'package.json'));
+    console.log(chalk.yellow('Setting table...'));
+    let file = editJsonFile(path.join(destination, 'package.json'));
     file.set('name', projectName);
     file.save();
+
+    //Now run 'npm i'
+    console.log(chalk.yellow('Serving Jollof...'));
+    await new Promise((resolve, reject) => {
+        childProc.exec(`cd ${destination} && npm i`, (error, stdout, stderr) => {
+            if (error) {
+                console.log('ERROR',error);
+                if (error.code === 0)
+                    return resolve();
+                else
+                    return reject(error);
+            }
+            //console.log(`stdout: ${stdout}`);
+            ////console.log(`stderr: ${stderr}`);
+            return resolve();
+        });
+    });
+
+
+    console.log(chalk.green("Bon apetit!"));
+    console.log(chalk.green(`Go to '${destination}' and run 'npm start'`));
 
 }
 

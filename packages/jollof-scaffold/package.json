@@ -1,13 +1,16 @@
 {
-  "name": "jollof-scaffold",
-  "version": "1.0.2",
-  "description": "A JollofJS App",
-  "main": "index.js",
-  "dependencies": {
-    "boom": "^4.3.1",
-    "figlet": "^1.2.0",
-    "jollof": "^1.0.0",
-    "passport-jwt": "^2.2.1",
-    "passport-local": "^1.0.0"
-  }
+    "name": "jollof-scaffold",
+    "version": "1.0.2",
+    "description": "A JollofJS App",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "boom": "^4.3.1",
+        "figlet": "^1.2.0",
+        "jollof": "^1.0.0",
+        "passport-jwt": "^2.2.1",
+        "passport-local": "^1.0.0"
+    }
 }
