@@ -67,7 +67,7 @@ exports.new = async function (args) {
     file.save();
 
     //Now run 'npm i'
-    console.log(chalk.yellow('Serving Jollof...'));
+    console.log(chalk.yellow('Serving Jollof...This might take a while!....'));
     await new Promise((resolve, reject) => {
         childProc.exec(`cd ${destination} && npm i`, (error, stdout, stderr) => {
             if (error) {
