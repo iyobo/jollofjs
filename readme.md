@@ -25,3 +25,38 @@ JollofJS has a custom-built config system that makes it easy to have different c
 Base configuration can easily be overwritten by environmental configs (i.e. development, test, production, etc).
 
 - *And More!...*
+
+## Getting Started
+
+```
+npm i -g jollof-cli
+```
+
+Then create your JollofJS app with:
+```
+jollof new myApp
+```
+
+Before you run your app, create an admin user:
+```
+cd myApp
+jollof run createAdmin test@test.com password
+```
+
+Now you are ready to run your jollof app:
+```
+npm start
+```
+
+You should now be able to see jollof running at `localhost:3000`.
+
+![jollof home](https://raw.github.com/iyobo/jollof/master/images/home.png)
+
+
+### App structure
+You are highly advised to study the structure of this new app, starting from index.js.
+
+
+## Jollof Admin
+
+To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
