@@ -18,8 +18,9 @@ const plugins = [];
 //uglify in prod
 if (isProd) {
 	plugins.push(new webpack.optimize.UglifyJsPlugin());
-	//plugins.push(new CommonsChunkPlugin("commons.chunk.js"));
 }
+plugins.push(new CommonsChunkPlugin("commons.chunk.js"));
+
 plugins.push(function() {
     this.plugin('watch-run', function(watching, callback) {
         console.log('>>' + new Date());
