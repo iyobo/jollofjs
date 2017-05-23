@@ -44,7 +44,7 @@ exports.new = async function (args) {
     const currentLocation = process.cwd();
     const projectName = args._[0];
 
-    let scaffoldSource = path.join(__dirname, '..', 'scaffold');
+    let scaffoldSource = path.join(__dirname, '..', 'jollof-scaffold');
     let destination = path.join(currentLocation, projectName);
 
     console.log('Cooking Project: ' + projectName + '...');
