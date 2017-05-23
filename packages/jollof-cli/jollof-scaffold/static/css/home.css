@@ -1,0 +1,87 @@
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+body#background {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('../img/jollof.png') no-repeat 50% 50% fixed;
+    background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    -webkit-background-size: cover;
+    font-family: 'Open Sans Light', sans-serif;
+}
+a{
+    font-size: 25px;
+    text-decoration: none;
+}
+
+.maincover{
+    margin: auto;
+    top: 30%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 800px;
+    color: white;
+
+    text-align: center;
+
+    animation-name: slideInLeft;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+    animation-duration: 0.6s;
+}
+
+.title{
+    font-size: 70px;
+
+}
+
+.subtitle{
+    padding: 10px;
+
+    text-align: center;
+
+    color: white;
+
+}
+
+.subtitle a{
+    color: white;
+}
+
+.subtitle .col{
+    width: 800px;
+}
+
+.gobox{
+    margin: 0 auto;
+    background-color: white;
+    width: 250px;
+    padding: 10px;
+    animation-delay: 0.4s;
+
+    border-radius: 20px;
+}
+
+.adminCog{
+    animation-delay: 0.5s;
+    vertical-align:middle;
+}
+
+.adminLabel{
+    animation-delay: 0.2s;
+    color: #343434;
+    font-weight: 800;
+
+    display: inline-block;
+
+}
