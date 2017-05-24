@@ -30,6 +30,8 @@ module.exports = (args) => {
         });
 
         console.log('Admin user created:', adminUser.email);
+
+        process.exit(0);
     });
 
 }

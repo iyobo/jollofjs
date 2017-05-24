@@ -36,6 +36,7 @@ const schema = {
             if (!origUser || origUser.password != this.password) {
                 this.password = await jollof.crypto.hash(this.password);
             }
+            return;
         }
     },
     /**
