@@ -109,6 +109,8 @@ class JollofDataMongoDB {
         //If we're paging
         let res;
 
+
+
         let cursor = this.db.collection(collectionName).find(convertConditionsFromJollof(criteria));
 
         if (opts) {
