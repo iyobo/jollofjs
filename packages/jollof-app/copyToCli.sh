@@ -1,4 +1,4 @@
-cp -r ./app ../jollof-cli/jollof-scaffold/app
+cp -r ./app ../jollof-cli/jollof-scaffold/app/
 cp -r ./commands ../jollof-cli/jollof-scaffold/
 cp -r ./config ../jollof-cli/jollof-scaffold/
 cp -r ./static ../jollof-cli/jollof-scaffold/
