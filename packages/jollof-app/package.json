@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "prepublish": ". copyToCli.sh"
+        "prepublish": ". copyToCli.sh",
+        "sayHi": "echo 'Copied jollof-app to cli'"
     },
     "dependencies": {
         "boom": "^4.3.1",
@@ -18,7 +19,8 @@
     "devDependencies": {
         "pre-commit": "^1.2.2"
     },
-    "pre-commit": [
-        "prepublish"
+    "pre-commit":[
+        "prepublish",
+        "sayHi"
     ]
 }
