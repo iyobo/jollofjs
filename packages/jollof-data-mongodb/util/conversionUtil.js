@@ -42,8 +42,15 @@ function translate(cond, query, parentConnector) {
 
     let fieldName = cond.field;
 
+
     if(fieldName === 'id'){
         fieldName = '_id';
+
+        //Only null is acceptable, not undefined.
+        if(typeof cond.value === 'undefined'){
+            return cond.connector;
+        }
+
         cond.value = new ObjectID(cond.value)
     }
 

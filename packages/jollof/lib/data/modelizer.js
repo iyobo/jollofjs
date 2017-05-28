@@ -238,6 +238,12 @@ exports.modelize = function (schema) {
 
         static async findById(id, opts = {}) {
 
+            //If id = null, then it obviously doesn't exist
+
+            if(!id){
+                return null;
+            }
+
             const queryString = jql`id = ${id}`;
 
             let res = await Model.findOne(queryString, opts);
