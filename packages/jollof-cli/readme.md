@@ -30,7 +30,7 @@ Base configuration can easily be overwritten by environmental configs (i.e. deve
 ## Getting Started
 
 ```
-npm i -g jollof-cli
+npm i -g jollofjs
 ```
 You also need to have mongoDB and Redis up and running.
 
