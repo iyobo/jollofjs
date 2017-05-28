@@ -28,10 +28,15 @@ const schema = {
             this.name = this.firstName + ' ' + this.lastName;
 
             //password
-            const origUser = await jollof.models.User.findById(this.id);
+            let origUser;
+            if(this.isPersisted()) {
+                origUser = await jollof.models.User.findById(this.id);
+            }
+
             if (!origUser || origUser.password != this.password) {
                 this.password = await jollof.crypto.hash(this.password);
             }
+            return;
         }
     },
     /**
