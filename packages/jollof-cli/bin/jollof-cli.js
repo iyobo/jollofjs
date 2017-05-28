@@ -22,4 +22,5 @@ var argv = require('minimist')(process.argv.slice(3));
     console.log('')
 })().catch(err => {
     console.log(chalk.red(err.message),'\n');
+    console.error(err.stack);
 });

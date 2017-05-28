@@ -1,5 +1,5 @@
 {
-  "name": "jollof-cli",
+  "name": "jollofjs",
   "version": "1.0.9",
   "description": "The Entry point to creating and working with Jollof Projects",
   "main": "./lib/index.js",

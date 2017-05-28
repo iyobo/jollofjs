@@ -44,7 +44,7 @@ exports.new = async function (args) {
     const currentLocation = process.cwd();
     const projectName = args._[0];
 
-    let scaffoldSource = path.join(__dirname, '..', 'jollof-app');
+    let scaffoldSource = path.join(__dirname, '..', 'jollof-scaffold');
     let destination = path.join(currentLocation, projectName);
 
     console.log('Cooking Project: ' + projectName + '...');
@@ -52,6 +52,7 @@ exports.new = async function (args) {
     //move scaffold files
     console.log(chalk.yellow('Moving pots...'));
     await new Promise((resolve, reject) => {
+
         ncp(scaffoldSource, destination, function (err) {
             if (err) {
                 return reject(err);
@@ -72,7 +73,7 @@ exports.new = async function (args) {
     await new Promise((resolve, reject) => {
         childProc.exec(`cd ${destination} && npm i`, (error, stdout, stderr) => {
             if (error) {
-                console.log('ERROR',error);
+                console.log('ERROR', error);
                 if (error.code === 0)
                     return resolve();
                 else
