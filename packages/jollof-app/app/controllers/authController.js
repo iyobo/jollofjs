@@ -1,4 +1,5 @@
 const boom = require('boom');
+const jollof = require('jollof');
 
 exports.doLogin = async (ctx) => {
 
@@ -28,7 +29,13 @@ exports.doLogin = async (ctx) => {
 }
 
 exports.doSignup = async (ctx) => {
-    ctx.body = JSON.stringify(ctx.request.fields);
+
+    await jollof.models.User.persist(ctx.request.fields);
+
+    //Use email of new user as username
+    ctx.request.fields.username = ctx.request.fields.email;
+
+    await exports.doLogin(ctx);
 }
 
 exports.logout = async (ctx) => {
