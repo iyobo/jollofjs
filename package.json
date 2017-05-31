@@ -1,6 +1,8 @@
 {
-  "devDependencies": {
-    "lerna": "^2.0.0-rc.4"
-  },
-  "version": "independent"
+    "scripts": {
+        "dev": "cd packages/jollof && npm run dev"
+    },
+    "devDependencies": {
+        "lerna": "^2.0.0-rc.4"
+    }
 }

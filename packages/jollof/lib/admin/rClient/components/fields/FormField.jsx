@@ -13,6 +13,7 @@ import MapFieldInput from './map/MapFieldInput';
 import FileFieldInput from './file/FileFieldInput';
 import RefInput from './ref/RefInput';
 import PasswordInput from './password/PasswordInput';
+import SelectInput from './select/SelectInput';
 const _ = require('lodash');
 
 export default class FormField extends Component {
@@ -50,13 +51,18 @@ export default class FormField extends Component {
             fieldElem = <MapFieldInput {...this.props} />
         } else if (meta.widget === 'file') {
             fieldElem = <FileFieldInput {...this.props} />
-        } else if (meta.type === 'Object') {
+        }
+        else if (meta.choices) {
+            fieldElem = <SelectInput {...this.props} />
+        }
+        else if (meta.type === 'Object') {
             //hideLabel = true;
             fieldElem = <ObjectFieldInput {...this.props} />
         } else if (meta.type === 'Array') {
             //hideLabel = true;
             fieldElem = <ArrayFieldInput {...this.props} />
-        } else {
+        }
+        else {
             fieldElem = <GenericFieldInput {...this.props} />
         }
 
