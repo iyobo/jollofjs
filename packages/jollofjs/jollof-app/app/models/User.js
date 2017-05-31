@@ -17,8 +17,17 @@ const schema = {
         lastName: String,
         name: { type: String, meta: { disableEdit: true } },
         email: types.Email(),
-        password: {type: String, meta:{ widget:'password' }},
-        isAdmin: Boolean
+        password: { type: String, meta: { widget: 'password' } },
+        isAdmin: Boolean,
+        accountType: {
+            type: String, meta: {
+                choices: [
+                    'normal',
+                    'grand',
+                    'epic'
+                ]
+            }
+        }
 
     },
     hooks: {
@@ -29,7 +38,7 @@ const schema = {
 
             //password
             let origUser;
-            if(this.isPersisted()) {
+            if (this.isPersisted()) {
                 origUser = await jollof.models.User.findById(this.id);
             }
 
@@ -58,7 +67,7 @@ const schema = {
             async init(){
                 console.log('MongoDB: Finished Setting up Foo ');
 
-                await this.db.collection('User').createIndex({email: 1});
+                await this.db.collection('User').createIndex({ email: 1 });
             },
 
             async pityFoo(param){

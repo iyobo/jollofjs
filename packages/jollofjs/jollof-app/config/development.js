@@ -4,7 +4,11 @@
 
 module.exports = {
 
-    env: 'development'
+    env: 'development',
+
+    server:{
+        port: 3000
+    }
 
 }
 
