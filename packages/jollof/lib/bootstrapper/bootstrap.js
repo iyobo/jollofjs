@@ -89,7 +89,7 @@ module.exports.bootServer = function (overWriteFn) {
 
     return co(function*() {
 
-        try {
+        //try {
 
             //Load models
             yield loadModels();
@@ -176,11 +176,23 @@ module.exports.bootServer = function (overWriteFn) {
             //app statics
             serverApp.use(convert(serve({ rootDir: 'static', rootPath: '/static' })));
 
+
+
             //Internal jollof statics
             serverApp.use(convert(serve({
                 rootDir: JOLLOF_STANDALONE ? 'jollofstatic' : path.join('node_modules', 'jollof', 'jollofstatic'),
                 rootPath: '/jollofstatic'
             })));
+
+            //Spice statics
+            jollof.spices.forEach((it)=>{
+                if(it.statics){
+                    serverApp.use(convert(serve({
+                        rootDir:  it.statics.rootDir,
+                        rootPath: it.statics.rootPath
+                    })));
+                }
+            })
 
             //public file upload statics
             serverApp.use(convert(serve({
@@ -204,6 +216,15 @@ module.exports.bootServer = function (overWriteFn) {
             });
 
             //nunjucks
+            let nunjConfig = jollof.config.nunjucks;
+
+            //add spice nunjucks view paths
+            jollof.spices.forEach((it)=>{
+                if(it.views){
+                    nunjConfig.path.push(it.views.path)
+                }
+            })
+
             jollof.config.nunjucks.configureEnvironment = (env) => {
                 jollof.view.setupFilters(env)
             };
@@ -221,6 +242,13 @@ module.exports.bootServer = function (overWriteFn) {
                 router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
             }
 
+            //spice routes
+            jollof.spices.forEach((it)=>{
+                if(it.routes){
+                    router.nestRoutes(jollof.config.spices.blog.mountPath, it.routes)
+                }
+            })
+
             //Give Framework user a chance to set things up or mount stuff
             if (overWriteFn)
                 overWriteFn(serverApp);
@@ -235,19 +263,14 @@ module.exports.bootServer = function (overWriteFn) {
             // }
 
             jollof.log.info("Server started on port " + jollof.config.server.port)
-            /**
-             * For Development MODE (Watchers and such)
-             */
-            // if (jollof.currentEnv == "development") {
-            // 	require('./scripts/dev/watchers');
-            // }
+
 
             jollof.serverApp = serverApp;
 
             return serverApp;
-        } catch (err) {
-            log.error(err.stack)
-        }
+        //} catch (err) {
+        //    log.error(err.stack)
+        //}
 
     }).catch(function (err) {
         log.error("[bootstrapper] Gracefully handled exception...")

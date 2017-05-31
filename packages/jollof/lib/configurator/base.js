@@ -84,7 +84,7 @@ module.exports = {
 
     nunjucks: {
         ext: 'nunj',
-        path: ['app/views', firstExistingPath(['lib/admin/views', 'node_modules/jollof/lib/admin/views'])], //from project root
+        path: ['app/views', 'node_modules/jollof/lib/admin/views'], //from project root
         nunjucksConfig: {
             //see https://mozilla.github.io/nunjucks/api.html#configure
             noCache: true,
@@ -111,6 +111,10 @@ module.exports = {
             }
         }
     },
+
+    spices:{
+
+    }
 
 }
 

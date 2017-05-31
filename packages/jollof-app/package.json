@@ -1,26 +1,26 @@
 {
-  "name": "jollof-app",
-  "version": "1.0.19",
-  "description": "A JollofJS App",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "prepublish": ". copyToCli.sh",
-    "sayHi": "echo 'Copied jollof-app to cli'"
-  },
-  "dependencies": {
-    "boom": "^4.3.1",
-    "figlet": "^1.2.0",
-    "jollof": "^1.0.7",
-    "jollof-data-mongodb": "^1.1.4",
-    "passport-jwt": "^2.2.1",
-    "passport-local": "^1.0.0"
-  },
-  "devDependencies": {
-    "pre-commit": "^1.2.2"
-  },
-  "pre-commit": [
-    "prepublish",
-    "sayHi"
-  ]
+    "name": "jollof-app",
+    "version": "1.0.19",
+    "description": "A JollofJS App",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "prepublish": ". copyToCli.sh",
+        "sayHi": "echo 'Copied jollof-app to cli'"
+    },
+    "dependencies": {
+        "boom": "^4.3.1",
+        "figlet": "^1.2.0",
+        "jollof": "^1.0.7",
+        "jollof-data-mongodb": "^1.1.4",
+        "passport-jwt": "^2.2.1",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "pre-commit": "^1.2.2"
+    },
+    "pre-commit": [
+        "prepublish",
+        "sayHi"
+    ]
 }
