@@ -8,6 +8,10 @@ module.exports = {
 
     env: 'development',
 
+    server:{
+        port: 3000
+    },
+
     //If you comment this out, an inferior memory DB will be used....
     data: {
         dataSources:{

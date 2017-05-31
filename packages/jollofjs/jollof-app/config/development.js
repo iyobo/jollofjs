@@ -6,9 +6,6 @@ module.exports = {
 
     env: 'development',
 
-    server:{
-        port: 3000
-    }
 
 }
 
