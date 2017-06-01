@@ -13,14 +13,17 @@ const schema = {
     name: 'Article',
     structure: {
         title: String,
+        stub: String,
         subTitle: String,
         author: { type: String, meta: { widget: 'ref', ref: 'User' } },
         isPublished: Boolean,
-        publishedAt: Date,
+        datePublished: Date,
         body: { type: String, meta: { widget: 'richtext' } },
         tags: [String],
         category: { type: String, meta: { widget: 'ref', ref: 'Category' } },
         domain: String,
+        isFeatured: Boolean,
+        featureImage: types.File()
     },
 
     /**
@@ -33,7 +36,7 @@ const schema = {
         mongodb: {
             async init(){
 
-                await this.db.collection('Article').createIndex({ title: 1 }, { unique: true });
+                await this.db.collection('Article').createIndex({ title: 1, domain: 1 }, { unique: true });
             }
         }
 

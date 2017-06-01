@@ -3,6 +3,12 @@ const main = require('../controllers/mainController');
 
 module.exports = {
     '/': { flow: main.index},
+    '/about': { flow: main.about},
+    '/contact': { flow: main.contact},
+    '/article/:id': { flow: main.article},
+    '/category/:name': { flow: main.category},
+
+
     //'post /login': { flow: auth.doLogin},
     //'post /signup': { flow: auth.doSignup},
     //'get /logout': { flow: auth.logout},

@@ -34,8 +34,20 @@ module.exports = {
         blog: {
             title: 'Tasty Blog',
             subTitle: 'Powered by JollofJS',
+
+            aboutTitle: 'About Me',
+            contactTitle: 'Contact Me',
+
+            bioText: `<p>Hey there, I love Brussel sprouts</p><p>...And Cabbage!</p>`,
+            contactText: `<p>Use one of the social buttons below to reach me</p>`,
+
             auth: auth.loggedIn,
-            mountPath: '/blog'
+            mountPath: '/blog',
+
+            facebookUrl: '',
+            twitterUrl: '',
+            githubUrl: '',
+            linkedInUrl: '',
         }
     }
 
