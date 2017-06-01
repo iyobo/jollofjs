@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>JollofJS</title>
     <link rel="stylesheet" href="/static/css/animate.css"/>
-    <link rel="stylesheet" href="/static/css/home.css"/>
-    <link rel="stylesheet" href="/static/css/login.css"/>
     <link rel="stylesheet" href="/static/css/toastr.min.css"/>
 </head>
 <body id="background">
