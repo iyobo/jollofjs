@@ -8,13 +8,13 @@ module.exports = {
 
     env: 'development',
 
-    server:{
+    server: {
         port: 3000
     },
 
     //If you comment this out, an inferior memory DB will be used....
     data: {
-        dataSources:{
+        dataSources: {
             default: {
                 adapter: require('jollof-data-mongodb'),
                 nativeType: 'mongodb',
@@ -28,6 +28,13 @@ module.exports = {
     admin: {
         enabled: true,
         auth: auth.canViewAdmin
+    },
+
+    spices: {
+        blog: {
+            auth: auth.loggedIn,
+            mountPath: '/blog'
+        }
     }
 
 }

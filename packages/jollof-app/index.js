@@ -3,15 +3,14 @@ console.log(figlet.textSync('JollofJS'));
 
 const jollof = require('jollof');
 
+const blogSpice = require('jollof-spice-blog');
 
-//return (async ()=>{
-//    console.log('Wait what?')
-//})()
+(async ()=>{
 
-jollof.bootstrap.bootServer(function*(app) {
+    await blogSpice(jollof);
 
-    //jollof.log.info('Mounting a jollof-plugin');
+    jollof.bootstrap.bootServer(function*(app) {
 
-
-    jollof.log.info('Server started');
-});
+        jollof.log.info('Server started');
+    });
+})();

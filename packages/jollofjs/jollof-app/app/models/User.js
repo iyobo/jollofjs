@@ -67,7 +67,7 @@ const schema = {
             async init(){
                 console.log('MongoDB: Finished Setting up Foo ');
 
-                await this.db.collection('User').createIndex({ email: 1 },{unique: true});
+                await this.db.collection('User').createIndex({ email: 1 },{ unique: true });
             },
 
             async pityFoo(param){
