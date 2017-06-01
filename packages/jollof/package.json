@@ -1,6 +1,6 @@
 {
   "name": "jollof",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The tastiest NodeJS Application Framework you ever ate",
   "main": "index.js",
   "scripts": {
