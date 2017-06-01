@@ -32,6 +32,8 @@ module.exports = {
 
     spices: {
         blog: {
+            title: 'Tasty Blog',
+            subTitle: 'Powered by JollofJS',
             auth: auth.loggedIn,
             mountPath: '/blog'
         }

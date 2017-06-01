@@ -8,6 +8,13 @@ module.exports = {
 
     server:{
         port: 3002
+    },
+
+    spices: {
+        blog: {
+            title: 'Iyobo Eki',
+            subTitle: 'Digital Alchemist',
+        }
     }
 
 }

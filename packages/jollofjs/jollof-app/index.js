@@ -3,14 +3,17 @@ console.log(figlet.textSync('JollofJS'));
 
 const jollof = require('jollof');
 
-const blogSpice = require('jollof-spice-blog');
-
 (async ()=>{
 
-    await blogSpice(jollof);
+    //Add spices
+    await require('jollof-spice-blog')(jollof);
 
-    jollof.bootstrap.bootServer(function*(app) {
 
-        jollof.log.info('Server started');
+    await jollof.bootstrap.bootServer(function*(app) {
+
+        //add overrides / things to add to koa app before it get launched
     });
+
+    console.log('><><><><><><><><><><><><><><><><><><><');
+
 })();

@@ -45,7 +45,7 @@ module.exports.data = data;
 module.exports.models = data.models;
 module.exports.services = data.services;
 
-//Initialize jollof  data
+//Initialize jollof data
 data.init();
 
 module.exports.bootstrap = require('./lib/bootstrapper/bootstrap');

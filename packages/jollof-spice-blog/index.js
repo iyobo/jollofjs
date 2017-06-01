@@ -1,8 +1,11 @@
 const path = require('path');
+const requireDir = require('require-dir');
 
 module.exports = async function (jollof) {
 
     jollof.log.info('Adding Blog Spice');
+
+    requireDir(path.join(__dirname, 'app', 'models'), { recurse: true });
 
     jollof.spices.push({
         name: 'Blog',
@@ -15,6 +18,6 @@ module.exports = async function (jollof) {
         },
         routes: require('./app/routes/default')
 
-    })
+    });
 
 };

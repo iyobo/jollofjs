@@ -20,20 +20,20 @@ var requireDirOptional = require('../util/fileUtil.js').requireDirOptional;
  * @param schema
  */
 module.exports.registerModel = function (schema) {
-	//Wrap whatever this is in a true Model
-	models[schema.name] = Modelizer.modelize(schema);
-	return models[schema.name];
+    //Wrap whatever this is in a true Model
+    models[schema.name] = Modelizer.modelize(schema);
+    return models[schema.name];
 };
 
 module.exports.registerType = function (schema) {
-	types[schema.name] = (opts) => {
-		return _.merge(schema.structure, opts);
-	};
-	return types[schema.name];
+    types[schema.name] = (opts) => {
+        return _.merge(schema.structure, opts);
+    };
+    return types[schema.name];
 };
 module.exports.registerService = function (name, Class) {
-	services[name] = new Class();
-	return services[name];
+    services[name] = new Class();
+    return services[name];
 };
 
 /**
@@ -41,24 +41,24 @@ module.exports.registerService = function (name, Class) {
  * @param schema
  */
 module.exports.init = function (schema) {
-	// try {
-	//Init in-built Schema Types and models
-	requireDir(path.join(__dirname, 'types'), { recurse: true });
-	requireDir(path.join(__dirname, 'models'), { recurse: true });
+    // try {
+    //Init in-built Schema Types and models
+    requireDir(path.join(__dirname, 'types'), { recurse: true });
+    requireDir(path.join(__dirname, 'models'), { recurse: true });
 
-	//Init app Schema Types
-	requireDirOptional(appPaths.schemaTypes, { recurse: true });
+    //Init app Schema Types
+    requireDirOptional(appPaths.schemaTypes, { recurse: true });
 
-	//Init app models
-	requireDirOptional(appPaths.models, { recurse: true });
+    //Init app models
+    requireDirOptional(appPaths.models, { recurse: true });
 
-	//Init app services
-	requireDirOptional(appPaths.services, { recurse: true });
+    //Init app services
+    requireDirOptional(appPaths.services, { recurse: true });
 
 
-	// }catch(err){
-	// 	log.error('Jollof init error:',err.message);
-	// }
+    // }catch(err){
+    // 	log.error('Jollof init error:',err.message);
+    // }
 
 };
 
