@@ -14,6 +14,7 @@
         <div class="title">
             <span>Welcome to Jollof<span class="js">JS</span></span>
         </div>
+        <div><a style="color:white" href="/blog">Go to the Blog</a></div>
         {% if user %}
             <div class="subtitle">
                 <div class="col">
