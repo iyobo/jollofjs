@@ -2,7 +2,7 @@
 
 The tastiest **NodeJS Application Framework** you ever ate.
 
-![jollof Logo](https://raw.github.com/iyobo/jollof/master/images/jollof.png)
+![jollof Logo](https://raw.github.com/iyobo/jollofjs/master/images/jollof.png)
 
 
 ## Key Features
@@ -53,7 +53,7 @@ npm start
 
 You should now be able to see jollof running at `localhost:3000`.
 
-![jollof home](https://raw.github.com/iyobo/jollof/master/images/home.png)
+![jollof home](https://raw.github.com/iyobo/jollofjs/master/images/home.png)
 
 
 ### App structure
@@ -64,11 +64,11 @@ You are highly advised to study the structure of this new app, starting from ind
 
 To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
 
-![jollof admin](https://raw.github.com/iyobo/jollof/master/images/admin.png)
+![jollof admin](https://raw.github.com/iyobo/jollofjs/master/images/admin.png)
 
 Editing an item in the Admin...
 
-![jollof edit](https://raw.github.com/iyobo/jollof/master/images/edit.png)
+![jollof edit](https://raw.github.com/iyobo/jollofjs/master/images/edit.png)
 
 
 
