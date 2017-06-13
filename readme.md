@@ -72,8 +72,14 @@ Editing an item in the Admin...
 
 
 
-The Jollof Admin is, quite frankly, the Saber's edge of all NodeJS frameworks. 
+The Jollof Admin is, quite frankly, the Saber's edge of any NodeJS framework in existence today. 
 Jollof Admin automatically creates a user interface to administer all your models, as well as in-built models.
+It supports all the usual field types you find in an other admins, *and then some!* Including:
+* Arrays (Of ANY field type)
+* Objects, (Of ANY combination of field types)
+* Files, 
+* GeoLocations
+
 
 Right now, the app you created has only one model `User`.
 
