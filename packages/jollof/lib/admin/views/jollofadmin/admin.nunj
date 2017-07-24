@@ -91,7 +91,8 @@
 
 <!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
 <script src="/jollofstatic/lightdash/assets/js/demo.js"></script>
-<script src="/jollofstatic/tinymce/jquery.tinymce.min.js"></script>
+<!--<script src="/jollofstatic/tinymce/jquery.tinymce.min.js"></script>-->
+<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
 
 
 <script type="text/javascript">
