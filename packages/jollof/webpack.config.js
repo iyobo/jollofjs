@@ -75,7 +75,20 @@ module.exports = {
 			//		}
 			//	}
 			//},
-		]
+            {
+                test: require.resolve('tinymce/tinymce'),
+                loaders: [
+                    'imports?this=>window',
+                    'exports?window.tinymce'
+                ]
+            },
+            {
+                test: /tinymce\/(themes|plugins)\//,
+                loaders: [
+                    'imports?this=>window'
+                ]
+            }
+        ]
 	},
 	resolve: {
 		extensions: ['', '.js', '.jsx', '.vue'],

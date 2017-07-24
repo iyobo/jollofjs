@@ -49,7 +49,6 @@ export default class ObjectFieldInput extends Component {
                     childData.set(childName, value);
                     this.handleChange(childData)
 
-
                 }
             };
 

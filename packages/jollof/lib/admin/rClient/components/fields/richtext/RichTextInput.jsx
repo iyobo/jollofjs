@@ -3,51 +3,34 @@ import {observer} from 'mobx-react';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 const _ = require('lodash');
+import TinyMCE from 'react-tinymce';
 
 @observer
 export default class RichTextInput extends Component {
 
     constructor(props) {
         super(props);
+    }
 
-        this.modules = {
-            toolbar: [
-                [{ 'header': [1, 2, false] }],
-                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-                ['link', 'image'],
-                ['clean']
-            ],
-        }
+    handleEditorChange = (e) => {
 
-        this.formats = [
-            'header',
-            'bold', 'italic', 'underline', 'strike', 'blockquote',
-            'list', 'bullet', 'indent',
-            'link', 'image'
-        ]
+        //console.log('Content was updated:', e.target.getContent());
+        this.props.onChange(e.target.getContent());
     }
 
     render() {
-
-        //if (!this.state) return <div>Loading state...</div>
-
-        //console.log('textfield propss', this.props);
-        //const field = this.props.field;
-
         return (
-
-            <ReactQuill
-                value={this.props.data || ''}
-                onChange={this.props.onChange}
-                theme="snow"
-                modules={this.modules}
-                formats={this.formats}
+            <TinyMCE
+                content={this.props.data || ''}
+                config={{
+                    plugins: 'link image code',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+                }}
+                onChange={this.handleEditorChange}
             />
-
-
         );
     }
+
 }
 
 
