@@ -111,6 +111,9 @@ export default class ModelListPage extends Component {
                     else if (Array.isArray(colVal)) {
                         colVal = <i>{colVal.length} items</i>
                     }
+                    else if (typeof colVal === 'string' && colVal.length> 30) {
+                        colVal = <i>{colVal.substring(0,30)+'....'} </i>
+                    }
 
 
                     return (
