@@ -1,6 +1,6 @@
 {
   "name": "jollof-spice-blog",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A JollofJS Plugin to add multi-domain blogging functionality to a jollof app",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "boom": "^4.3.1",
-    "jollof": "^1.0.14",
+    "jollof": "^1.0.15",
     "require-dir": "^0.3.2"
   }
 }

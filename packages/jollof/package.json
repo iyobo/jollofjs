@@ -1,6 +1,6 @@
 {
     "name": "jollof",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "The tastiest NodeJS Application Framework you ever ate",
     "main": "index.js",
     "scripts": {
@@ -33,8 +33,8 @@
         "immutable": "^3.8.1",
         "inflection": "~1.10.0",
         "invariant": "^2.2.2",
-        "isvalid-jollof": "^1.1.0",
-        "jollof-data-memory": "^1.3.4",
+        "isvalid-jollof": "^1.1.1",
+        "jollof-data-memory": "^1.3.5",
         "jollof-data-mongodb": "^1.1.5",
         "koa": "^2.2.0",
         "koa-better-body": "^3.0.2",
