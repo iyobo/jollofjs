@@ -27,7 +27,8 @@ module.exports = {
 
     admin: {
         enabled: true,
-        auth: auth.canViewAdmin
+        auth: auth.canViewAdmin,
+        logoutPath: '/logout'
     },
 
     spices: {

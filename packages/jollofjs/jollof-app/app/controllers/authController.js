@@ -43,6 +43,14 @@ exports.logout = async (ctx) => {
     ctx.redirect('/')
 }
 
+exports.login = async (ctx) => {
+    await ctx.render('login');
+}
+exports.signin = async (ctx) => {
+    await ctx.render('signup');
+}
+
+
 
 /**
  * Other potential auth endpoints
