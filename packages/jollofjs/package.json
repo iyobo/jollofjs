@@ -2,7 +2,7 @@
   "name": "jollofjs",
   "version": "1.0.37",
   "description": "The Entry point to creating and working with Jollof Projects",
-  "main": "./lib/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
