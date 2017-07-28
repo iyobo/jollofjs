@@ -4,6 +4,8 @@ const auth = require('../controllers/authController');
 module.exports = {
     '/': { flow: main.index},
     'post /login': { flow: auth.doLogin},
+    '/login': { flow: auth.login},
+    '/signup': { flow: auth.signup},
     'post /signup': { flow: auth.doSignup},
     'get /logout': { flow: auth.logout},
 

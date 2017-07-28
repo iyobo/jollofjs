@@ -81,7 +81,7 @@ export default class AppLayout extends Component {
 								<ul className="nav navbar-nav navbar-right">
 
 									<li>
-										<a href="#">
+										<a href={logoutPath}>
 											Log out
 										</a>
 									</li>
