@@ -1,6 +1,6 @@
 {
   "name": "jollof-app",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "A JollofJS App",
   "main": "index.js",
   "scripts": {
