@@ -6,7 +6,7 @@
 	<link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<title>Get Shit Done Kit by Creative Tim</title>
+	<title>JollofJS: Get Shit Done</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -823,7 +823,7 @@
         <div class="row">
              <div class="col-md-12 text-center">
                 <div class="credits">
-                    &copy; <script>document.write(new Date().getFullYear())</script> Get Shit Done Kit by <a href="http://creative-tim.com"> Creative Tim</a>, made with <i class="fa fa-heart heart" alt="love"></i> for a better web.
+                    &copy; <script>document.write(new Date().getFullYear())</script> You. Built by <a href="http://iyobo.one">Iyobo Eki</a>. Designed by <a href="http://creative-tim.com"> Creative Tim</a>, made with <i class="fa fa-heart heart" alt="love"></i> for a better web.
                 </div>
             </div>
         </div>

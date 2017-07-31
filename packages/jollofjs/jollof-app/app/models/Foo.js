@@ -10,7 +10,7 @@ const types = data.types;
 //Models use names
 const schema = {
     name: 'Foo',
-    connectionName: 'default',
+    dataSource: 'default',
     structure: {
         name: String,
         age: Number,

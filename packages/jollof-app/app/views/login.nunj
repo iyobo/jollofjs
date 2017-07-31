@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JollofJS</title>
+    <title>JollofJS: Login</title>
     <link rel="stylesheet" href="/static/css/animate.css"/>
     <link rel="stylesheet" href="/static/css/home.css"/>
     <link rel="stylesheet" href="/static/css/login.css"/>
@@ -12,55 +12,23 @@
 <header>
     <div class="maincover">
         <div class="title">
-            <span>Welcome</span>
+            <span>Login</span>
         </div>
-        <div><a style="color:white" href="/">Back to HomePage</a></div>
-        {% if user %}
-            <div class="subtitle">
-                <div class="col">
 
-                    {% if user.isAdmin %}
-                        <a href="/admin">
-                            <div class="gobox animated bounceIn">
-                                <img class="adminCog animated rotateIn" src="/jollofstatic/img/cog-256.png"
-                                     width="60px"/>
-                                <span class="adminLabel animated fadeInLeft">To the Admin</span>
-                            </div>
-                        </a>
-                    {% else %}
-                        You are logged In as <b>{{ user.name }}</b>!
-                    {% endif %}
-                    <br/>
-                    <a href="/logout">Logout</a>
-                </div>
+        <div class="login-page">
+
+            <div class="form">
+                <div id="msg" style="color: orangered; padding:2px;"></div>
+                <form id="loginform" class="login-form" >
+                    <input type="hidden" name="_csrf" value="{{ csrf }}" />
+                    <input name="username" type="text" placeholder="Email or Username"/>
+                    <input name="password" type="password" placeholder="password"/>
+                    <input id="signupBtn" type="submit" class='button' value="Login" />
+                    <p class="message">Not registered? <a  href="/signup">Sign Up</a></p>
+                </form>
             </div>
+        </div>
 
-        {% else %}
-            <div class="login-page">
-
-                <div class="form">
-                    <div id="msg" style="color: orangered; padding:2px;"></div>
-                    <form id="signupForm" class="register-form" >
-                        <input type="hidden" name="_csrf" value="{{ csrf }}" />
-                        <input name="firstName" type="text" placeholder="First"/>
-                        <input name="lastName" type="text" placeholder="Last"/>
-
-                        <input name="email" type="text" placeholder="email address"/>
-                        <input name="password" type="password" placeholder="password"/>
-
-                        <input id="loginBtn" type="submit" class="button" value="Sign Up"/>
-                        <p class="message">Already registered? <a  href="javascript:;">Log In</a></p>
-                    </form>
-                    <form id="loginform" class="login-form" >
-                        <input type="hidden" name="_csrf" value="{{ csrf }}" />
-                        <input name="username" type="text" placeholder="Email or Username"/>
-                        <input name="password" type="password" placeholder="password"/>
-                        <input id="signupBtn" type="submit" class='button' value="Login" />
-                        <p class="message">Not registered? <a  href="javascript:;">Sign Up</a></p>
-                    </form>
-                </div>
-            </div>
-        {% endif %}
 
 
     </div>
@@ -93,27 +61,6 @@
             toastr.warning('Unable to Login. Please try again later');
 //            $('#msg').html('Unable to Login. Please try again later');
             $('#loginBtn').prop('disabled', true);
-        })
-    });
-
-    $('#signupForm').on('submit',function(evt){
-        evt.preventDefault();
-        $('#loginBtn').prop('disabled', true);
-
-        $.post('/signup',$( this ).serialize(), function(data){
-            $('#signupBtn').prop('disabled', false);
-
-            if(data.success){
-                location.href = '/';
-            }
-            else{
-                toastr.warning(data.message);
-//                $('#msg').html(data.message);
-            }
-        }).fail(function(){
-            toastr.warning('Unable to Register. Please try again later');
-//            $('#msg').html('Unable to Login. Please try again later');
-            $('#signupBtn').prop('disabled', true);
         })
     });
 

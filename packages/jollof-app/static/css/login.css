@@ -38,6 +38,7 @@
     font-size: 14px;
     -webkit-transition: all 0.3 ease;
     transition: all 0.3 ease;
+    transition: all 0.3 ease;
     cursor: pointer;
 }
 .form .button:hover,.form .button:active,.form .button:focus {
@@ -52,9 +53,7 @@
     color: #4CAF50;
     text-decoration: none;
 }
-.form .register-form {
-    display: none;
-}
+
 .container {
     position: relative;
     z-index: 1;

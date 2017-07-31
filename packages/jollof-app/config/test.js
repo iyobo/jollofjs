@@ -7,7 +7,7 @@ module.exports = {
     env: 'test',
 
     server: {
-        port: 3001, //Port main app runs on
+        port: 3002, //Port main app runs on
         host: '0.0.0.0',
         hostname: 'localhost'
     },

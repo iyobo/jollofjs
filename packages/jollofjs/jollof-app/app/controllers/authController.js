@@ -5,7 +5,7 @@ exports.doLogin = async (ctx) => {
 
     //Authenticate using the local strategy defined in app/service/passport/strategy
     //See there for other strategies.
-    const authenticatedUser = await new Promise((resolve, reject)=> {
+    const authenticatedUser = await new Promise((resolve, reject) => {
         ctx.passport.authenticate('local', function (err, user) {
 
             if (err) {
@@ -44,12 +44,20 @@ exports.logout = async (ctx) => {
 }
 
 exports.login = async (ctx) => {
-    await ctx.render('login');
-}
-exports.signin = async (ctx) => {
-    await ctx.render('signup');
-}
+    if (ctx.session.user) {
+        await ctx.redirect('/');
+    } else {
+        await ctx.render('login');
+    }
 
+}
+exports.signup = async (ctx) => {
+    if (ctx.session.user) {
+        await ctx.redirect('/');
+    } else {
+        await ctx.render('signup');
+    }
+}
 
 
 /**

@@ -27,8 +27,8 @@ const adapterMap = {};
 exports.modelize = function (schema) {
     const collectionName = schema.name;
 
-    const connectorName = schema.connector || 'default';
-    const dataSource = config.data.dataSources[connectorName];
+    const dataSourceName = schema.dataSource || 'default';
+    const dataSource = config.data.dataSources[dataSourceName];
 
     /**
      * Only the native functions matching this connector's nativeName can be run for this model
@@ -39,12 +39,12 @@ exports.modelize = function (schema) {
     let adapter;
 
     //if adapter has already been instantiated
-    if (adapterMap[connectorName]) {
-        adapter = adapterMap[connectorName];
+    if (adapterMap[dataSourceName]) {
+        adapter = adapterMap[dataSourceName];
     } else {
         adapter = new dataSource.adapter(dataSource.options);
         //TODO: Move this to something external that keeps "Active adapters mapped by connectorName".
-        adapterMap[connectorName] = adapter;
+        adapterMap[dataSourceName] = adapter;
     }
 
 
@@ -103,7 +103,7 @@ exports.modelize = function (schema) {
 
         constructor(data) {
             this._loadData(data);
-            this._connectionName = connectorName;
+            this._connectionName = dataSourceName;
 
             /**
              * Only the native functions matching active nativeTypes can be run for this model.
@@ -176,7 +176,7 @@ exports.modelize = function (schema) {
         }
 
         static get adapterName() {
-            return connectorName;
+            return dataSourceName;
         }
 
         static get adapter() {
@@ -654,12 +654,12 @@ exports.modelize = function (schema) {
         }
 
         static async runNativeQuery(queryName, params) {
-            if (schema.nativeQueries && schema.nativeQueries[queryName] && schema.nativeQueries[queryName][connectorName]) {
-                let queryFunc = schema.nativeQueries[queryName][connectorName];
+            if (schema.nativeQueries && schema.nativeQueries[queryName] && schema.nativeQueries[queryName][dataSourceName]) {
+                let queryFunc = schema.nativeQueries[queryName][dataSourceName];
                 return await queryFunc(params, adapter._db);
             }
             else {
-                log.error(`${schema.name}: No such native query '${queryName}' exists for the ${connectorName} engine. Did you forget to create it?`)
+                log.error(`${schema.name}: No such native query '${queryName}' exists for the ${dataSourceName} engine. Did you forget to create it?`)
             }
         }
 

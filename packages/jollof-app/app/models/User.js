@@ -11,7 +11,7 @@ const types = data.types;
 //Models use names
 const schema = {
     name: 'User',
-    connectionName: 'default',
+    dataSource: 'default',
     structure: {
         firstName: String,
         lastName: String,
