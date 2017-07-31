@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JollofJS: Signup</title>
+    <link rel="stylesheet" href="/static/css/animate.css"/>
+    <link rel="stylesheet" href="/static/css/home.css"/>
+    <link rel="stylesheet" href="/static/css/login.css"/>
+    <link rel="stylesheet" href="/static/css/toastr.min.css"/>
+</head>
+<body id="background">
+<header>
+    <div class="maincover">
+        <div class="title">
+            <span>Sign Up</span>
+        </div>
+
+        <div class="login-page">
+
+            <div class="form">
+                <div id="msg" style="color: orangered; padding:2px;"></div>
+                <form id="signupForm" class="register-form" >
+                    <input type="hidden" name="_csrf" value="{{ csrf }}" />
+                    <input name="firstName" type="text" placeholder="First"/>
+                    <input name="lastName" type="text" placeholder="Last"/>
+
+                    <input name="email" type="text" placeholder="email address"/>
+                    <input name="password" type="password" placeholder="password"/>
+
+                    <input id="loginBtn" type="submit" class="button" value="Sign Up"/>
+                    <p class="message">Already registered? <a  href="/login">Log In</a></p>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</header>
+
+<script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
+<script src="/static/js/toastr.min.js"></script>
+<script type="text/javascript">
+    $('.message a').click(function () {
+        $('form').animate({ height: "toggle", opacity: "toggle" }, "medium");
+    });
+
+
+    $('#signupForm').on('submit',function(evt){
+        evt.preventDefault();
+        $('#loginBtn').prop('disabled', true);
+
+        $.post('/signup',$( this ).serialize(), function(data){
+            $('#signupBtn').prop('disabled', false);
+
+            if(data.success){
+                location.href = '/';
+            }
+            else{
+                toastr.warning(data.message);
+//                $('#msg').html(data.message);
+            }
+        }).fail(function(){
+            toastr.warning('Unable to Register. Please try again later');
+//            $('#msg').html('Unable to Login. Please try again later');
+            $('#signupBtn').prop('disabled', true);
+        })
+    });
+
+
+</script>
+
+</body>
+</html>
