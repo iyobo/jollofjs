@@ -1,6 +1,8 @@
 {
     "scripts": {
-        "dev": "cd packages/jollof && npm run dev"
+        "dev": "cd packages/jollof && npm run dev",
+        "build": ". build.sh",
+        "publish": "npm run build && lerna publish"
     },
     "devDependencies": {
         "lerna": "^2.0.0"

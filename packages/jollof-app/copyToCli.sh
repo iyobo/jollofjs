@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 mkdir ../jollofjs/jollof-app
 cp -r ./app ../jollofjs/jollof-app/
 cp -r ./commands ../jollofjs/jollof-app/

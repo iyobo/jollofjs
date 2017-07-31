@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "prepublish": ". copyToCli.sh",
+    "copy": ". copyToCli.sh",
     "sayHi": "echo 'Copied jollof-app to cli'"
   },
   "dependencies": {
