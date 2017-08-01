@@ -19,9 +19,5 @@
   },
   "devDependencies": {
     "pre-commit": "^1.2.2"
-  },
-  "pre-commit": [
-    "prepublish",
-    "sayHi"
-  ]
+  }
 }
