@@ -13,12 +13,10 @@ const boom = require('boom');
 exports.canViewAdmin = async (ctx, next) => {
 
     if (ctx.isAuthenticated() && ctx.state.user.isAdmin) {
-        //if (true) {
-        //console.log('Can see admin')
         await next();
     }
     else {
-        //If user is not authorized to use admin, throw a misleading 404 to avoid hinting.
+        //If user is not authorized to use admin, throw a misleading redirect to avoid hinting.
         ctx.redirect('/');
     }
 

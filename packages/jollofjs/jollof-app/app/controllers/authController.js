@@ -21,8 +21,7 @@ exports.doLogin = async (ctx) => {
         ctx.login(authenticatedUser);
 
     } else {
-        //ctx.status = 401;
-        ctx.body = { success: false, message: 'Invalid Credentials' };
+        return ctx.throw(new boom.notFound('Invalid Credentials'));
     }
 
 
@@ -30,7 +29,16 @@ exports.doLogin = async (ctx) => {
 
 exports.doSignup = async (ctx) => {
 
-    await jollof.models.User.persist(ctx.request.fields);
+    const User = jollof.models.User;
+    const email = ctx.request.fields.email;
+
+    //first check if user exists
+    if ((await User.exists(email)) === true) {
+        return ctx.throw(new boom.conflict(`User with email ${email} already exists`));
+    }
+
+
+    await User.persist(ctx.request.fields);
 
     //Use email of new user as username
     ctx.request.fields.username = ctx.request.fields.email;
