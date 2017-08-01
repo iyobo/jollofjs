@@ -48,19 +48,19 @@
         $('#loginBtn').prop('disabled', true);
 
         $.post('/login',$( this ).serialize(), function(data){
-            $('#loginBtn').prop('disabled', false);
 
-            if(data.success){
-                location.href = '/';
+            location.href = '/'; //TODO: Go to dashboard
+
+        }).fail(function(err){
+
+            if(err.responseJSON){
+                toastr.warning(err.responseJSON.message);
             }
             else{
-                toastr.warning(data.message);
-//                $('#msg').html(data.message);
+                toastr.warning('Unable to Login. Please try again later');
             }
-        }).fail(function(){
-            toastr.warning('Unable to Login. Please try again later');
-//            $('#msg').html('Unable to Login. Please try again later');
-            $('#loginBtn').prop('disabled', true);
+        }).always(function(){
+            $('#loginBtn').prop('disabled', false);
         })
     });
 

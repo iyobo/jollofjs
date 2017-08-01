@@ -382,10 +382,12 @@ exports.modelize = function (schema) {
             const q = [];
 
             _.each(match, (v, k) => {
-                q.push(jql`${k} = ${v}`);
+                q.push(k+ (jql` = ${v}`));
             });
 
-            let res = await Model.find(q.join(' and '), opts);
+            const qstr = q.join(' and ');
+
+            let res = await Model.find(qstr, opts);
 
             return res;
         }
@@ -667,11 +669,18 @@ exports.modelize = function (schema) {
 
 
     /**
-     * setup methods
+     * setup instance methods
      */
-    _.each(schema.methods, (v, k) => {
+    _.each(schema.methods, (func, funcName) => {
+        Model.prototype[funcName] = func;
+    });
+
+    /**
+     * setup static methods
+     */
+    _.each(schema.statics, (v, k) => {
         Model[k] = v;
-    })
+    });
 
 
     /**

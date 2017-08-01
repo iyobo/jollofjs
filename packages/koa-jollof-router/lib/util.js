@@ -9,13 +9,35 @@ function isPath(it) {
     return it.startsWith('/')
 }
 
-exports.makeRoute= (router, method, path, flow, children) =>{
+exports.makeRoute = (router, method, path, flow, children) => {
 
-    if(flow && !Array.isArray(flow))
+    if (flow && !Array.isArray(flow))
         flow = [flow];
 
+    //error handling try/catch wrap
+    if (flow) {
+        flow = flow.map((it) => {
+            return async function (ctx, next) {
+                try {
+                    return await it(ctx, next)
+                } catch (err) {
+                    console.error(err.stack);
+
+                    if (err.isBoom && !err.isServer) {
+                        ctx.status = err.output.statusCode;
+                        ctx.body = err.output.payload;
+                    } else {
+                        ctx.throw(err);
+                    }
+
+                }
+            }
+        });
+    }
+
+
     if (!children) {
-        if(flow)
+        if (flow)
             router = router[method](path, ...flow)
         //else
         //    router = router[method](path, ...flow)
@@ -25,7 +47,7 @@ exports.makeRoute= (router, method, path, flow, children) =>{
         let subRouter = KRouter();
         subRouter = exports.digestRouteMap(subRouter, children)
 
-        if(flow)
+        if (flow)
             router.use(path, ...flow, subRouter.routes(), subRouter.allowedMethods());
         else
             router.use(path, subRouter.routes(), subRouter.allowedMethods());

@@ -50,19 +50,17 @@
         $('#loginBtn').prop('disabled', true);
 
         $.post('/signup',$( this ).serialize(), function(data){
-            $('#signupBtn').prop('disabled', false);
 
-            if(data.success){
-                location.href = '/';
+            location.href = '/'; //TODO: Go to dashboard
+        }).fail(function(err){
+            if(err.responseJSON){
+                toastr.warning(err.responseJSON.message);
             }
             else{
-                toastr.warning(data.message);
-//                $('#msg').html(data.message);
+                toastr.warning('Unable to Register. Please try again later');
             }
-        }).fail(function(){
-            toastr.warning('Unable to Register. Please try again later');
-//            $('#msg').html('Unable to Login. Please try again later');
-            $('#signupBtn').prop('disabled', true);
+        }).always(function(){
+            $('#loginBtn').prop('disabled', false);
         })
     });
 

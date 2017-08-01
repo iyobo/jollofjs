@@ -7,6 +7,7 @@
 const jollof = require('jollof');
 const data = jollof.data;
 const types = data.types;
+const jql = data.jql;
 
 //Models use names
 const schema = {
@@ -49,33 +50,48 @@ const schema = {
         }
     },
     /**
-     * Methods are convenience functions that are statically attached to a Model. e.g User.findNear(...)
+     * Methods extend a model's instance, allowing you to
+     * carry out actions on the instantiated model using *this*, where *this* is the model's content.
      */
-    methods: { //
-        * findNear(long1, lat1, long2, lat2){
-            console.log('FOO METHOD: finding a Foo near', ...arguments);
+    methods: {
+        async sayName(params) {
+            console.log('My name is', this.name);
+
         }
+
     },
     /**
-     * Natives are functions that you can use to access the full power of whatever native type this model's active connector belongs to. i.e. User.native.pityFoo({foo: 'bar'}).
+     * statics extend a model's class
+     */
+    statics: {
+
+        /**
+         * Does a user with this email exist?
+         * @param email
+         * @param selfAllowed - if true, will return true only if more than one email match is found
+         * @returns {Promise.<void>}
+         */
+        async exists(email) {
+            const count = await jollof.models.User.count(jql`email=${email}`);
+
+            if (count === 0)
+                return false;
+            else
+                return true;
+        }
+
+    },
+    /**
+     * Natives functions extend adapters and can be used to access the full power of this model's raw datasource.
+     * Accesed with e.g User.native.pityFoo({foo: 'bar'}).
      *
      * The init native function of a model will always be ran automatically after the model's adapter finishes initialization.
      * This is generally where you want to set indexes.
      */
     native: {
         mongodb: {
-            async init(){
-                console.log('MongoDB: Finished Setting up Foo ');
-
-                await this.db.collection('User').createIndex({ email: 1 },{ unique: true });
-            },
-
-            async pityFoo(param){
-                console.log('mongo pity!', this._adapterName, params.foo)
-            },
-
-            async slapFoo(){
-                console.log('mongo slap', this._adapterName)
+            async init() {
+                await this.db.collection('User').createIndex({ email: 1 }, { unique: true });
             }
         }
 

@@ -26,6 +26,7 @@ var kBetterBody = require('koa-better-body')
 const kValidate = require('koa-better-validation');
 
 const httpUtil = require('../util/httpUtil');
+const Boom = require('boom');
 
 const CSRF = require('koa-csrf');
 
@@ -206,6 +207,7 @@ module.exports.bootServer = function (overWriteFn) {
                 return yield next;
             }));
 
+            //csrf
             serverApp.use(async (ctx, next) => {
 
                 if (ctx.method === 'GET') {
@@ -255,7 +257,11 @@ module.exports.bootServer = function (overWriteFn) {
 
 
             serverApp.use(router.router.routes());
-            serverApp.use(router.router.allowedMethods());
+            serverApp.use(router.router.allowedMethods({
+                throw: true,
+                notImplemented: () => new Boom.notImplemented(),
+                methodNotAllowed: () => new Boom.methodNotAllowed()
+            }));
 
             //WEB SERVER-----------------------------------------------------
             // if(!module.parent){
