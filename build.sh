@@ -14,4 +14,5 @@ npm run copy
 cd ../..
 pwd
 
-
+#Commit Any changes
+git commit -a -m "Build"
