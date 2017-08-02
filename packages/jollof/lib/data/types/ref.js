@@ -7,15 +7,16 @@ const registry = require('../registry');
  * @type {{type: string, schema: {address1: String, address2: String, city: {type: String, required: boolean}, state: {type: String, required: boolean}, postalCode: String, country: {type: String, required: boolean}, longitude: {type: Number, required: boolean}, latitude: {type: Number, required: boolean}}}}
  */
 const refSchema = {
-	name: 'Ref',
-	structure: {
-		type: String,
-		meta: {
-			widget: 'ref',
-		}
-	}
+    name: 'Ref',
+    structure: {
+        type: String,
+        meta: {
+            widget: 'ref',
+            ref: ''
+        }
+    }
 
-}
+};
 
 module.exports = registry.registerType(refSchema);
 

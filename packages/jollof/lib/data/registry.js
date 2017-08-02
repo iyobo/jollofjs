@@ -27,7 +27,7 @@ module.exports.registerModel = function (schema) {
 
 module.exports.registerType = function (schema) {
     types[schema.name] = (opts) => {
-        return _.merge(schema.structure, opts);
+        return _.merge({},schema.structure, opts);
     };
     return types[schema.name];
 };
