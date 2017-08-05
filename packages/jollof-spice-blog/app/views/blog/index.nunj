@@ -49,19 +49,8 @@
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="{{ config.spices.blog.mountPath }}">Home</a>
-                </li>
-                <li>
-                    <a href="{{ config.spices.blog.mountPath }}/about">About</a>
-                </li>
-                <li>
-                    <a href="{{ config.spices.blog.mountPath }}/contact">Contact</a>
-                </li>
-            </ul>
-        </div>
+
+        {%include "includes/nav.nunj"%}
         <!-- /.navbar-collapse -->
     </div>
     <!-- /.container -->
@@ -101,15 +90,22 @@
                     <p class="post-meta">Posted on {{ article.datePublished }}</p>
                 </div>
                 <hr>
+            {% else %}
+                - No Articles yet -
+                {% if user and user.isAdmin %}
+            <br/>
+            You can create articles by creating <b>Blog_Article</b> entries in the <b><a href="/admin">Admin Panel</a></b>.
+                {% endif %}
             {% endfor %}
 
 
-            <!-- Pager -->
-            <ul class="pager">
-                <li class="next">
-                    <a href="javascript:null;">Older Posts &rarr;</a>
-                </li>
-            </ul>
+
+            <!--&lt;!&ndash; Pager &ndash;&gt;-->
+            <!--<ul class="pager">-->
+                <!--<li class="next">-->
+                    <!--<a href="javascript:null;">Older Posts &rarr;</a>-->
+                <!--</li>-->
+            <!--</ul>-->
         </div>
     </div>
 </div>
@@ -117,49 +113,7 @@
 <hr>
 
 <!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                    <li>
-                        <a href="{{ config.spices.blog.twitterUrl }}" target="_blank">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                                </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ config.spices.blog.facebookUrl }}" target="_blank">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ config.spices.blog.githubUrl }}" target="_blank">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ config.spices.blog.linkedInUrl }}" target="_blank">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                                </span>
-                        </a>
-                    </li>
-                </ul>
-                <p class="copyright text-muted">Copyright &copy; 2017. Powered by JollofJS</p>
-            </div>
-        </div>
-    </div>
-</footer>
+{%include "includes/footer.nunj"%}
 
 <!-- jQuery -->
 <script src="blogstatic/vendor/jquery/jquery.min.js"></script>

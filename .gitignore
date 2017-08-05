@@ -42,3 +42,5 @@ bundles/
 .idea/
 downloads/
 uploads
+
+.DS_Store

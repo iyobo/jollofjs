@@ -10,7 +10,7 @@ const types = data.types;
 
 //Media files
 const schema = {
-    name: 'Media',
+    name: 'Blog_Media',
     structure: {
         name: { type: String, meta: { disableEdit: true } },
         file: types.File(),

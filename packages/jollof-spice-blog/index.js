@@ -5,8 +5,10 @@ module.exports = async function (jollof) {
 
     jollof.log.info('Adding Blog Spice');
 
+    //Run models
     requireDir(path.join(__dirname, 'app', 'models'), { recurse: true });
 
+    //Add to jollof
     jollof.spices.push({
         name: 'Blog',
         statics: {

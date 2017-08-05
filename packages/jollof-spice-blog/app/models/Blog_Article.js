@@ -1,32 +1,28 @@
 /**
  * Created by iyobo on 2017-01-10.
  */
-/**
- * Created by iyobo on 2016-09-18.
- */
 const jollof = require('jollof');
 const data = jollof.data;
 const types = data.types;
 
 //Media files
 const schema = {
-    name: 'Comment',
+    name: 'Blog_Article',
     structure: {
         title: String,
+        stub: String,
+        subTitle: String,
         author: { type: String, meta: { widget: 'ref', ref: 'User' } },
-        body: { type: String, required: true, meta: { widget: 'richtext' } },
-        domain: String
+        isPublished: Boolean,
+        datePublished: Date,
+        body: { type: String, meta: { widget: 'richtext' } },
+        tags: [String],
+        category: { type: String, meta: { widget: 'ref', ref: 'Category' } },
+        domain: String,
+        isFeatured: Boolean,
+        featureImage: types.File()
     },
 
-    hooks: {
-        async preSave(){
-            //Title is a substring of body if empty
-
-            if (!this.title || this.title.trim() === '') {
-                this.title = this.title.length > 15 ? this.body.substr(0, 14) + '...' : this.title;
-            }
-        }
-    },
     /**
      * Natives are functions that you can use to access the full power of whatever native type this model's active connector belongs to. i.e. User.native.pityFoo({foo: 'bar'}).
      *
@@ -37,7 +33,7 @@ const schema = {
         mongodb: {
             async init(){
 
-                await this.db.collection('Comment').createIndex({ author: 1 });
+                await this.db.collection('Article').createIndex({ title: 1, domain: 1 }, { unique: true });
             }
         }
 
