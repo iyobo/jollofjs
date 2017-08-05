@@ -214,6 +214,27 @@ exports.modelize = function (schema) {
         }
 
         /**
+         * Instantiate and create an object
+         * @param data
+         */
+        static async create(data){
+            if (!data)
+                return null;
+
+            if (Array.isArray(data)) {
+                //This is an array of items
+                return await Promise.all(data.map( (item) => {
+                    return new Model(item).save();
+                }));
+            }
+            else {
+                //a singular item. wrap it
+                return await new Model(data).save();
+
+            }
+        }
+
+        /**
          * For when you don't want to instantiate, but just want the fully formated version
          * FIXME: This can be optimized!!!!
          * @param data
@@ -551,7 +572,7 @@ exports.modelize = function (schema) {
             this._originalData = _.clone(this._data);
 
 
-            return this.display();
+            return this;
         }
 
         get id() {
@@ -671,6 +692,7 @@ exports.modelize = function (schema) {
     /**
      * setup instance methods
      */
+
     _.each(schema.methods, (func, funcName) => {
         Model.prototype[funcName] = func;
     });
