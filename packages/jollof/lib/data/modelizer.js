@@ -676,6 +676,10 @@ exports.modelize = function (schema) {
             return JSON.stringify(this.display());
         }
 
+        toJSON(){
+            return this.toString();
+        }
+
         static async runNativeQuery(queryName, params) {
             if (schema.nativeQueries && schema.nativeQueries[queryName] && schema.nativeQueries[queryName][dataSourceName]) {
                 let queryFunc = schema.nativeQueries[queryName][dataSourceName];
