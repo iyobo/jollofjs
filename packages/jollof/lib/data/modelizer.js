@@ -677,7 +677,7 @@ exports.modelize = function (schema) {
         }
 
         toJSON(){
-            return this.toString();
+            return this.display();
         }
 
         static async runNativeQuery(queryName, params) {
