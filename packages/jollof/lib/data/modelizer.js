@@ -673,8 +673,8 @@ exports.modelize = function (schema) {
         }
 
         toString() {
-            //return JSON.stringify(this.display());
-            return this.toJSON();
+            return JSON.stringify(this._data);
+
         }
 
         toJSON() {
