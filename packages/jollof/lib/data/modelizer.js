@@ -123,7 +123,7 @@ exports.modelize = function (schema) {
 
             // const model = new Model(data);
             var modelAccessor = {
-                set (target, key, value) {
+                set(target, key, value) {
                     if (target._isDeleted)
                         throw new Error('Jollof Data: Cannot set data for a deleted item');
 
@@ -134,7 +134,7 @@ exports.modelize = function (schema) {
 
                     return true
                 },
-                get (target, key) {
+                get(target, key) {
                     if (target._isDeleted)
                         throw new Error('Jollof Data: Cannot get data from a deleted item');
 
@@ -217,13 +217,13 @@ exports.modelize = function (schema) {
          * Instantiate and create an object
          * @param data
          */
-        static async create(data){
+        static async create(data) {
             if (!data)
                 return null;
 
             if (Array.isArray(data)) {
                 //This is an array of items
-                return await Promise.all(data.map( (item) => {
+                return await Promise.all(data.map((item) => {
                     return new Model(item).save();
                 }));
             }
@@ -261,7 +261,7 @@ exports.modelize = function (schema) {
 
             //If id = null, then it obviously doesn't exist
 
-            if(!id){
+            if (!id) {
                 return null;
             }
 
@@ -283,7 +283,7 @@ exports.modelize = function (schema) {
             const q = [];
 
             _.each(match, (v, k) => {
-                q.push(k+jql` = ${v}`);
+                q.push(k + jql` = ${v}`);
             });
 
             const qstr = q.join(' and ');
@@ -403,7 +403,7 @@ exports.modelize = function (schema) {
             const q = [];
 
             _.each(match, (v, k) => {
-                q.push(k+ (jql` = ${v}`));
+                q.push(k + (jql` = ${v}`));
             });
 
             const qstr = q.join(' and ');
@@ -673,10 +673,11 @@ exports.modelize = function (schema) {
         }
 
         toString() {
-            return JSON.stringify(this.display());
+            //return JSON.stringify(this.display());
+            return this.toJSON();
         }
 
-        toJSON(){
+        toJSON() {
             return this.display();
         }
 
@@ -723,13 +724,13 @@ exports.modelize = function (schema) {
         }
 
         const nativeProxyAcessor = {
-            set (target, key, value) {
+            set(target, key, value) {
 
                 throw new Error('You cannot set a Jollof Native function')
 
                 return false;
             },
-            get (target, key) {
+            get(target, key) {
 
                 //if key exists in data's keys, get from there. otherwise get from the model
                 if (activeNativeFunctions[key])
