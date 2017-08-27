@@ -8,16 +8,24 @@ const config = require('../configurator').settings;
 const log = require('../log');
 const jfs = require('../filestorage');
 const isValid = require('isvalid-jollof');
-var jqlParser = require('./jollofql/index.js').jqlParser;
+
 const Boom = require('boom');
-var jql = require('./jollofql/index.js').jql;
-//import {jql} from './jollofql/index';
+
 var populateMetaTypes = require('../util/dataUtils.js').populateMetaTypes;
 
 const isValidValidate = Promise.promisify(isValid);
 
 const adapterMap = {};
 
+function objToCriteria(matchObj) {
+    const q = [];
+
+    _.each(matchObj, (v, k) => {
+        q.push([k, '=', v]);
+    });
+
+    return q;
+}
 
 /**
  * Takes a Jollof schema. Returns a Model
@@ -265,9 +273,7 @@ exports.modelize = function (schema) {
                 return null;
             }
 
-            const queryString = jql`id = ${id}`;
-
-            let res = await Model.findOne(queryString, opts);
+            let res = await Model.findOneBy({ id }, opts);
 
             return res;
         }
@@ -280,15 +286,7 @@ exports.modelize = function (schema) {
          */
         static async findOneBy(match, opts = {}) {
 
-            const q = [];
-
-            _.each(match, (v, k) => {
-                q.push(k + jql` = ${v}`);
-            });
-
-            const qstr = q.join(' and ');
-
-            let res = await Model.findOne(qstr, opts);
+            let res = await Model.findOne(objToCriteria(match), opts);
 
             return res;
         }
@@ -317,7 +315,7 @@ exports.modelize = function (schema) {
         /**
          * Searches for all matching items, and returns according to options.
          *
-         * @param {string} queryString - A safe JQL string.
+         * @param {Array} queryArray - A safe JQ array.
          * @param {object} options
          * @param {boolean} options.raw - if true, result will not be modelized. (But it will still respect the Jollof Id rule)
          * @param {object} options.paging -
@@ -326,15 +324,7 @@ exports.modelize = function (schema) {
          * @param {object} options.sort - e.g {fieldA: 1, fieldB: -1}. 1 is asc, -1 is desc
          * @returns {*}
          */
-        static async find(queryString, opts = {}) {
-
-            let criteria = [];
-
-            if (queryString && queryString.trim && queryString.trim() != '') {
-                //For now, we can only send a string into the jql parser if it is NOT empty
-                criteria = jqlParser.parse(queryString);
-            }
-
+        static async find(criteria, opts = {}) {
 
             let res = await adapter.find(collectionName, criteria, opts);
 
@@ -350,16 +340,11 @@ exports.modelize = function (schema) {
         /**
          * Counts all items matching query criteria.
          *
-         * @param {string} queryString - A safe JQL string.
+         * @param {array} criteria - query array.
          * @returns {*}
          */
-        static async count(queryString) {
-            let criteria = [];
+        static async count(criteria) {
 
-            if (queryString && queryString.trim && queryString.trim() != '') {
-                //For now, we can only send a string into the jql parser if it is NOT empty
-                criteria = jqlParser.parse(queryString);
-            }
             const count = await adapter.count(collectionName, criteria);
 
             return count;
@@ -368,7 +353,7 @@ exports.modelize = function (schema) {
         /**
          * Searches for and Returns only ONE item.
          *
-         * @param {string} queryString - A safe JQL string.
+         * @param {Array} criteria
          * @param {object} options
          * @param {boolean} options.raw - if true, result will not be modelized. (But it will still respect the Jollof Id rule)
          * @param {object} options.paging
@@ -377,13 +362,13 @@ exports.modelize = function (schema) {
          * @param {object} options.sort - e.g {fieldA: 1, fieldB: -1}. 1 is asc, -1 is desc
          * @returns {*}
          */
-        static async findOne(queryString, options = {}) {
+        static async findOne(criteria, options = {}) {
 
             const opts = _.clone(options);
             opts.paging = opts.paging || {};
             opts.paging.limit = 1;
 
-            let res = await Model.find(queryString, opts);
+            let res = await Model.find(criteria, opts);
 
             if (Array.isArray(res)) {
                 res = res.length > 0 ? res[0] : null;
@@ -400,15 +385,7 @@ exports.modelize = function (schema) {
          */
         static async findBy(match, opts = {}) {
 
-            const q = [];
-
-            _.each(match, (v, k) => {
-                q.push(k + (jql` = ${v}`));
-            });
-
-            const qstr = q.join(' and ');
-
-            let res = await Model.find(qstr, opts);
+            let res = await Model.find(objToCriteria(match), opts);
 
             return res;
         }
@@ -416,20 +393,26 @@ exports.modelize = function (schema) {
         /**
          * updates all matching condition with data.
          *
-         * @param {string} queryString - A safe JQL string.
+         * @param {array} criteria -
          * @param data
          *
          * @returns {*} A number signifying number of items updated.
          */
-        static async update(queryString, data) {
-            let criteria = [];
-
-            if (queryString && queryString.trim && queryString.trim() != '') {
-                //For now, we can only send a string into the jql parser if it is NOT empty
-                criteria = jqlParser.parse(queryString);
-            }
+        static async update(criteria, data) {
 
             const updateCount = await adapter.update(collectionName, criteria, data);
+            return updateCount;
+        }
+
+        static async updateById(id, data) {
+
+            const updateCount = await adapter.update(collectionName, [['id', '=', id]], data);
+            return updateCount;
+        }
+
+        static async updateBy(match, data) {
+
+            const updateCount = await adapter.update(collectionName, objToCriteria(match), data);
             return updateCount;
         }
 
@@ -453,20 +436,26 @@ exports.modelize = function (schema) {
          * Will throw error if no conditions are given.
          * JollofJS will never wipe all your data unless env= test.
          *
-         * @param queryString
+         * @param criteria
          * @returns {*}
          */
-        static async remove(queryString) {
-            let criteria = [];
-            if (queryString && queryString.trim && queryString.trim() != '') {
-                //For now, we can only send a string into the jql parser if it is NOT empty
-                criteria = jqlParser.parse(queryString);
-            }
-            else {
+        static async remove(criteria) {
+
+            if (!criteria && criteria.length === 0) {
                 throw new Boom.badRequest('Cannot remove with zero conditions. Please specify at least one condition to remove.')
             }
 
             return await adapter.remove(collectionName, criteria);
+        }
+
+        static async removeById(id) {
+
+            return await adapter.remove(collectionName, [['id', '=', id]]);
+        }
+
+        static async removeBy(match, opts) {
+
+            return await adapter.remove(collectionName, objToCriteria(match));
         }
 
 
@@ -560,9 +549,8 @@ exports.modelize = function (schema) {
 
 
             if (this.isPersisted()) {
-                const where = jqlParser.parse(jql`id = ${this.id}`)
 
-                await adapter.update(collectionName, where, this._data)
+                await adapter.update(collectionName, [['id', '=', this.id]], this._data)
             }
             else {
                 let res = await adapter.create(collectionName, this._data);
@@ -653,9 +641,7 @@ exports.modelize = function (schema) {
 
             await this._preRemove();
 
-            const where = jqlParser.parse(jql`id = ${this.id}`)
-            await adapter.remove(model._collectionName, where);
-            //await adapter.removeModel(this);
+            await adapter.remove(model._collectionName, [['id', '=', this.id]]);
 
             await this._postRemove();
 

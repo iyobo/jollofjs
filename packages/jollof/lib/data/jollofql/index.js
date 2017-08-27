@@ -10,6 +10,8 @@ function cleanString(value) {
 
 /**
  * A tag to be used with ES6 string literals to prevent JQL injection.
+ * Helps to build JQL queries.
+ *
  * @param queryChunks
  * @param injects
  * @returns {string}
@@ -23,7 +25,6 @@ function jql(queryChunks, ...injects) {
 
             let value = injects[i];
             let q = queryChunks[i];
-
 
             if (typeof value === 'string') {
                 //make string value safe
