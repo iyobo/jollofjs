@@ -391,6 +391,19 @@ exports.modelize = function (schema) {
         }
 
         /**
+         * Finds by json match
+         * @param match json match
+         * @param opts
+         * @returns {Promise.<*>}
+         */
+        static async countBy(match, opts = {}) {
+
+            let res = await Model.count(objToCriteria(match), opts);
+
+            return res;
+        }
+
+        /**
          * updates all matching condition with data.
          *
          * @param {array} criteria -

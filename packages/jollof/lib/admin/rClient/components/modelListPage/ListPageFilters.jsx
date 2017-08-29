@@ -3,7 +3,10 @@
  */
 import React, {Component, PropTypes} from 'react';
 import {inject, observer} from 'mobx-react';
-import TextField from 'material-ui/TextField';
+require('codemirror/lib/codemirror.css');
+require('codemirror/theme/cobalt.css');
+var CodeMirror = require('react-codemirror');
+require('codemirror/mode/javascript/javascript');
 
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import RemoveIcon from 'material-ui/svg-icons/navigation/cancel';
@@ -42,7 +45,7 @@ export default class ListPageFilters extends Component {
         this.props.store.models.clearFilters();
     }
 
-    handleFilterChange = (evt, str) => {
+    handleFilterChange = (str) => {
 
         this.props.store.models.changeQueryConditions(str);
     }
@@ -58,12 +61,15 @@ export default class ListPageFilters extends Component {
                 <div className="filterBlock row">
 
                     <div class="col-xs-10">
-                        <TextField
-                            floatingLabelText="Conditions"
-                            fullWidth={true}
-                            value={this.props.store.models.modelQuery.conditions}
-                            onChange={this.handleFilterChange}
-                        />
+                        {/*<TextField*/}
+                            {/*floatingLabelText="Conditions"*/}
+                            {/*fullWidth={true}*/}
+                            {/*value={this.props.store.models.modelQuery.conditions}*/}
+                            {/*onChange={this.handleFilterChange}*/}
+                        {/*/>*/}
+                        <label>Enter a filter in <a href="http://jollofjs.com/docs" target="_blank" >JQA</a></label>
+                        <CodeMirror value={this.props.store.models.modelQuery.conditions||''} autoSave={true}
+                                    onChange={this.handleFilterChange} options={{lineNumbers: true, mode: 'javascript', theme: 'cobalt'}} />
                         <FlatButton
                             label="Refresh"
                             labelPosition="before"

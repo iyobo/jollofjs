@@ -72,7 +72,7 @@ const schema = {
          * @returns {Promise.<void>}
          */
         async exists(email) {
-            const count = await jollof.models.User.count(jql`email=${email}`);
+            const count = await jollof.models.User.countBy({email});
 
             if (count === 0)
                 return false;

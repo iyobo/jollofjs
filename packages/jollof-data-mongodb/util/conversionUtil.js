@@ -2,7 +2,7 @@
  * Created by iyobo on 2017-05-02.
  */
 const idField = '_id';
-const Boom = require('boom');
+const assert = require('assert');
 const ObjectID = require('mongodb').ObjectID;
 
 function convertComp(comp) {
@@ -37,91 +37,112 @@ function convertComp(comp) {
     return symbol;
 }
 
+/**
+ * Translates a single jollof condition
+ * @param {array | object} cond
+ * @returns {*}
+ */
+function translate(cond) {
 
-function translate(cond, query, parentConnector) {
+    let result = {};
 
-    let fieldName = cond.field;
+    // If condition is not an array...
+    if (!Array.isArray(cond)) {
+        //...then it is a condition cluster
+        if (cond.and) {
+            result = translateAndList(cond.and)
+        }
+        else if (cond.or) {
+            result = translateOrList(cond.or)
+        }
+        else {
+            //This is an illegal subject.
+            throw new Error('Invalid query Object keys. Objects must be either "and" or "or"');
+        }
+    }
+    else {
+        //...then it's a singular condition
+        assert(cond.length === 3, 'Invalid condition item. Condition items must be an array of 3 items representing field, comparator, and value')
 
+        let fieldName = cond[0];
+        let comp = cond[1];
+        let value = cond[2];
 
-    if(fieldName === 'id'){
-        fieldName = '_id';
-
-        //Only null is acceptable, not undefined.
-        if(typeof cond.value === 'undefined'){
-            return cond.connector;
+        if (fieldName === 'id') {
+            fieldName = '_id';
+            value = new ObjectID(value)
         }
 
-        cond.value = new ObjectID(cond.value)
-    }
-
-    //We don't support elemMatch fields
-    if (fieldName.indexOf('*') > -1) {
-        throw new Boom.methodNotAllowed('Sub-array matches not supported in jollof-data-memory adapter');
-    }
-
-
-    if (!cond.items) { // if not a nest starter
-
-        const condBlock = {};
-
         // construct mini block
-        if (cond.comp === '=') {
-            let value = cond.value;
+        if (comp === '=') {
 
-            //NEDB is too dumb to deal with foo:null
-            if (cond.value === null || cond.value === undefined) {
+            if (value === null || value === undefined) {
                 value = {};
                 value['$exists'] = false;
             }
 
-            condBlock[fieldName] = value;
-        } else if (cond.comp === '!=' && (cond.value === null || cond.value === undefined)) {
+            result[fieldName] = value;
+        } else if (comp === '!=' && (value === null || cond.value === undefined)) {
             let value = {};
             value['$exists'] = true;
 
-            condBlock[fieldName] = value;
+            result[fieldName] = value;
         }
         else {
             const subCondBlock = {};
-            subCondBlock[convertComp(cond.comp)] = cond.value;
 
-            //construct block
-            condBlock[fieldName] = subCondBlock;
+            subCondBlock[convertComp(comp)] = value;
+
+            result[fieldName] = subCondBlock;
         }
-
-
-        //how is this block connected to the previous?
-        const logical = '$' + (cond.connector || parentConnector || 'and');
-        query[logical] = query[logical] || [];
-        query[logical].push(condBlock);
-
-    }
-    else if (cond.items) {
-        throw new Boom.methodNotAllowed('Nested conditions currently unsupported in Jollof Memory Adapter')
     }
 
-    return cond.connector;
+    return result;
 
 }
 
-function translateList(conds, map) {
-    let activeConnector;
-    conds.reverse().forEach((cond, index) => {
-        activeConnector = translate(cond, map, activeConnector);
-    });
+function translateAndList(conds) {
+    assert(Array.isArray(conds), 'Expected an array to AND. Instead got ' + typeof conds);
+
+    const andList = [];
+    conds.forEach((cond) => {
+        andList.push(translate(cond));
+    })
+    return andList.length > 0 ? { $and: andList } : {};
 }
 
-exports.convertConditionsFromJollof = (conditions) => {
-    const query = {};
+function translateOrList(conds) {
+    assert(Array.isArray(conds), 'Expected an array to OR. Instead got ' + typeof conds);
 
-    translateList(conditions, query);
+    const orList = [];
+    conds.forEach((cond) => {
+        orList.push(translate(cond));
+    })
 
-    //console.log('conditions:', conditions, 'query:', query);
-
-    return query;
+    return orList.length > 0 ? { $or: orList } : {};
 }
 
 
+/**
+ * Converts an array of jollof conditions to MongoDB
+ * @param {Array} jollofArray
+ * @returns MongoDB query
+ */
+exports.convertConditionsFromJollof = (jollofArray) => {
+    try {
+        return translateAndList(jollofArray);
+    } catch (e) {
+        console.error('jollof-data-mongodb: Trouble processing ', jollofArray);
+        throw e;
+    }
+
+}
+
+/**
+ * Converts paging and sorting options
+ * @param opts
+ * @returns {*}
+ */
 exports.convertOptionsFromJollof = (opts) => {
 
     if (opts.sort && opts.sort.id) {

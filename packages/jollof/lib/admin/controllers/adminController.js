@@ -7,6 +7,7 @@ const Boom = require('boom');
 const _ = require('lodash');
 const httpUtil = require('../../util/httpUtil');
 var jql = require('../../data/index.js').jql;
+const {VM} = require('vm2');
 
 module.exports = {
     index: async function (ctx) {
@@ -62,8 +63,15 @@ module.exports = {
                 opts.paging = JSON.parse(ctx.query.paging);
             }
 
-            const items = await models[modelName].find(ctx.query['conditions'], opts);
-            const count = await models[modelName].count(ctx.query['conditions'], opts);
+            //turn conditions to JQA, in separate context, with a 500ms timeout
+            let vmctx = Object.create(null); //create a context for the vm that does NOT have a prototype to prevent vuln.
+            vmctx.a = 1;
+            const jqa = new VM({
+                timeout: 5
+            }).run(ctx.query['conditions']);
+
+            const items = await models[modelName].find(jqa || [], opts);
+            const count = await models[modelName].count(jqa || [], opts);
 
             ctx.body = items.map((it) => {
                 return it.display();

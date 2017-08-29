@@ -3,7 +3,7 @@ const jql = jollof.jql;
 
 exports.index = async (ctx) => {
 
-    ctx.state.articles = await jollof.models.Blog_Article.find('', {raw:true});
+    ctx.state.articles = await jollof.models.Blog_Article.find([], {raw:true});
 
     await ctx.render('blog/index');
 }
@@ -25,7 +25,7 @@ exports.article = async (ctx) => {
 exports.category = async (ctx) => {
     const category = await jollof.models.Blog_Category.findById(ctx.params.id);
 
-    ctx.state.articles = await jollof.models.Blog_Article.find(jql`category = ${ctx.params.id}`);
+    ctx.state.articles = await jollof.models.Blog_Article.findBy({category: ctx.params.id});
     ctx.state.category = category;
     await ctx.render('blog/category');
 }
