@@ -150,7 +150,7 @@ module.exports = {
         try {
             const id = ctx.params.id;
             const modelName = ctx.params.modelName;
-            ctx.body = await models[modelName].remove(jql`id=${id}`)
+            ctx.body = await models[modelName].removeById(id)
         } catch (err) {
             httpUtil.handleError(ctx, err);
         }
