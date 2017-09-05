@@ -7,7 +7,7 @@ module.exports = {
     env: 'development',
 
     server:{
-        port: 4001
+        port: 3001
     }
 
 }

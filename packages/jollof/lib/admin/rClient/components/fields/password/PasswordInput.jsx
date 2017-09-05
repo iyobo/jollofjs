@@ -86,12 +86,12 @@ export default class PasswordInput extends Component {
                 <div>
                     <strong>Editing Encrypted Field. </strong>
                     <div class="form-group">
-                        <input type="text" className={"form-control"} value={this.state.p1}
+                        <input type="password" className={"form-control"} value={this.state.p1}
                                onChange={this.onP1Change}/>
                         <small class="form-text text-muted">New Value</small>
                     </div>
                     <div class={"form-group " + (this.state.matching ? "has-success" : "has-danger")}>
-                        <input type="text"
+                        <input type="password"
                                className={"form-control " + (this.state.matching ? "form-control-success" : "form-control-danger") }
                                value={this.state.p2} onChange={this.onP2Change}/>
                         <small class="form-text text-muted">Confirm New Value</small>
