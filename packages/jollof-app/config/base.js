@@ -40,6 +40,14 @@ module.exports = {
         logoutPath: '/logout'
     },
 
+    thirdParty:{
+        google: {
+            maps: {
+                apiKey: ''
+            }
+        }
+    },
+
     spices: {
         blog: {
             title: 'The Journey so Far',
