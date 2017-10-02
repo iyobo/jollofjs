@@ -2,7 +2,7 @@
 
 The tastiest **NodeJS Application Framework** you ever ate.
 
-![jollof Logo](https://raw.github.com/iyobo/jollof/master/images/jollof.png)
+![jollof Logo](https://raw.github.com/iyobo/jollofjs/master/images/jollof.png)
 
 
 ## Key Features
@@ -10,8 +10,8 @@ The tastiest **NodeJS Application Framework** you ever ate.
 - *Convention over configuration...*
 ...Because you have better things to do with your time. But JollofJS is still very configurable.
 
-- *Full support for ES7 Async/Await * 
-Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables 
+- *Full support for ES7 Async/Await *
+Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables
 through ES6 Promises, and Async Await. Powered by KoaJS.
 
 
@@ -53,7 +53,7 @@ npm start
 
 You should now be able to see jollof running at `localhost:3000`.
 
-![jollof home](https://raw.github.com/iyobo/jollof/master/images/home.png)
+![jollof home](https://raw.github.com/iyobo/jollofjs/master/images/home.png)
 
 
 ### App structure
@@ -64,17 +64,23 @@ You are highly advised to study the structure of this new app, starting from ind
 
 To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
 
-![jollof admin](https://raw.github.com/iyobo/jollof/master/images/admin.png)
+![jollof admin](https://raw.github.com/iyobo/jollofjs/master/images/admin.png)
 
 Editing an item in the Admin...
 
-![jollof edit](https://raw.github.com/iyobo/jollof/master/images/edit.png)
+![jollof edit](https://raw.github.com/iyobo/jollofjs/master/images/edit.png)
 
 
 
-The Jollof Admin is, quite frankly, the Saber's edge of all NodeJS frameworks. 
+The Jollof Admin is, quite frankly, the Saber's edge of any NodeJS framework in existence today.
 Jollof Admin automatically creates a user interface to administer all your models, as well as in-built models.
+It supports all the usual field types you find in an other admins, *and then some!* Including:
+* Arrays (Of ANY field type)
+* Objects, (Of ANY combination of field types)
+* Files,
+* GeoLocations
+
 
 Right now, the app you created has only one model `User`.
 
-See the Jollof Wiki for how to work with Models.
+See the [Jollof docs](http://docs.jollofjs.com) for how to work with Models.
