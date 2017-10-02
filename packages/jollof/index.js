@@ -1,7 +1,3 @@
-if (typeof JOLLOF_STANDALONE === 'undefined') {
-    JOLLOF_STANDALONE = false;
-}
-
 /**
  * Created by iyobo on 2016-10-17.
  */
