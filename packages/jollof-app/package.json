@@ -14,6 +14,8 @@
     "jollof": "^1.2.4",
     "jollof-data-mongodb": "^1.2.0",
     "jollof-spice-blog": "^0.2.5",
+      "koa-convert": "^1.2.0",
+      "koa-passport": "^4.0.0",
     "passport-jwt": "^2.2.1",
     "passport-local": "^1.0.0",
     "slugify": "^1.1.0"

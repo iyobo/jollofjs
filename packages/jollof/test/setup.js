@@ -18,11 +18,6 @@ before('bootstrapping Jollof for testing', function () {
 	//Before each test, wipe
 	return co(function*() {
 
-		//If this is the test environment, wipe out memory DB
-		if(process.env.NODE_ENV === 'test'){
-			del.sync([ jollof.config.db.memory.filename +'/*.db' ],{force: true});
-		}
-
 		//Start Jollof
 		yield jollof.bootstrap.bootStandAloneServer();
 

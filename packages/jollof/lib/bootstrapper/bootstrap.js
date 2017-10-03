@@ -34,7 +34,7 @@ var helmet = require('koa-helmet')
 const Router = require('koa-jollof-router');
 
 const convert = require('koa-convert') // necessary until all have been updated to support koa@2
-const passport = require('koa-passport')
+
 
 let modelsLoaded = false;
 
@@ -108,10 +108,8 @@ module.exports.bootServer = function (overWriteFn) {
             // trust proxy
             serverApp.proxy = true;
 
-            //Setup passport auth strategies
-            require(appPaths.appRoot + '/app/services/passport/strategies').setupStrategies(serverApp, passport);
 
-            //wear helmet for security
+        //wear helmet for security
             serverApp.use(helmet());
 
             // serverApp.use(kBody());
@@ -147,16 +145,12 @@ module.exports.bootServer = function (overWriteFn) {
             //}));
 
 
-            serverApp.use(passport.initialize());
-            serverApp.use(passport.session());
-
-            //Make session variables accesible to View renderers
+        //Make session variables accesible to View renderers
             serverApp.use(convert(function*(next) {
                 this.state.session = this.session;
                 this.state.sessionId = this.sessionId;
                 this.state.env = jollof.config.env;
                 this.state.config = jollof.config;
-                this.passport = passport;
                 return yield next;
             }));
 
@@ -253,7 +247,7 @@ module.exports.bootServer = function (overWriteFn) {
 
             //Give Framework user a chance to set things up or mount stuff
             if (overWriteFn)
-                overWriteFn(serverApp);
+                yield overWriteFn(serverApp);
 
 
             serverApp.use(router.router.routes());
