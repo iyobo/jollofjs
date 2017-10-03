@@ -61,7 +61,7 @@ function* loadModels() {
  * @returns {*}
  */
 module.exports.boot = function (fn) {
-    return co(function*() {
+    return co(function* () {
 
         //Load models
         yield loadModels();
@@ -88,186 +88,186 @@ module.exports.bootStandAlone = function (fn) {
 
 module.exports.bootServer = function (overWriteFn) {
 
-    return co(function*() {
+    return co(function* () {
 
         //try {
 
-            //Load models
-            yield loadModels();
+        //Load models
+        yield loadModels();
 
-            //Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
-            log.info("[Jollof] Starting Jollof Server app... \n APPROOT: " + appPaths.appRoot);
+        //Initialize Bootstrap globals. Access these anywhere in the app e.g env.settings.appname
+        log.info("[Jollof] Starting Jollof Server app... \n APPROOT: " + appPaths.appRoot);
 
-            //Run the application
+        //Run the application
 
-            //Set'em up------------------------------------------------------
-            serverApp = new koa({
-                // qs: true
-            });
+        //Set'em up------------------------------------------------------
+        serverApp = new koa({
+            // qs: true
+        });
 
-            // trust proxy
-            serverApp.proxy = true;
+        // trust proxy
+        serverApp.proxy = true;
 
 
         //wear helmet for security
-            serverApp.use(helmet());
+        serverApp.use(helmet());
 
-            // serverApp.use(kBody());
-            serverApp.use(convert(kBetterBody({
-                'multipart': true,
-                querystring: require('qs')
-            })));
+        // serverApp.use(kBody());
+        serverApp.use(convert(kBetterBody({
+            'multipart': true,
+            querystring: require('qs')
+        })));
 
-            //koa-better-body annoyingly doesn't put fields in body. Fixes that
-            serverApp.use(convert(function*(next) {
-                if (this.request.fields) {
-                    this.request.body = this.request.fields;
-                }
-                return yield next;
-            }));
+        //koa-better-body annoyingly doesn't put fields in body. Fixes that
+        serverApp.use(convert(function* (next) {
+            if (this.request.fields) {
+                this.request.body = this.request.fields;
+            }
+            return yield next;
+        }));
 
-            //Sessions
-            serverApp.keys = jollof.config.crypto.secrets;
-            //serverApp.use(convert(session(jollof.config, serverApp)));
-            serverApp.use(convert(session({
-                store: redisStore(jollof.config.sessions.redis),
-                // store: require("koa-generic-session/lib/memory_store")
-            })));
+        //Sessions
+        serverApp.keys = jollof.config.crypto.secrets;
+        //serverApp.use(convert(session(jollof.config, serverApp)));
+        serverApp.use(convert(session({
+            store: redisStore(jollof.config.sessions.redis),
+            // store: require("koa-generic-session/lib/memory_store")
+        })));
 
-            // add the CSRF middleware
-            //serverApp.use(new CSRF({
-            //    invalidSessionSecretMessage: 'Invalid session secret',
-            //    invalidSessionSecretStatusCode: 403,
-            //    invalidTokenMessage: 'Invalid CSRF token',
-            //    invalidTokenStatusCode: 403,
-            //    excludedMethods: [ 'GET', 'HEAD', 'OPTIONS','DELETE' ],
-            //    disableQuery: false
-            //}));
+        // add the CSRF middleware
+        //serverApp.use(new CSRF({
+        //    invalidSessionSecretMessage: 'Invalid session secret',
+        //    invalidSessionSecretStatusCode: 403,
+        //    invalidTokenMessage: 'Invalid CSRF token',
+        //    invalidTokenStatusCode: 403,
+        //    excludedMethods: [ 'GET', 'HEAD', 'OPTIONS','DELETE' ],
+        //    disableQuery: false
+        //}));
 
 
         //Make session variables accesible to View renderers
-            serverApp.use(convert(function*(next) {
-                this.state.session = this.session;
-                this.state.sessionId = this.sessionId;
-                this.state.env = jollof.config.env;
-                this.state.config = jollof.config;
-                return yield next;
-            }));
+        serverApp.use(convert(function* (next) {
+            this.state.session = this.session;
+            this.state.sessionId = this.sessionId;
+            this.state.env = jollof.config.env;
+            this.state.config = jollof.config;
+            return yield next;
+        }));
 
-            /**
-             * TODO: Create signature jollof error page
-             */
-            //if (!JOLLOF_STANDALONE) {
-            //	serverApp.use(kerror({
-            //		engine: 'nunjucks',
-            //		template: appPaths.views + path.sep + 'error.nunj'
-            //	}));
-            //}
+        /**
+         * TODO: Create signature jollof error page
+         */
+        //if (!JOLLOF_STANDALONE) {
+        //	serverApp.use(kerror({
+        //		engine: 'nunjucks',
+        //		template: appPaths.views + path.sep + 'error.nunj'
+        //	}));
+        //}
 
-            //server-side form validator
-            serverApp.use(convert(kValidate()));
-
-
-            //app statics
-            serverApp.use(convert(serve({ rootDir: 'static', rootPath: '/static' })));
+        //server-side form validator
+        serverApp.use(convert(kValidate()));
 
 
+        //app statics
+        serverApp.use(convert(serve({ rootDir: 'static', rootPath: '/static' })));
 
-            //Internal jollof statics
-            serverApp.use(convert(serve({
-                rootDir: path.join('node_modules', 'jollof', 'jollofstatic'),
-                rootPath: '/jollofstatic'
-            })));
 
-            //Spice statics
-            jollof.spices.forEach((it)=>{
-                if(it.statics){
-                    serverApp.use(convert(serve({
-                        rootDir:  it.statics.rootDir,
-                        rootPath: it.statics.rootPath
-                    })));
-                }
-            })
+        //Internal jollof statics
+        serverApp.use(convert(serve({
+            rootDir: path.join('node_modules', 'jollof', 'jollofstatic'),
+            rootPath: '/jollofstatic'
+        })));
 
-            //public file upload statics
-            serverApp.use(convert(serve({
-                rootDir: jollof.config.fileStorage.engines.local.publicRoot,
-                rootPath: jollof.config.fileStorage.engines.local.basePublicUrl
-            })));
+        //Spice statics
+        jollof.spices.forEach((it) => {
+            if (it.statics) {
+                serverApp.use(convert(serve({
+                    rootDir: it.statics.rootDir,
+                    rootPath: it.statics.rootPath
+                })));
+            }
+        })
 
-            //Jollof formdata parsing
-            serverApp.use(convert(function*(next) {
-                yield httpUtil.objectify(this);
-                return yield next;
-            }));
+        //public file upload statics
+        serverApp.use(convert(serve({
+            rootDir: jollof.config.fileStorage.engines.local.publicRoot,
+            rootPath: jollof.config.fileStorage.engines.local.basePublicUrl
+        })));
 
-            //csrf
-            serverApp.use(async (ctx, next) => {
+        //Jollof formdata parsing
+        serverApp.use(convert(function* (next) {
+            yield httpUtil.objectify(this);
+            return yield next;
+        }));
 
-                if (ctx.method === 'GET') {
-                    ctx.state.csrf = ctx.csrf;
-                }
+        //csrf
+        serverApp.use(async (ctx, next) => {
 
-                return next();
-            });
-
-            //nunjucks
-            let nunjConfig = jollof.config.nunjucks;
-
-            //add spice nunjucks view paths
-            jollof.spices.forEach((it)=>{
-                if(it.views){
-                    nunjConfig.path.push(it.views.path)
-                }
-            })
-
-            jollof.config.nunjucks.configureEnvironment = (env) => {
-                jollof.view.setupFilters(env)
-            };
-            serverApp.use(koaNunjucks(jollof.config.nunjucks));
-
-            //Router
-            let router = new Router();
-
-            ////APP ROUTES
-            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
-
-            //If Admin is enabled
-            if (jollof.config.admin.enabled ) {
-
-                router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
+            if (ctx.method === 'GET') {
+                ctx.state.csrf = ctx.csrf;
             }
 
-            //spice routes
-            jollof.spices.forEach((it)=>{
-                if(it.routes){
-                    router.nestRoutes(jollof.config.spices.blog.mountPath, it.privateBlogAuth, it.routes)
-                }
-            })
+            return next();
+        });
 
-            //Give Framework user a chance to set things up or mount stuff
-            if (overWriteFn)
-                yield overWriteFn(serverApp);
+        //nunjucks
+        let nunjConfig = jollof.config.nunjucks;
+
+        //add spice nunjucks view paths
+        jollof.spices.forEach((it) => {
+            if (it.views) {
+                nunjConfig.path.push(it.views.path)
+            }
+        })
+
+        jollof.config.nunjucks.configureEnvironment = (env) => {
+            jollof.view.setupFilters(env)
+        };
+        serverApp.use(koaNunjucks(jollof.config.nunjucks));
+
+        //Router
+        let router = new Router();
+
+        ////APP ROUTES
+        if (process.env.NODE_ENV !== 'test')
+            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
+
+        //If Admin is enabled
+        if (jollof.config.admin.enabled) {
+
+            router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
+        }
+
+        //spice routes
+        jollof.spices.forEach((it) => {
+            if (it.routes) {
+                router.nestRoutes(jollof.config.spices.blog.mountPath, it.privateBlogAuth, it.routes)
+            }
+        })
+
+        //Give Framework user a chance to set things up or mount stuff
+        if (overWriteFn)
+            yield overWriteFn(serverApp);
 
 
-            serverApp.use(router.router.routes());
-            serverApp.use(router.router.allowedMethods({
-                throw: true,
-                notImplemented: () => new Boom.notImplemented(),
-                methodNotAllowed: () => new Boom.methodNotAllowed()
-            }));
+        serverApp.use(router.router.routes());
+        serverApp.use(router.router.allowedMethods({
+            throw: true,
+            notImplemented: () => new Boom.notImplemented(),
+            methodNotAllowed: () => new Boom.methodNotAllowed()
+        }));
 
-            //WEB SERVER-----------------------------------------------------
-            // if(!module.parent){
-            serverApp.listen(jollof.config.server.port);
-            // }
+        //WEB SERVER-----------------------------------------------------
+        // if(!module.parent){
+        serverApp.listen(jollof.config.server.port);
+        // }
 
-            jollof.log.info("Server started on port " + jollof.config.server.port)
+        jollof.log.info("Server started on port " + jollof.config.server.port)
 
 
-            jollof.serverApp = serverApp;
+        jollof.serverApp = serverApp;
 
-            return serverApp;
+        return serverApp;
         //} catch (err) {
         //    log.error(err.stack)
         //}
