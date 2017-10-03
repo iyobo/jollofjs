@@ -82,7 +82,7 @@ module.exports.boot = function (fn) {
 }
 
 module.exports.bootStandAlone = function (fn) {
-    global.JOLLOF_STANDALONE = true;
+
     return module.exports.boot(fn);
 }
 
@@ -181,7 +181,7 @@ module.exports.bootServer = function (overWriteFn) {
 
             //Internal jollof statics
             serverApp.use(convert(serve({
-                rootDir: JOLLOF_STANDALONE ? 'jollofstatic' : path.join('node_modules', 'jollof', 'jollofstatic'),
+                rootDir: path.join('node_modules', 'jollof', 'jollofstatic'),
                 rootPath: '/jollofstatic'
             })));
 
@@ -239,7 +239,7 @@ module.exports.bootServer = function (overWriteFn) {
             router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
 
             //If Admin is enabled
-            if (jollof.config.admin.enabled || JOLLOF_STANDALONE) {
+            if (jollof.config.admin.enabled ) {
 
                 router.nestRoutes(jollof.config.admin.routePrefix, jollof.config.admin.auth, require('../admin/adminRoutes'))
             }
@@ -286,6 +286,6 @@ module.exports.bootServer = function (overWriteFn) {
 }
 
 module.exports.bootStandAloneServer = function (fn) {
-    global.JOLLOF_STANDALONE = true;
+
     return module.exports.bootServer(fn);
 }
