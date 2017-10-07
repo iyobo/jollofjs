@@ -69,25 +69,27 @@ exports.new = async function (args) {
     file.save();
 
     //Now run 'npm i'
-    console.log(chalk.yellow('Serving Jollof...This might take a while!....'));
-    await new Promise((resolve, reject) => {
-        childProc.exec(`cd ${destination} && npm i`, (error, stdout, stderr) => {
-            if (error) {
-                console.log('ERROR', error);
-                if (error.code === 0)
-                    return resolve();
-                else
-                    return reject(error);
-            }
-            //console.log(`stdout: ${stdout}`);
-            ////console.log(`stderr: ${stderr}`);
-            return resolve();
-        });
-    });
+    //console.log(chalk.yellow('Serving Jollof...This might take a while!....'));
+    //await new Promise((resolve, reject) => {
+    //    childProc.exec(`cd ${destination} && npm i`, (error, stdout, stderr) => {
+    //        if (error) {
+    //            console.log('ERROR', error);
+    //            if (error.code === 0)
+    //                return resolve();
+    //            else
+    //                return reject(error);
+    //        }
+    //        //console.log(`stdout: ${stdout}`);
+    //        ////console.log(`stderr: ${stderr}`);
+    //        return resolve();
+    //    });
+    //});
 
 
-    console.log(chalk.green("Bon apetit!"));
-    console.log(chalk.green(`Go to '${destination}' and run 'npm start'`));
+    console.log(chalk.green("Bon apetit! To run:"));
+    console.log(chalk.green(`- cd '${destination}'`));
+    console.log(chalk.green(`- npm i `));
+    console.log(chalk.green(`- npm run`));
 
 }
 

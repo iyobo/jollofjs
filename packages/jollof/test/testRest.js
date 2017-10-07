@@ -15,19 +15,16 @@ var request = require('supertest');
 const apiRoot = '/api/v1/resource';
 const fooApiRoot = apiRoot+'/Foo';
 
-beforeEach('Clear DB', () => {
-	const deletionThunks = [];
+beforeEach('Clear DB', async () => {
+    const deletionThunks = [];
 
-	_.each(jollof.models, (model) => {
-		deletionThunks.push(function*() {
-			return yield model.remove({})
-		});
-	});
+    _.each(jollof.models, (model, name) => {
+        deletionThunks.push(async () => {
+            return await model.remove({}, { multi: true })
+        });
+    });
 
-	return co(function*() {
-
-		yield* deletionThunks;
-	});
+    return Promise.all(deletionThunks)
 });
 
 describe('Jollof REST', function () {

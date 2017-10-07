@@ -1,16 +1,17 @@
 /**
  * Created by iyobo on 2017-02-18.
  */
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
+import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
+import RemoveIcon from 'material-ui/svg-icons/navigation/cancel';
+import FlatButton from 'material-ui/FlatButton';
+
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/cobalt.css');
 var CodeMirror = require('react-codemirror');
 require('codemirror/mode/javascript/javascript');
 
-import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
-import RemoveIcon from 'material-ui/svg-icons/navigation/cancel';
-import FlatButton from 'material-ui/FlatButton';
 const _ = require('lodash');
 const uuid = require('uuid');
 
@@ -67,7 +68,7 @@ export default class ListPageFilters extends Component {
                             {/*value={this.props.store.models.modelQuery.conditions}*/}
                             {/*onChange={this.handleFilterChange}*/}
                         {/*/>*/}
-                        <label>Enter a filter in <a href="http://docs/jollofjs.com" target="_blank" >JFQL</a></label>
+                        <label>Enter a filter in <a href="http://docs.jollofjs.com" target="_blank">JFQL</a></label>
                         <CodeMirror value={this.props.store.models.modelQuery.conditions||''} autoSave={true}
                                     onChange={this.handleFilterChange} options={{lineNumbers: true, mode: 'javascript', theme: 'cobalt'}} />
                         <FlatButton
