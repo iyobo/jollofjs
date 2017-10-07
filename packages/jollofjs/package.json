@@ -1,6 +1,6 @@
 {
   "name": "jollofjs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "The Entry point to creating and working with Jollof Projects",
   "main": "index.js",
   "scripts": {
