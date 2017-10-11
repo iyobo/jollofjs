@@ -1,9 +1,10 @@
 import 'rc-checkbox/assets/index.css';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import FlatButton from 'material-ui/FlatButton';
 import RefDialog from '../../refDialog/RefDialog';
 import IconButton from 'material-ui/IconButton';
+
 const _ = require('lodash');
 
 @inject('store')
@@ -62,7 +63,7 @@ export default class RefInput extends Component {
 
         if (this.props.data) {
             if (this.state.item) {
-                return this.props.data + ' - ' + this.state.item.name || this.state.item.title || ''
+                return this.props.data + ' - ' + (this.state.item.name || this.state.item.title || this.state.item.firstName || '')
             } else {
                 return this.props.data;
             }
