@@ -3,17 +3,20 @@
  */
 const _ = require('lodash');
 
-const MongoClient = require('mongodb').MongoClient;
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const ObjectId = mongodb.ObjectID;
 
 const convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 const convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
 
 const connPool = {};
+
 async function getConnection(url) {
 
-    if(connPool[url]){
+    if (connPool[url]) {
         return connPool[url];
-    }else{
+    } else {
         const conn = await MongoClient.connect(url, {
             poolSize: 3
         });
@@ -44,7 +47,7 @@ class JollofDataMongoDB {
 
     async ensureConnection() {
         const url = this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb';
-        const opts = this.connectionOptions.opts || {poolSize: 10};
+        const opts = this.connectionOptions.opts || { poolSize: 10 };
 
         this.db = await getConnection(url, opts);
     }
@@ -69,6 +72,14 @@ class JollofDataMongoDB {
      */
     get idField() {
         return '_id';
+    }
+
+    /**
+     * This is the primary Id type
+     * @returns {*}
+     */
+    static get idType() {
+        return ObjectId;
     }
 
     /**
@@ -108,7 +119,6 @@ class JollofDataMongoDB {
         //await this.ensureConnection();
         //If we're paging
         let res;
-
 
 
         let cursor = this.db.collection(collectionName).find(convertConditionsFromJollof(criteria));

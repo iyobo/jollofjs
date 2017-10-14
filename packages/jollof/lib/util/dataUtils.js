@@ -11,9 +11,13 @@ const _ = require('lodash');
 exports.populateMetaTypes = (schema, isChild) => {
 
     //This should be present after formalization
+    schema.meta = schema.meta || {};
     if (schema.type) {
-        schema.meta = schema.meta || {};
         schema.meta.type = schema.type.name;
+    }
+    else if (schema.custom) {
+        //An ANY field
+        schema.meta.type = 'any';
     }
     else {
         throw new Error('Jollof Model Initialization Error: Cannot populateMeta for unFormalized schema. This is likely an internal Jollof bug. Please upgrade to the latest version of JollofJS')
@@ -29,7 +33,10 @@ exports.populateMetaTypes = (schema, isChild) => {
         //if it's an array...skip to child schema
         _.each(structure, (childSchema, k) => {
 
-            if (childSchema.type.name === 'Array') {
+            if (!childSchema.type) {
+                exports.populateMetaTypes(childSchema, true);
+            }
+            else if (childSchema.type.name === 'Array') {
                 exports.populateMetaTypes(childSchema.schema, true);
             }
             else {
