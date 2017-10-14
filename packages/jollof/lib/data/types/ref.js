@@ -22,7 +22,6 @@ const refSchema = {
             let validatedData = data;
             const IdType = dataSourceSettings[schema.meta.dataSourceName].adapter.idType;
 
-            console.log({ dataType: typeof validatedData, idType: IdType.name })
             if (IdType && typeof validatedData !== IdType.name) {
                 validatedData = new IdType(validatedData);
             }
