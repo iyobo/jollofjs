@@ -104,8 +104,6 @@ exports.modelize = function (schema) {
 
         identifyRefsInSchemaFields(finalStructure);
 
-        console.log({ refFields });
-
         return finalStructure;
     };
 

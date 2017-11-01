@@ -45,7 +45,8 @@
                     </li>
                     {% endif %}
                 </ul>
-                <p class="copyright text-muted">Copyright &copy; 2017. Powered by JollofJS</p>
+                <p class="copyright text-muted">Copyright &copy; 2017. <a href="http://jollofjs.com" target="_blank">Powered
+                    by JollofJS</a></p>
             </div>
         </div>
     </div>

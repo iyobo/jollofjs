@@ -912,7 +912,8 @@
                 <div class="credits">
                     &copy;
                     <script>document.write(new Date().getFullYear())</script>
-                    You. Powered by JollofJS, made with <i class="fa fa-heart heart" alt="love"></i> for a better web.
+                    You. <a href="http://jollofjs.com" target="_blank">Powered by JollofJS, made with <i
+                    class="fa fa-heart heart" alt="love"></i> for a better web.
                 </div>
             </div>
         </div>
