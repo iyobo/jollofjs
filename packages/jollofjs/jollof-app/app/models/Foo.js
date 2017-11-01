@@ -4,76 +4,31 @@
 /**
  * Created by iyobo on 2016-09-18.
  */
-var data = require('jollof').data;
+const jollof = require('jollof');
+const data = jollof.data;
 const types = data.types;
+const jql = data.jql;
 
 //Models use names
 const schema = {
     name: 'Foo',
     dataSource: 'default',
+    description: 'Delete this model anytime',
     structure: {
-        name: String,
-        age: Number,
-
-        mig: types.Ref({ meta: { ref: 'JollofMigration', condition: '' } }),
-
-        mugshot: types.File(),
-        //richy: types.RichText(),
-        any: {
-            aString: String,
-            aNumber: Number,
-            aDate: Date
+        user: types.Ref({ meta: { ref: 'user' } }),
+        mappings: {
+            byUser: types.Ref({ meta: { ref: 'user' } }),
+            mappedOn: Date
         },
-        //crono: Date,
-        logic: { type: Boolean, meta: { description: 'Do you like logic?' } },
-        //body: types.Textarea(),
-        //home: types.Location(),
-        //sightings: [types.Location()],
-        //email: types.Email(),
-        strings: [String],
-
-
-        //gallery: [types.File()]
-    },
-    indexes: {},
-    /**
-     * Methods are convenience functions that are statically attached to a Model.
-     */
-    methods: { //
-        * findNear(long1, lat1, long2, lat2){
-            console.log('FOO METHOD: finding a Foo near', ...arguments);
-        }
-    },
-    /**
-     * Natives are functions that you can use to access the full power of whatever native type this model's active connector belongs to.
-     */
-    native: {
-        memory: {
-            * init(){
-                console.log('Memory: Finished Setting up Foo ');
-            },
-
-            * pityFoo(fooName){
-                console.log(`memory: pity! ${fooName} context: ${this.db}`);
-            },
-
-            * slapFoo(){
-                console.log('memory slap', this.db)
+        userListings: [
+            types.Ref({ meta: { ref: 'user' } })
+        ],
+        userMappingListings: [
+            {
+                mappedUser: types.Ref({ meta: { ref: 'user' } }),
+                happenedOn: Date
             }
-        },
-        mongodb: {
-            * init(){
-                console.log('MongoDB: Finished Setting up Foo ');
-            },
-
-            * pityFoo(coll){
-                console.log('mongo pity!', this._adapterName)
-            },
-
-            * slapFoo(){
-                console.log('mongo slap', this._adapterName)
-            }
-        }
+        ]
 
     }
 
