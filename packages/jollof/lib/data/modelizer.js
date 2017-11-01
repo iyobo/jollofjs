@@ -28,7 +28,8 @@ function objToCriteria(matchObj) {
 }
 
 /**
- * Takes a Jollof schema. Returns a Model
+ * Takes a Jollof schema. Dynamically Returns a Model Class.
+ * Runs per defined model.
  * @param schema
  * @returns {*}
  */
@@ -45,16 +46,21 @@ exports.modelize = function (schema) {
     const activeNativeType = dataSource.nativeType;
 
     let adapter;
+    const AdapterClass = dataSource.adapter;
 
     //if adapter has already been instantiated
     if (adapterMap[dataSourceName]) {
         adapter = adapterMap[dataSourceName];
     } else {
-        adapter = new dataSource.adapter(dataSource.options);
-        //TODO: Move this to something external that keeps "Active adapters mapped by connectorName".
+        adapter = new AdapterClass(dataSource.options);
+        //TODO: Move this to something external that keeps "Active adapters mapped by connectorName". ---Done???
         adapterMap[dataSourceName] = adapter;
     }
 
+    /**
+     * The native id type this model cares about.
+     */
+    const IdType = AdapterClass.idType;
 
     /**
      * Generate validation rules for the model
@@ -69,9 +75,16 @@ exports.modelize = function (schema) {
          * Some adapters use special meta-fields.
          * Add these fields to our rules so we do not wipe those metas out during validation!
          */
-        _.each(adapter.metafields, (fieldName) => {
-            tempStructure[fieldName] = String; //isvalid module doesn't have an 'any' type, so we use strings
+        _.each(adapter.keepFields, (fieldName) => {
+            tempStructure[fieldName] = {
+                custom: function (data) {
+                    return data
+                }
+            }; //The isValid representation for Any
         });
+
+        //determine typeCast fields
+
 
         /**
          * These are Jollof's own meta fields:
@@ -87,7 +100,51 @@ exports.modelize = function (schema) {
          * Finally, formalize the structure.
          * Converts all shortcut field defs to full {type:...} field defs
          */
-        return isValid.formalize(tempStructure);
+        const finalStructure = isValid.formalize(tempStructure);
+
+        identifyRefsInSchemaFields(finalStructure);
+
+        console.log({ refFields });
+
+        return finalStructure;
+    };
+
+    /**
+     * Stores string notation of ref fields so to know to typecast in queries.
+     * Populated in generate rules.
+     * @type {{}}
+     */
+    const refFields = {};
+
+    /**
+     * Identify all refs in the structure and store path names of ref fields
+     * @param criteria
+     */
+    function identifyRefsInSchemaFields(structure, prefix) {
+
+        _.each(structure.schema, (fieldStructure, fieldName) => {
+
+            const name = prefix ? prefix + '.' + fieldName : fieldName;
+
+            //If field has a schema, then it is a collection
+            if (fieldStructure.schema) {
+
+                // is this an object or an array?
+                if (fieldStructure.meta && fieldStructure.meta.type === 'Array') {
+                    //array
+                    identifyRefsInSchemaFields(fieldStructure, name + '.*')
+                } else {
+                    //object. loop through schema.fields
+                    identifyRefsInSchemaFields(fieldStructure, name)
+                }
+
+            } else if (fieldStructure.meta && fieldStructure.meta.ref) {
+                //ref field found!
+                refFields[name] = 1;
+            }
+        });
+
+
     };
 
 
@@ -189,6 +246,10 @@ exports.modelize = function (schema) {
 
         static get adapter() {
             return adapter;
+        }
+
+        static get idType() {
+            return IdType;
         }
 
         static get schema() {
