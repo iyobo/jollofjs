@@ -60,7 +60,7 @@ exports.modelize = function (schema) {
     /**
      * The native id type this model cares about.
      */
-    const IdType = AdapterClass.idType;
+    const IdType = AdapterClass.IdType;
 
     /**
      * Generate validation rules for the model

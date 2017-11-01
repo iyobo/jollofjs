@@ -78,7 +78,7 @@ class JollofDataMongoDB {
      * This is the primary Id type
      * @returns {*}
      */
-    static get idType() {
+    static get IdType() {
         return ObjectId;
     }
 

@@ -6,8 +6,7 @@ const registry = require('../registry');
  * Just be careful not to create an infinite loop by using a custom Schema Type in itself or child.
  *
  *
- * This type is used to store relationships to other entities/models by id.
- * Before storage, the type of the id will be cast to the adapter.idType of dataSourceName ('default' by default)
+ * This type is used to store stuff of any field type. Not advised.
  */
 const schema = {
     name: 'Any',

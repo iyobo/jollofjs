@@ -8,7 +8,7 @@ const dataSourceSettings = config.settings.data.dataSources;
  *
  *
  * This type is used to store relationships to other entities/models by id.
- * Before storage, the type of the id will be cast to the adapter.idType of dataSourceName ('default' by default)
+ * Before storage, the type of the id will be cast to the adapter.IdType of dataSourceName ('default' by default)
  */
 const refSchema = {
     name: 'Ref',
@@ -20,7 +20,7 @@ const refSchema = {
         },
         custom: function (data, schema) {
             let validatedData = data;
-            const IdType = dataSourceSettings[schema.meta.dataSourceName].adapter.idType;
+            const IdType = dataSourceSettings[schema.meta.dataSourceName].adapter.IdType;
 
             if (IdType && typeof validatedData !== IdType.name) {
                 validatedData = new IdType(validatedData);
