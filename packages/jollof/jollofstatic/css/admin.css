@@ -164,3 +164,7 @@ label.label {
     font-size: 10px;
     line-height: 0.9;
 }
+
+.mce-notification {
+    display: none !important;
+}
