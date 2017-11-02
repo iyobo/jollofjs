@@ -246,8 +246,23 @@ exports.modelize = function (schema) {
             return adapter;
         }
 
-        static get idType() {
+        static get IdType() {
             return IdType;
+        }
+
+        /**
+         * Wraps an inputID into the form of an ID that is respected by this model's adapter.
+         * Ensure you use this when querying by ref fields.
+         *
+         * @param inputId
+         * @returns {*}
+         */
+        static wrapId(inputId) {
+            let id = inputId;
+            if (typeof id !== IdType.name) {
+                id = new IdType(inputId)
+            }
+            return id;
         }
 
         static get schema() {

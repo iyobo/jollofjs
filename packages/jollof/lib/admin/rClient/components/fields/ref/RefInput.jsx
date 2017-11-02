@@ -81,7 +81,7 @@ export default class RefInput extends Component {
 
             <div>
                 <FlatButton label={label} onClick={this.openDialog}/>
-                <IconButton iconClassName="muidocs-icon-action-cancel" onClick={this.clearRef}/>
+                <IconButton iconClassName="pe-7s-close" onClick={this.clearRef}/>
 
                 <RefDialog {...this.props} open={this.state.open} closeDialog={this.closeDialog}
                            openDialog={this.openDialog} onChange={this.onChange}/>

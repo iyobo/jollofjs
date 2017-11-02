@@ -22,7 +22,7 @@ const refSchema = {
             let validatedData = data;
             const IdType = dataSourceSettings[schema.meta.dataSourceName].adapter.IdType;
 
-            if (IdType && typeof validatedData !== IdType.name) {
+            if (validatedData && IdType && typeof validatedData !== IdType.name) {
                 validatedData = new IdType(validatedData);
             }
 
