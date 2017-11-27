@@ -1,7 +1,8 @@
 import 'rc-checkbox/assets/index.css';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {observer} from 'mobx-react';
 import Checkbox from 'rc-checkbox';
+
 const _ = require('lodash');
 
 @observer
@@ -15,7 +16,7 @@ export default class BooleanInput extends Component {
     handleChange=(evt)=>{
         //console.log(evt, val);
 
-        this.props.onChange(evt.target.checked)
+        this.props.onChange(evt.target.checked || false)
     }
 
     render() {

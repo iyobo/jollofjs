@@ -7,7 +7,7 @@ function appendRecursively(formData, collection, parentkey, parentIsArray) {
     for (let k in collection) {
         const val = collection[k];
 
-        if (!val) continue;
+        if (val === undefined) continue;
 
         if (val instanceof File) {
             let mkey = (parentkey ? parentkey + '.' : '') + k;
