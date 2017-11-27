@@ -91,7 +91,12 @@ exports.modelize = function (schema) {
          * id: Every adapter must understand that this is Jollof's main id field
          * TimestampDates for time logging.
          */
-        tempStructure['id'] = { type: String, meta: { type: 'String', disableEdit: true } };
+        tempStructure['id'] = {
+            meta: { disableEdit: true },
+            custom: function (data, schema) {
+                return data;
+            }
+        };
         tempStructure['dateCreated'] = { type: Date, meta: { type: 'Date', disableEdit: true } };
         tempStructure['lastUpdated'] = { type: Date, meta: { type: 'Date', disableEdit: true } };
 
