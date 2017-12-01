@@ -15,7 +15,8 @@ function ValidationError(keyPath, schema, validator, message) {
 	this.keyPath = keyPath;
 	this.schema = schemaCopy;
 	this.validator = validator;
-	this.message = message;
+    this.message = this.keyPath.join('.') + ': ' + message;
+    this.stack = this.keyPath.join('.') + ': ' + message + ' \n' + this.stack;
 
 }
 

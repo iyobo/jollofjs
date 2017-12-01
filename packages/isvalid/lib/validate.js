@@ -371,14 +371,14 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 			if (schema.allowNull === true || (options || {}).allowNull === true) {
 				return validateCustom(data, schema, fn, keyPath, options);
 			}
-			return fn(
-				new ValidationError(
-					keyPath,
-					schema._nonFormalizedSchema,
-					'allowNull',
-					(schema.errors || {}).allowNull || 'Cannot be null.'
-				)
-			);
+            const rexc = new Error('What the heck are you waiting for?')
+            const exc = new ValidationError(
+                keyPath,
+                schema._nonFormalizedSchema,
+                'allowNull',
+                (schema.errors || {}).allowNull || 'Cannot be null.'
+            )
+            return fn(exc);
 		}
 		if (typeof schema.default !== 'undefined') {
 			if (typeof schema.default === 'function') {
