@@ -1,10 +1,11 @@
 /**
  * Created by iyobo on 2017-02-12.
  */
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import ListPageHeader from '../../components/modelListPage/ListPageHeader';
 import ListPagePager from '../../components/modelListPage/ListPagePager';
+
 const _ = require('lodash');
 
 
@@ -104,8 +105,10 @@ export default class ModelListPage extends Component {
                     );
                 }
                 else {
-
-                    if (typeof colVal === 'object') {
+                    if (!colVal) {
+                        colVal = <i></i>
+                    }
+                    else if (typeof colVal === 'object') {
                         colVal = <i>{Object.keys(colVal).length} fields</i>;
                     }
                     else if (Array.isArray(colVal)) {

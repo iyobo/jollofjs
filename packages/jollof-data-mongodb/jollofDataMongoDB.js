@@ -43,6 +43,7 @@ class JollofDataMongoDB {
         this._MongoClient = MongoClient;
         this._convertConditionsFromJollof = convertConditionsFromJollof;
         this._convertToJollof = convertToJollof;
+        this.ObjectId = ObjectId;
     }
 
     async ensureConnection() {
