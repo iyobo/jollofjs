@@ -86,7 +86,14 @@ module.exports.bootStandAlone = function (fn) {
     return module.exports.boot(fn);
 }
 
-module.exports.bootServer = function (overWriteFn) {
+/**
+ *
+ * @param overWriteFn
+ * @param donNotAutoStart - if true, bootstraper will NOT automatically run app.listen(...)
+ *                          because the jollof app is using app.Callback(...) somewhere in the overWriteFn.
+ * @returns {*}
+ */
+module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
 
     return co(function* () {
 
@@ -257,10 +264,15 @@ module.exports.bootServer = function (overWriteFn) {
             methodNotAllowed: () => new Boom.methodNotAllowed()
         }));
 
+
         //WEB SERVER-----------------------------------------------------
-        // if(!module.parent){
-        serverApp.listen(jollof.config.server.port);
-        // }
+        if (!donNotAutoStart) {
+            console.log('Using default app listen')
+            serverApp.listen(jollof.config.server.port);
+        }
+        else {
+            console.log('Deferring server start to a callback process')
+        }
 
         jollof.log.info("Server started on port " + jollof.config.server.port)
 
