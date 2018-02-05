@@ -1,6 +1,6 @@
 {
   "name": "jollof-app",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A JollofJS App",
   "main": "index.js",
   "scripts": {
@@ -11,9 +11,9 @@
   "dependencies": {
     "boom": "^4.3.1",
     "figlet": "^1.2.0",
-    "jollof": "^1.6.7",
+    "jollof": "^1.6.8",
     "jollof-data-mongodb": "^1.4.1",
-    "jollof-spice-blog": "^0.6.7",
+    "jollof-spice-blog": "^0.6.8",
     "koa-convert": "^1.2.0",
     "koa-passport": "^4.0.0",
     "passport-jwt": "^2.2.1",
