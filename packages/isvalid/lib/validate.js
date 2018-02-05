@@ -31,23 +31,24 @@ var validateObject = function(data, schema, fn, keyPath, options) {
 		// Find unknown keys
 		for (key in data) {
 			if (schemaCopy[key] === undefined) {
-				var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
-				switch (schema.unknownKeys || (options || {}).unknownKeys) {
-					case 'allow':
-						validObject[key] = data[key];
-						break;
-					case 'remove':
-						break;
-					default:
-						return fn(
-							new ValidationError(
-								keyPath.concat([key]),
-								schema._nonFormalizedSchema,
-								(wasAllowUnknownKeys ? 'allowUnknownKeys' : 'unknownKeys'),
-								(wasAllowUnknownKeys ? (schema.errors || {}).allowUnknownKeys : (schema.errors || {}).unknownKeys) || 'Unknown key.'
-						)
-					);
-				}
+                //var wasAllowUnknownKeys = schema.wasAllowUnknownKeys === true || (options || {}).wasAllowUnknownKeys === true;
+                //switch (schema.unknownKeys || (options || {}).unknownKeys) {
+                //	case 'allow':
+                //		validObject[key] = data[key];
+                //		break;
+                //	case 'remove':
+                //		break;
+                //	default:
+                //		return fn(
+                //			new ValidationError(
+                //				keyPath.concat([key]),
+                //				schema._nonFormalizedSchema,
+                //				(wasAllowUnknownKeys ? 'allowUnknownKeys' : 'unknownKeys'),
+                //				(wasAllowUnknownKeys ? (schema.errors || {}).allowUnknownKeys : (schema.errors || {}).unknownKeys) || 'Unknown key.'
+                //		)
+                //	);
+                //}
+                break;
 			}
 		}
 

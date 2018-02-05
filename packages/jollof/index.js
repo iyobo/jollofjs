@@ -9,6 +9,8 @@ const _ = require('lodash');
 const fs = require('fs');
 
 const log = require('./lib/log');
+const version = require('./package.json').version;
+log.info('JollofJS v' + version);
 
 module.exports = {
     errors: requireDir('./lib/errors', { recurse: true }),
