@@ -36,7 +36,7 @@ var formalizeObject = function (formalizedSchema, nonFormalizedSchema, fn, sync)
         if (!process.env.ISVALID_SILENCE) {
             console.error('isvalid: DEPRECATED: Validator allowUnknownKeys has been deprecated in favour of unknownKeys as of version 1.0.4. See README for more info.');
         }
-        formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'deny');
+        formalizedSchema.unknownKeys = (formalizedSchema.allowUnknownKeys ? 'allow' : 'remove'); //Don't throw an error. either allow, or remove.
         formalizedSchema.wasAllowUnknownKeys = true;
         delete formalizedSchema.allowUnknownKeys;
     }
