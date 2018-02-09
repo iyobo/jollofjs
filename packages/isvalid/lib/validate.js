@@ -48,6 +48,7 @@ var validateObject = function(data, schema, fn, keyPath, options) {
                 //		)
                 //	);
                 //}
+                validObject[key] = data[key];
                 break;
 			}
 		}

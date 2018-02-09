@@ -1,6 +1,8 @@
 /**
  * Created by iyobo on 2016-10-17.
  */
+const hijackConsole = require('./lib/util/appUtil').hijackConsole;
+hijackConsole()
 const requireDir = require('require-dir');
 const appPaths = require('./appPaths');
 const co = require('co');
@@ -11,6 +13,7 @@ const fs = require('fs');
 const log = require('./lib/log');
 const version = require('./package.json').version;
 log.info('JollofJS v' + version);
+
 
 module.exports = {
     errors: requireDir('./lib/errors', { recurse: true }),
