@@ -11,5 +11,5 @@
 * Built-in Admin UI
 * Powered by KoaJS 2+
 
-[GitHub](https://github.com/QingWei-Li/docsify/)
+[GitHub](https://github.com/iyobo/jollofjs/)
 [Get Started](#jollofjs)
