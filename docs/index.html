@@ -2,14 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>JollofJS</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta name="description" content="Description">
+    <meta name="description" content="A CMS and Modern MVC Framework for NodeJS">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+    <style>
+        .editnav {
+            position: fixed;
+            right: 0;
+            bottom: -5px;
+        }
+    </style>
 </head>
 <body>
+<nav style="position: fixed;">
+    <a class="versionSpot" href="#/"></a>
+</nav>
+
+<a title="Edit this Doc" target="_blank" class="editnav" href="https://github.com/iyobo/jollofjs/tree/master/docs">
+    <img src="/images/edit.svg" width="80px"/>
+</a>
+
 <div id="app"></div>
 <script>
     window.$docsify = {
@@ -22,5 +37,36 @@
     }
 </script>
 <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    var info = {};
+
+    $(function () {
+
+        var url = 'https://cdn.rawgit.com/iyobo/jollofjs/master/packages/jollofjs/package.json';
+
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: url,
+            success: function (responseData) {
+                //Loaded JollofJS active most recent version
+                info = responseData;
+
+
+                //alert(responseData);
+                //console.log(responseData);
+                $('.versionSpot').html('v' + info.version);
+
+            },
+            error: function (responseData) {
+                //alert('POST failed.');
+            }
+        });
+
+    });
+
+</script>
 </body>
 </html>

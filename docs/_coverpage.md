@@ -2,7 +2,7 @@
 
 <img src="images/logo.png" alt="Drawing" style="width: 100px;"/>
 
-# JollofJS <small></small>
+# JollofJS <small class='versionSpot'></small>
 
 > A CMS and Modern MVC Framework for NodeJS.
 
