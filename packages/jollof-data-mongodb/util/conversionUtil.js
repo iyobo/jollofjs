@@ -4,6 +4,7 @@
 const idField = '_id';
 const assert = require('assert');
 const ObjectID = require('mongodb').ObjectID;
+const util = require('util')
 
 function convertComp(comp) {
 
@@ -65,12 +66,13 @@ function translate(cond) {
         assert(cond.length === 3, 'Invalid condition item. Condition items must be an array of 3 items representing field, comparator, and value')
 
         let fieldName = cond[0];
+        fieldName = fieldName.replace('.*', '');
         let comp = cond[1];
         let value = cond[2];
 
         if (fieldName === 'id') {
             fieldName = '_id';
-            value = new ObjectID(value)
+            value = Array.isArray(value) ? value : new ObjectID(value)
         }
 
         // construct mini block
@@ -130,7 +132,10 @@ function translateOrList(conds) {
  */
 exports.convertConditionsFromJollof = (jollofArray) => {
     try {
-        return translateAndList(jollofArray);
+        const resp = translateAndList(jollofArray);
+
+        //console.log('The query:', util.inspect(resp))
+        return resp;
     } catch (e) {
         console.error('jollof-data-mongodb: Trouble processing ', jollofArray);
         throw e;

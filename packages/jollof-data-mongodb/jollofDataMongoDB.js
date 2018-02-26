@@ -123,7 +123,7 @@ class JollofDataMongoDB {
 
         const params = convertConditionsFromJollof(criteria);
 
-        console.log(params)
+        //console.log(params)
 
         let cursor = this.db.collection(collectionName).find(params);
 
