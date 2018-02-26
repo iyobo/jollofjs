@@ -70,6 +70,8 @@ These are the supported comparators for JFQL.
 >=
 <
 >=
+in
+nin
 
 ## Native queries
 See the Models section on Native functions.

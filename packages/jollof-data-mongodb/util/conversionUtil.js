@@ -28,7 +28,7 @@ function convertComp(comp) {
         case 'in':
             symbol = '$in';
             break;
-        case 'not in':
+        case 'nin':
             symbol = '$nin';
             break;
 
@@ -82,7 +82,7 @@ function translate(cond) {
             }
 
             result[fieldName] = value;
-        } else if (comp === '!=' && (value === null || cond.value === undefined)) {
+        } else if (comp === '!=' && (value === null || value === undefined)) {
             let value = {};
             value['$exists'] = true;
 
