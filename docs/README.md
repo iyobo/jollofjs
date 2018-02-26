@@ -31,9 +31,13 @@ JollofJS has a custom-built data abstraction layer that makes it possible to use
 ## Getting Started
 
 ```
-npm i -g jollofjs
+npm i -g jollof-cli
 ```
-You also need to have mongoDB and Redis up and running.
+You also need to have **mongoDB** and **Redis** up and running.
+
+JollofJS uses Redis for session storage.
+It also comes with the mongodb adapter for data persistence by default.
+More adapters for other datasources will undoubtedly be created in the future.
 
 
 Create your JollofJS app with:

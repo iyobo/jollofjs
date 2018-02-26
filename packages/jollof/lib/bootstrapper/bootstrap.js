@@ -34,7 +34,7 @@ var helmet = require('koa-helmet')
 const Router = require('koa-jollof-router');
 
 const convert = require('koa-convert') // necessary until all have been updated to support koa@2
-
+const fs = require('fs')
 
 let modelsLoaded = false;
 
@@ -236,8 +236,16 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         let router = new Router();
 
         ////APP ROUTES
-        if (process.env.NODE_ENV !== 'test')
-            router.addRoutes(require(process.cwd() + '/app/routes/default.js'));
+        const newRoutePath = process.cwd() + '/app/routes.js';
+        const oldRoutePath = process.cwd() + '/app/routes/default.js';
+        if (fs.existsSync(newRoutePath))
+            router.addRoutes(require(newRoutePath));
+        else
+            router.addRoutes(require(oldRoutePath));
+
+
+        //}
+
 
         //If Admin is enabled
         if (jollof.config.admin.enabled) {
