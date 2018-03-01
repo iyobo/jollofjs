@@ -1,0 +1,33 @@
+{
+    "name": "jollof-data-arangodb",
+    "version": "1.4.2",
+    "description": "JollofJS ArangoDB adapter",
+    "main": "jollofDataArangoDB.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iyobo/jollof-data-arangodb.git"
+    },
+    "keywords": [
+        "jollof",
+        "data",
+        "adapter",
+        "mongodb"
+    ],
+    "author": "Iyobo Eki",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/iyobo/jollof-data-arangodb/issues"
+    },
+    "homepage": "https://github.com/iyobo/jollof-data-arangodb#readme",
+    "dependencies": {
+        "bluebird": "^3.5.0",
+        "boom": "^4.3.1",
+        "co": "^4.6.0",
+        "lodash": "^4.17.4",
+        "mongo-factory": "^1.0.0",
+        "mongodb": "^2.2.30"
+    }
+}
