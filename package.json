@@ -2,11 +2,13 @@
   "scripts": {
     "dev": "cd packages/jollof && npm run dev",
     "build": ". build.sh",
-      "publish": "npm run build && lerna publish",
-      "test": "NODE_ENV=test cd packages/jollof && npm test"
+    "publish": "npm run build && lerna publish",
+    "test": "NODE_ENV=test cd packages/jollof && npm test"
   },
   "devDependencies": {
     "lerna": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "codemirror": "^5.35.0"
+  }
 }

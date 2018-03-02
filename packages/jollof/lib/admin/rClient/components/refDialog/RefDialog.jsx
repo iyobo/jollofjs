@@ -116,6 +116,13 @@ export default class RefDialog extends Component {
             modal={false}
             open={this.props.open}
             onRequestClose={this.props.closeDialog}
+            autoDetectWindowHeight={true}
+            autoScrollBodyContent={true}
+            repositionOnUpdate={true}
+            contentStyle={
+                {width: '90%',
+                height: '90%'}
+            }
         >
             <div className="content table-responsive table-full-width">
 
