@@ -4,10 +4,15 @@
 import React, {Component, PropTypes} from 'react';
 import {inject, observer} from 'mobx-react';
 import TextField from 'material-ui/TextField';
-
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import RemoveIcon from 'material-ui/svg-icons/navigation/cancel';
 import FlatButton from 'material-ui/FlatButton';
+
+require('codemirror/lib/codemirror.css');
+require('codemirror/theme/cobalt.css');
+var CodeMirror = require('react-codemirror');
+require('codemirror/mode/javascript/javascript');
+
 const _ = require('lodash');
 const uuid = require('uuid');
 
@@ -42,7 +47,7 @@ export default class RefDialogFilters extends Component {
         this.props.store.models.clearRefFilters();
     }
 
-    handleFilterChange = (evt, str) => {
+    handleFilterChange = (str) => {
 
         this.props.store.models.changeRefQueryConditions(str);
     }
@@ -58,12 +63,16 @@ export default class RefDialogFilters extends Component {
                 <div className="filterBlock row">
 
                     <div class="col-xs-10">
-                        <TextField
-                            floatingLabelText="Conditions"
-                            fullWidth={true}
-                            value={this.props.store.models.refModelQuery.conditions}
-                            onChange={this.handleFilterChange}
-                        />
+                        {/*<TextField*/}
+                            {/*floatingLabelText="Conditions"*/}
+                            {/*fullWidth={true}*/}
+                            {/*value={this.props.store.models.refModelQuery.conditions}*/}
+                            {/*onChange={this.handleFilterChange}*/}
+                        {/*/>*/}
+                        <label>Enter a filter in <a href="http://jollofjs.com" target="_blank">JFQL</a></label>
+                        <CodeMirror value={this.props.store.models.refModelQuery.conditions||''} autoSave={true}
+                                    onChange={this.handleFilterChange} options={{lineNumbers: true, mode: 'javascript', theme: 'cobalt'}} />
+
                         <FlatButton
                             label="Refresh"
                             labelPosition="before"

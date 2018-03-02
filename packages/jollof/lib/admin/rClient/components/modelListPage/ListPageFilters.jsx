@@ -68,7 +68,7 @@ export default class ListPageFilters extends Component {
                             {/*value={this.props.store.models.modelQuery.conditions}*/}
                             {/*onChange={this.handleFilterChange}*/}
                         {/*/>*/}
-                        <label>Enter a filter in <a href="http://docs.jollofjs.com" target="_blank">JFQL</a></label>
+                        <label>Enter a filter in <a href="http://jollofjs.com" target="_blank">JFQL</a></label>
                         <CodeMirror value={this.props.store.models.modelQuery.conditions||''} autoSave={true}
                                     onChange={this.handleFilterChange} options={{lineNumbers: true, mode: 'javascript', theme: 'cobalt'}} />
                         <FlatButton

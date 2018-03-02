@@ -88,9 +88,11 @@ class ModelStore {
     changeQueryConditions(str) {
         this.modelQuery.conditions = str;
         storeState(this.getStateKey(), this.modelQuery);
+        console.log({real: str})
     }
     changeRefQueryConditions(str) {
         this.refModelQuery.conditions = str;
+        console.log({ref: str})
     }
 
     reportSuccess = (msg) => {

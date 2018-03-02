@@ -21,16 +21,16 @@ module.exports = {
 
     models: async function (ctx) {
         //generate a list of model schemas and send it down
-        try {
+        //try {
             let schemas = [];
             _.each(models, (model) => {
                 schemas.push(model.schema);
             });
 
             ctx.body = schemas;
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
     },
 
     //List all
@@ -45,7 +45,7 @@ module.exports = {
      * query.sort e.g -id, id, -age
      */
     list: async function (ctx) {
-        try {
+        //try {
 
             const modelName = ctx.params.modelName;
 
@@ -80,15 +80,15 @@ module.exports = {
             //Set headers
             ctx.set('jollof-total-count', count);
 
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
 
     },
 
     //Get singular
     get: async function (ctx) {
-        try {
+        //try {
             const id = ctx.params.id;
             const modelName = ctx.params.modelName;
             const res = await models[modelName].findById(id);
@@ -98,9 +98,9 @@ module.exports = {
             else {
                 throw new Boom.notFound(`${modelName}:${id} not found`)
             }
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
     },
 
     /**
@@ -110,7 +110,7 @@ module.exports = {
      */
     create: async function (ctx) {
         //get schema
-        try {
+        //try {
             // console.log('body',ctx.request.body)    // if buffer or text
             // console.log('files',ctx.request.files)   // if multipart or urlencoded
             // console.log('fields',ctx.request.fields)
@@ -123,14 +123,14 @@ module.exports = {
             const res = await models[modelName].persist(payload);
 
             ctx.body = res.display();
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
     },
 
     //Update
     update: async function (ctx) {
-        try {
+        //try {
             // console.log('body',ctx.request.body)    // if buffer or text
             // console.log('files',ctx.request.files)   // if multipart or urlencoded
             // console.log('fields',ctx.request.fields)
@@ -140,19 +140,19 @@ module.exports = {
             const res = await models[modelName].persist(payload);
             ctx.body = res.display();
             //console.log(ctx.body);
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
     },
 
     //Delete or disable
     delete: async function (ctx) {
-        try {
+        //try {
             const id = ctx.params.id;
             const modelName = ctx.params.modelName;
             ctx.body = await models[modelName].removeById(id)
-        } catch (err) {
-            httpUtil.handleError(ctx, err);
-        }
+        //} catch (err) {
+        //    httpUtil.handleError(ctx, err);
+        //}
     },
 }

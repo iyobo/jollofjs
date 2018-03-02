@@ -32,7 +32,7 @@ export default class FormField extends Component {
 
         let hideLabel = this.props.hideLabel;
 
-        console.log(this.props)
+        //console.log(this.props)
 
         if (meta.type === 'Date') {
             fieldElem = <DateInput {...this.props} />
