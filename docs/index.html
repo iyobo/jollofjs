@@ -28,6 +28,7 @@
 </a>
 
 <div id="app"></div>
+<script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
 <script>
     window.$docsify = {
         name: 'JollofJS',
@@ -36,7 +37,12 @@
         loadSidebar: true,
         auto2top: true,
         ga: 'UA-103973391-1',
-        //themeColor: '#ff6f40'
+        plugins: [
+            EditOnGithubPlugin.create(
+                'https://github.com/iyobo/jollofjs/blob/master/docs/'
+            )
+        ]
+        //themeColor: '#ff6f40',
     }
 </script>
 <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
