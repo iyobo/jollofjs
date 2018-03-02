@@ -32,7 +32,9 @@ Base configuration can easily be overwritten by environmental configs (i.e. deve
 ```
 npm i -g jollofjs
 ```
-You also need to have mongoDB and Redis up and running.
+You also need to have `mongoDB` and `Redis` installed and running.
+Redis is used for sessions, and mongoDB is the default data adapter your skeleton app will come with.
+However you are notYou can change that adapter to that of another datasource later.
 
 
 Create your JollofJS app with:
@@ -51,7 +53,130 @@ Now you are ready to run your jollof app:
 npm start
 ```
 
-You should now be able to see jollof running at `localhost:3000`.
+You should now be able to see jollof running at `localhost:3000`.\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ![jollof home](https://raw.github.com/iyobo/jollofjs/master/images/home.png)
 
@@ -62,14 +187,14 @@ You are highly advised to study the structure of this new app, starting from ind
 
 ## Jollof Admin
 
-To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
+To enter the Jollof admin, login and go to [http://localhost:3001/admin](http://localhost:3001/admin).
+You have to login with that admin user you created previously with the createAdmin command.
 
 ![jollof admin](https://raw.github.com/iyobo/jollofjs/master/images/admin.png)
 
 Editing an item in the Admin...
 
 ![jollof edit](https://raw.github.com/iyobo/jollofjs/master/images/edit.png)
-
 
 
 The Jollof Admin is, quite frankly, the Saber's edge of any NodeJS framework in existence today. 
@@ -81,6 +206,6 @@ It supports all the usual field types you find in an other admins, *and then som
 * GeoLocations
 
 
-Right now, the app you created has only one model `User`.
+Right now, the app you just created has 3 direct models `User`.
 
 See the [Jollof docs](http://jollofjs.com) for how to work with Models.
