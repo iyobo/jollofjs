@@ -1,9 +1,9 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {observer} from 'mobx-react';
 import 'react-quill/dist/quill.snow.css';
-import ReactQuill from 'react-quill';
-const _ = require('lodash');
 import TinyMCE from 'react-tinymce';
+
+const _ = require('lodash');
 
 @observer
 export default class RichTextInput extends Component {
@@ -23,8 +23,8 @@ export default class RichTextInput extends Component {
             <TinyMCE
                 content={this.props.data || ''}
                 config={{
-                    plugins: 'link image code',
-                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+                    plugins: 'link image code media',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code insert media'
                 }}
                 onChange={this.handleEditorChange}
             />
