@@ -34,11 +34,11 @@ var lbd = {
     checkSidebarImage: function(){
         $sidebar = $('.sidebar');
         image_src = $sidebar.data('image');
-        
-        if(image_src !== undefined){
-            sidebar_container = '<div class="sidebar-background" style="background-image: url(' + image_src + ') "/>'
-            $sidebar.append(sidebar_container);
-        }  
+
+        //if(image_src !== undefined){
+        //    sidebar_container = '<div class="sidebar-background" style="background-image: url(' + image_src + ') "/>'
+        //    $sidebar.append(sidebar_container);
+        //}
     },
     initRightMenu: function(){  
          if(!navbar_initialized){

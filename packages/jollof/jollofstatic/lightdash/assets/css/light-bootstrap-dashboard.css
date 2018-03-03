@@ -353,19 +353,18 @@ body > .navbar-collapse .logo-tim img {
 .sidebar:after, .sidebar:before,
 body > .navbar-collapse:after,
 body > .navbar-collapse:before {
-  display: block;
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 2;
+    /*display: block;*/
+    /*content: "";*/
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*z-index: 2;*/
 }
 .sidebar:before,
 body > .navbar-collapse:before {
-  opacity: .33;
-  background: #000000;
+
 }
 .sidebar:after,
 body > .navbar-collapse:after {

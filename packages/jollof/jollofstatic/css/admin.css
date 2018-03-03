@@ -3,23 +3,27 @@
 .slide-fade-enter-active {
     transition: all .3s ease;
 }
+
 .slide-fade-leave-active {
     transition: all 0s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
+
 .slide-fade-enter, .slide-fade-leave-to
-    /* .slide-fade-leave-active for <2.1.8 */ {
+    /* .slide-fade-leave-active for <2.1.8 */
+{
     transform: translateX(10px);
     opacity: 0;
 }
 
-.pad-5{
+.pad-5 {
     padding: 5px;
 }
 
-.marg-5{
+.marg-5 {
     margin: 5px;
 }
-.marg-10{
+
+.marg-10 {
     margin: 10px;
 }
 
@@ -69,7 +73,7 @@
     animation-name: fadeInLeft;
 }
 
-.animated{
+.animated {
     animation-duration: 0.5s;
 }
 
@@ -86,30 +90,27 @@
     color: #ff2a48;
 }
 
-
-.jconfirm-box{
+.jconfirm-box {
     min-width: 350px;
 }
 
-
 /*///FIELDS*/
-.react-date-field__input[disabled]{
-    background-color: #cdcdcd;
-}
-.react-date-field [disabled]{
+.react-date-field__input[disabled] {
     background-color: #cdcdcd;
 }
 
-.chkbox{
+.react-date-field [disabled] {
+    background-color: #cdcdcd;
+}
+
+.chkbox {
     cursor: pointer;
 }
 
-textarea{
+textarea {
     width: 500px;
     /*height: 150px;*/
 }
-
-
 
 /*----Miigrated from old client*/
 
@@ -171,4 +172,15 @@ label.label {
 
 .CodeMirror {
     height: 120px !important;
+}
+
+.sidebar {
+    background: linear-gradient(
+            rgba(50, 50, 50, 0.80),
+            rgba(50, 50, 50, 0.80)
+    ), url(/jollofstatic/img/jollof2.jpg) center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
