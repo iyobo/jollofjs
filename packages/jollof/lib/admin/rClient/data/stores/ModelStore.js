@@ -3,7 +3,7 @@ import {getState, storeState} from 'react-spoon';
 /**
  * Created by iyobo on 2017-02-12.
  */
-import {observable, action, extendObservable, toJS} from 'mobx';
+import {action, extendObservable, observable, toJS} from 'mobx';
 import convertToFormData from '../../util/convertToFormData';
 
 const defaultQuery = {
@@ -88,11 +88,11 @@ class ModelStore {
     changeQueryConditions(str) {
         this.modelQuery.conditions = str;
         storeState(this.getStateKey(), this.modelQuery);
-        console.log({real: str})
+        //console.log({real: str})
     }
     changeRefQueryConditions(str) {
         this.refModelQuery.conditions = str;
-        console.log({ref: str})
+        //console.log({ref: str})
     }
 
     reportSuccess = (msg) => {

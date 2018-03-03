@@ -15,6 +15,8 @@ require('codemirror/mode/javascript/javascript');
 const _ = require('lodash');
 const uuid = require('uuid');
 
+var humanize = require('string-humanize')
+
 @inject('store')
 @observer
 export default class ListPageFilters extends Component {

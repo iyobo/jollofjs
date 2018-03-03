@@ -14,7 +14,10 @@ import FileFieldInput from './file/FileFieldInput';
 import RefInput from './ref/RefInput';
 import PasswordInput from './password/PasswordInput';
 import SelectInput from './select/SelectInput';
+
 const _ = require('lodash');
+var humanize = require('string-humanize')
+
 
 export default class FormField extends Component {
 
@@ -70,7 +73,7 @@ export default class FormField extends Component {
 
         return (
             <div class="form-group">
-                {hideLabel ? '' : <label>{this.props.name}</label>}
+                {hideLabel ? '' : <label>{humanize(this.props.name)}</label>}
                 {fieldElem}
             </div>
         );

@@ -9,6 +9,7 @@
     "lerna": "^2.0.0"
   },
   "dependencies": {
-    "codemirror": "^5.35.0"
+      "codemirror": "^5.35.0",
+      "string-humanize": "^1.0.0"
   }
 }

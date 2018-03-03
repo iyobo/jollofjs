@@ -7,7 +7,7 @@ import ListPageHeader from '../../components/modelListPage/ListPageHeader';
 import ListPagePager from '../../components/modelListPage/ListPagePager';
 
 const _ = require('lodash');
-
+var humanize = require('string-humanize')
 
 @inject('store')
 @observer
@@ -70,7 +70,7 @@ export default class ModelListPage extends Component {
                     <a href="javascript:;" onClick={() => {
                         this.sort(fieldName)
                     }}>
-                        <div>{ fieldName }
+                        <div>{humanize(fieldName)}
 
                             {this.props.store.models.modelQuery.sort[fieldName] === 1 ?
                                 <i className="fa fa-sort-asc" aria-hidden="true"></i> : ''}
