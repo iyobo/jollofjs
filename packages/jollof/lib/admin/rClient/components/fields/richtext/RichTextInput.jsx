@@ -23,8 +23,8 @@ export default class RichTextInput extends Component {
             <TinyMCE
                 content={this.props.data || ''}
                 config={{
-                    plugins: 'link image code media',
-                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code insert media'
+                    plugins: 'link image code media autolink emoticons hr lists table',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright numlist bullist | code insert media | emoticons table'
                 }}
                 onChange={this.handleEditorChange}
             />
