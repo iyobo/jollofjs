@@ -39,9 +39,11 @@
 
     <link href="/static/jollof/admin.css" rel="stylesheet" type="text/css">
 
+
     <script>
 		var sessionId = '{{ sessionId }}';
     </script>
+
 </head>
 <body>
 

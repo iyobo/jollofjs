@@ -168,3 +168,7 @@ label.label {
 .mce-notification {
     display: none !important;
 }
+
+.CodeMirror {
+    height: 120px !important;
+}

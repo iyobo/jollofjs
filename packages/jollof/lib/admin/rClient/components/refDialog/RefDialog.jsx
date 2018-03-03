@@ -8,6 +8,11 @@ import RefDialogFilters from './RefDialogFilters';
 import RefDialogPager from './RefDialogPager';
 const _ = require('lodash');
 
+const dialogStyle = {
+    width: '90%',
+    maxWidth: 'none',
+};
+var humanize = require('string-humanize')
 
 @inject('store')
 @observer
@@ -112,17 +117,14 @@ export default class RefDialog extends Component {
 
 
         return (<Dialog
-            title={this.props.name + ": Choose a " + meta.ref}
+            title={`${humanize(this.props.name)}: Choose ${meta.ref}...`}
             modal={false}
             open={this.props.open}
             onRequestClose={this.props.closeDialog}
             autoDetectWindowHeight={true}
             autoScrollBodyContent={true}
             repositionOnUpdate={true}
-            contentStyle={
-                {width: '90%',
-                height: '90%'}
-            }
+            contentStyle={dialogStyle}
         >
             <div className="content table-responsive table-full-width">
 

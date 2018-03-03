@@ -64,13 +64,8 @@ export default class ListPageFilters extends Component {
                 <div className="filterBlock row">
 
                     <div class="col-xs-10">
-                        {/*<TextField*/}
-                            {/*floatingLabelText="Conditions"*/}
-                            {/*fullWidth={true}*/}
-                            {/*value={this.props.store.models.modelQuery.conditions}*/}
-                            {/*onChange={this.handleFilterChange}*/}
-                        {/*/>*/}
-                        <label>Enter a filter in <a href="http://jollofjs.com" target="_blank">JFQL</a></label>
+
+                        <label>Enter a filter as a <a href="http://jollofjs.com/#/data/queries?id=jfql-queries" target="_blank">JFQL</a> query.</label>
                         <CodeMirror value={this.props.store.models.modelQuery.conditions||''} autoSave={true}
                                     onChange={this.handleFilterChange} options={{lineNumbers: true, mode: 'javascript', theme: 'cobalt'}} />
                         <FlatButton
