@@ -176,8 +176,8 @@ label.label {
 
 .sidebar {
     background: linear-gradient(
-            rgba(50, 50, 50, 0.80),
-            rgba(50, 50, 50, 0.80)
+            rgba(50, 50, 50, 0.90),
+            rgba(50, 50, 50, 0.90)
     ), url(/jollofstatic/img/jollof2.jpg) center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
