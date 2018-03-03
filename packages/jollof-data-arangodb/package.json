@@ -1,6 +1,6 @@
 {
     "name": "jollof-data-arangodb",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "JollofJS ArangoDB adapter",
     "main": "jollofDataArangoDB.js",
     "scripts": {
