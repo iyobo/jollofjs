@@ -12,12 +12,12 @@ const convertConditionsFromJollof = require('./util/conversionUtil.js').convertC
 
 const connPool = {};
 
-async function getConnection(url) {
+async function getConnection(url, opts) {
 
     if (connPool[url]) {
         return connPool[url];
     } else {
-        const conn = await MongoClient.connect(url, {
+        const conn = await MongoClient.connect(url, opts || {
             poolSize: 3
         });
         connPool[url] = conn;

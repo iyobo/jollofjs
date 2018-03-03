@@ -3,23 +3,25 @@
  */
 const _ = require('lodash');
 
-const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient;
-const ObjectId = mongodb.ObjectID;
+
+const Database = require('arangojs').Database;
 
 const convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 const convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
 
 const connPool = {};
 
+/**
+ * A factory of different ArangoDB connections based on URL
+ * @param url
+ * @returns {Promise<*>}
+ */
 async function getConnection(url) {
 
     if (connPool[url]) {
         return connPool[url];
     } else {
-        const conn = await MongoClient.connect(url, {
-            poolSize: 3
-        });
+        const conn = new Database(url)
         connPool[url] = conn;
         return conn;
     }
@@ -40,17 +42,20 @@ class JollofDataMongoDB {
 
         this.connectionOptions = options || {};
 
-        this._MongoClient = MongoClient;
         this._convertConditionsFromJollof = convertConditionsFromJollof;
         this._convertToJollof = convertToJollof;
-        this.ObjectId = ObjectId;
+    }
+
+    async ensureDatabaseExists(opts) {
+
     }
 
     async ensureConnection() {
-        const url = this.connectionOptions.mongoUrl || 'mongodb://localhost/nodb';
-        const opts = this.connectionOptions.opts || { poolSize: 10 };
+        const url = this.connectionOptions.url || 'http://127.0.0.1:8529';
+        const opts = this.connectionOptions.opts || {};
 
         this.db = await getConnection(url, opts);
+        this.db = ensureDatabaseExists(opts);
     }
 
     /**
@@ -60,7 +65,7 @@ class JollofDataMongoDB {
      */
     async addSchema(schema) {
 
-        //Because this is mongo, there is no need to do a whole lot here.
+        //Because this is ArangoDB, there is no need to do a whole lot here.
         //Just ensure the necessary connection is cached.
         await this.ensureConnection();
         return true;
@@ -72,7 +77,7 @@ class JollofDataMongoDB {
      * @returns {string}
      */
     get idField() {
-        return '_id';
+        return '_key';
     }
 
     /**
@@ -80,7 +85,7 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     static get IdType() {
-        return ObjectId;
+        return String;
     }
 
     /**

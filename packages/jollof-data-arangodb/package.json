@@ -1,6 +1,6 @@
 {
     "name": "jollof-data-arangodb",
-    "version": "1.4.2",
+    "version": "0.0.1",
     "description": "JollofJS ArangoDB adapter",
     "main": "jollofDataArangoDB.js",
     "scripts": {
@@ -23,11 +23,10 @@
     },
     "homepage": "https://github.com/iyobo/jollof-data-arangodb#readme",
     "dependencies": {
+        "arangojs": "^6.1.1",
         "bluebird": "^3.5.0",
         "boom": "^4.3.1",
         "co": "^4.6.0",
-        "lodash": "^4.17.4",
-        "mongo-factory": "^1.0.0",
-        "mongodb": "^2.2.30"
+        "lodash": "^4.17.4"
     }
 }
