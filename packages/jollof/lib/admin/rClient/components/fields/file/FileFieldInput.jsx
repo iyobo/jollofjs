@@ -196,12 +196,12 @@ export default class FileFieldInput extends Component {
                 >
                     <Tab label="Upload as File" value={false}>
                         <div>
-
+                            <i>You can upload a file from this tab</i>
                         </div>
                     </Tab>
                     <Tab label="Paste as URL" value={true}>
                         <div>
-
+                            <i>You can paste the URL to a file from this tab</i>
                         </div>
                     </Tab>
                 </Tabs>
@@ -229,7 +229,6 @@ export default class FileFieldInput extends Component {
                             <TextField
                                 hintText="Paste file url here"
                                 floatingLabelText="File URL"
-                                placeholder="Paste the URL"
                                 name={this.props.name}
                                 onChange={this.onURLChange}
                                 value={this.props.data ? this.props.data.url || this.props.data.preview : null}
