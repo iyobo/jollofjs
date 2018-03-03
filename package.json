@@ -10,6 +10,7 @@
   },
   "dependencies": {
       "codemirror": "^5.35.0",
+      "react-player": "^1.2.1",
       "string-humanize": "^1.0.0"
   }
 }
