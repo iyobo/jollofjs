@@ -814,7 +814,9 @@ exports.modelize = function (schema) {
                 if (activeNativeFunctions[key])
                     return activeNativeFunctions[key];
                 else
-                    throw new Error(`The native function '${key}' has not been defined for nativeType '${activeNativeType}' in model '${collectionName}'`)
+                    throw new Error(`The native function '${key}' has not been defined for nativeType '${activeNativeType}' in model '${collectionName}'.
+                    You are likely seeing this because another nativeType has the '${key}' function defined 
+                    `)
             }
         };
 

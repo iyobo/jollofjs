@@ -22,7 +22,7 @@ const connPool = {};
 async function getConnection(url, opts = {}) {
 
     const dbName = opts.databaseName;
-    if (!opts.databaseName || dbName === '')
+    if (!dbName || dbName === '')
         throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', { url, opts })
 
     const key = url + dbName;
@@ -70,7 +70,7 @@ class JollofDataMongoDB {
 
     async ensureConnection() {
         const url = this.connectionOptions.url || 'http://127.0.0.1:8529';
-        const opts = this.connectionOptions.opts || {};
+        const opts = this.connectionOptions || {};
 
         this.db = await getConnection(url, opts);
     }
@@ -85,7 +85,12 @@ class JollofDataMongoDB {
         await this.ensureConnection();
 
         //add collection
-        await this.db.collection(schema.name).create();
+        try {
+            await this.db.collection(schema.name).get();
+        }
+        catch (ex) {
+            await this.db.collection(schema.name).create();
+        }
 
         return true;
     }
