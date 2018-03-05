@@ -2,9 +2,12 @@
  * Created by iyobo on 2016-10-30.
  */
 const _ = require('lodash');
+const boom = require('boom')
 
-
-const Database = require('arangojs').Database;
+const arangojs = require('arangojs');
+const convertOptionsFromJollof = require('./util/conversionUtil').convertOptionsFromJollof;
+const Database = arangojs.Database;
+const aql = arangojs.aqlQuery;
 
 const convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 const convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
@@ -16,16 +19,35 @@ const connPool = {};
  * @param url
  * @returns {Promise<*>}
  */
-async function getConnection(url) {
+async function getConnection(url, opts = {}) {
 
-    if (connPool[url]) {
-        return connPool[url];
+    const dbName = opts.databaseName;
+    if (!opts.databaseName || dbName === '')
+        throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', { url, opts })
+
+    const key = url + dbName;
+
+    //Get connection
+    let connection;
+    if (connPool[key]) {
+        connection = connPool[key];
     } else {
-        const conn = new Database(url)
-        connPool[url] = conn;
-        return conn;
+        connection = new Database(url)
+        connPool[key] = connection;
     }
 
+    //Now ensure database exists
+    const dbNames = await connection.listDatabases();
+    if (dbNames.indexOf(dbName) > -1) {
+        //our db exists. use it.
+        connection.useDatabase(dbName)
+    } else {
+        //our db does not exist. Attempting to create it
+        await connection.createDatabase(dbName, [{ username: opts.username, passw: opts.password }])
+        connection.useDatabase(dbName)
+    }
+
+    return connection;
 }
 
 /**
@@ -46,16 +68,11 @@ class JollofDataMongoDB {
         this._convertToJollof = convertToJollof;
     }
 
-    async ensureDatabaseExists(opts) {
-
-    }
-
     async ensureConnection() {
         const url = this.connectionOptions.url || 'http://127.0.0.1:8529';
         const opts = this.connectionOptions.opts || {};
 
         this.db = await getConnection(url, opts);
-        this.db = ensureDatabaseExists(opts);
     }
 
     /**
@@ -65,9 +82,11 @@ class JollofDataMongoDB {
      */
     async addSchema(schema) {
 
-        //Because this is ArangoDB, there is no need to do a whole lot here.
-        //Just ensure the necessary connection is cached.
         await this.ensureConnection();
+
+        //add collection
+        await this.db.collection(schema.name).create();
+
         return true;
     }
 
@@ -95,7 +114,7 @@ class JollofDataMongoDB {
      * @returns {string}
      */
     get keepFields() {
-        return [];
+        return ['_id', '_rev'];
     }
 
     /**
@@ -108,11 +127,10 @@ class JollofDataMongoDB {
      */
     async create(collectionName, data) {
 
-        //await this.ensureConnection();
-        const res = await this.db.collection(collectionName).insertOne(data);
-        return convertToJollof(res.ops[0]);
+        const cursor = await this.db.query(aql`INSERT ${data} IN ${collectionName}`);
+        const result = cursor.next();
+        return result;
     }
-
 
     /**
      *
@@ -122,35 +140,35 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     async find(collectionName, criteria, opts = {}) {
-        //await this.ensureConnection();
-        //If we're paging
-        let res;
 
-        const params = convertConditionsFromJollof(criteria);
+        const filter = convertConditionsFromJollof(criteria);
 
-        //console.log(params)
-
-        let cursor = this.db.collection(collectionName).find(params);
+        let query = aql`For c IN ${collectionName}\n`;
+        query += aql`FILTER ${filter} \n`;
 
         if (opts) {
 
             if (opts.paging) {
                 const page = opts.paging.page || 1;
-                const limit = opts.paging.limit || 10;
-                const skip = ((page - 1) * limit);
+                const count = opts.paging.limit || 10;
+                const offset = ((page - 1) * count);
 
-                cursor = cursor.skip(skip);
-                cursor = cursor.limit(limit);
+                query += aql`LIMIT ${offset ? offset + ',' : ''} ${count} \n`;
             }
 
             if (opts.sort) {
-                cursor = cursor.sort(opts.sort)
+
+                query += aql`SORT `;
+                _.each(opts.sort, (v, k) => {
+                    query += aql`${k} ${v > 0 ? 'ASC' : 'DESC'} `;
+                })
             }
-
         }
+        query += aql`RETURN c \n`;
 
-        res = await cursor.toArray();
-        return convertToJollof(res);
+        const cursor = await this.db.query(query);
+        const result = cursor.next();
+        return result;
 
     }
 
@@ -162,8 +180,16 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     async count(collectionName, criteria, opts) {
-        //await this.ensureConnection();
-        return await this.db.collection(collectionName).count(convertConditionsFromJollof(criteria));
+
+        const filter = convertConditionsFromJollof(criteria);
+        let query = aql`For c IN ${collectionName}\n`;
+        query += aql`FILTER ${filter} \n`;
+        query += aql`COLLECT WITH COUNT INTO length \n`;
+        query += aql`RETURN length \n`;
+
+        const cursor = await this.db.query(query);
+        const count = cursor.next();
+        return count;
     }
 
 
@@ -176,12 +202,15 @@ class JollofDataMongoDB {
      * @returns {number} - How many were updated
      */
     async update(collectionName, criteria, newValues, opts) {
-        //await this.ensureConnection();
-        //opts = convertFromJollof(opts);
-        const q = convertConditionsFromJollof(criteria);
-        const res = await this.db.collection(collectionName).updateMany(q, { $set: newValues });
-        //console.log('item update result', res);
-        return res.modifiedCount;
+
+        const filter = convertConditionsFromJollof(criteria);
+        let query = aql`For c IN ${collectionName}\n`;
+        query += aql`FILTER ${filter} \n`;
+        query += aql`UPDATE c WITH ${newValues} IN ${collectionName} \n`;
+
+        const cursor = await this.db.query(query);
+        const res = cursor.next();
+        return res;
     }
 
 
@@ -195,11 +224,15 @@ class JollofDataMongoDB {
      * @returns {number}
      */
     async remove(collectionName, criteria, opts) {
-        //await this.ensureConnection();
-        _.merge(opts, { multi: true })
-        const res = await this.db.collection(collectionName).deleteMany(convertConditionsFromJollof(criteria), opts);
 
-        return res.deletedCount;
+        const filter = convertConditionsFromJollof(criteria);
+        let query = aql`For c IN ${collectionName}\n`;
+        query += aql`FILTER ${filter} \n`;
+        query += aql`REMOVE c IN ${collectionName} \n`;
+
+        const cursor = await this.db.query(query);
+        const res = cursor.next();
+        return res;
 
     }
 

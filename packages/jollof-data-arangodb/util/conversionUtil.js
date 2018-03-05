@@ -3,7 +3,7 @@
  */
 const idField = '_id';
 const assert = require('assert');
-const ObjectID = require('mongodb').ObjectID;
+const aql = require('arangojs').aqlQuery;
 const util = require('util')
 
 function convertComp(comp) {
@@ -11,26 +11,36 @@ function convertComp(comp) {
     let symbol = '';
 
     switch (comp) {
-        case '>':
-            symbol = '$gt';
+
+        case '=':
+            symbol = '==';
             break;
         case '!=':
-            symbol = '$ne';
+            symbol = '!=';
+            break;
+        case '>':
+            symbol = '>';
             break;
         case '>=':
-            symbol = '$gte';
+            symbol = '>=';
             break;
         case '<':
-            symbol = '$lt';
+            symbol = '<';
             break;
         case '<=':
-            symbol = '$lte';
+            symbol = '<=';
             break;
         case 'in':
-            symbol = '$in';
+            symbol = 'IN';
             break;
         case 'nin':
-            symbol = '$nin';
+            symbol = 'NOT IN';
+            break;
+        case 'like':
+            throw new Error('Cannot handle "like" operator here. Do so in translate function')
+            break;
+        case 'nlike':
+            throw new Error('Cannot handle "nlike" operator here. Do so in translate function')
             break;
 
     }
@@ -66,37 +76,24 @@ function translate(cond) {
         assert(cond.length === 3, 'Invalid condition item. Condition items must be an array of 3 items representing field, comparator, and value')
 
         let fieldName = cond[0];
-        fieldName = fieldName.replace('.*', '');
+        if (fieldName === 'id') {
+            fieldName = '_key';
+        }
+        fieldName = 'c.' + fieldName.replace('.*', '[*]');
+
         let comp = cond[1];
         let value = cond[2];
 
-        if (fieldName === 'id') {
-            fieldName = '_id';
-            value = Array.isArray(value) ? value : new ObjectID(value)
-        }
-
         // construct mini block
-        if (comp === '=') {
+        if (comp === 'like' || comp !== 'like') {
 
-            if (value === null || value === undefined) {
-                value = {};
-                value['$exists'] = false;
-            }
+            value = '%' + value + '%';
 
-            result[fieldName] = value;
-        } else if (comp === '!=' && (value === null || value === undefined)) {
-            let value = {};
-            value['$exists'] = true;
-
-            result[fieldName] = value;
         }
-        else {
-            const subCondBlock = {};
 
-            subCondBlock[convertComp(comp)] = value;
+        const aqlComp = convertComp(comp);
+        result = aql`${fieldName} ${aqlComp} ${value}`;
 
-            result[fieldName] = subCondBlock;
-        }
     }
 
     return result;
@@ -109,8 +106,9 @@ function translateAndList(conds) {
     const andList = [];
     conds.forEach((cond) => {
         andList.push(translate(cond));
-    })
-    return andList.length > 0 ? { $and: andList } : {};
+    });
+    //return andList.length > 0 ? { $and: andList } : {};
+    return '(' + andList.join(' AND ') + ')';
 }
 
 function translateOrList(conds) {
@@ -119,16 +117,17 @@ function translateOrList(conds) {
     const orList = [];
     conds.forEach((cond) => {
         orList.push(translate(cond));
-    })
+    });
 
-    return orList.length > 0 ? { $or: orList } : {};
+    //return orList.length > 0 ? { $or: orList } : {};
+    return '(' + orList.join(' OR ') + ')';
 }
 
 
 /**
- * Converts an array of jollof conditions to MongoDB
+ * Converts an array of jollof conditions to native query language
  * @param {Array} jollofArray
- * @returns MongoDB query
+ * @returns ArangoDB string query
  */
 exports.convertConditionsFromJollof = (jollofArray) => {
     try {
@@ -137,27 +136,19 @@ exports.convertConditionsFromJollof = (jollofArray) => {
         //console.log('The query:', util.inspect(resp))
         return resp;
     } catch (e) {
-        console.error('jollof-data-mongodb: Trouble processing ', jollofArray);
+        console.error('jollof-data-arangodb: Trouble processing ', jollofArray);
         throw e;
     }
 
 }
 
+
 /**
- * Converts paging and sorting options
- * @param opts
+ * Prepare data for delivery back to JollofJS.
+ * For one, jollof respects data.id as the universal id key, so change the datasource's id key to that.
+ * @param res
  * @returns {*}
  */
-exports.convertOptionsFromJollof = (opts) => {
-
-    if (opts.sort && opts.sort.id) {
-        opts.sort._id = opts.sort.id;
-        delete opts.sort.id;
-    }
-
-    return opts;
-}
-
 exports.convertToJollof = (res) => {
     if (Array.isArray(res)) {
         res = res.map((row) => {

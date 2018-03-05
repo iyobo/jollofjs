@@ -32,7 +32,12 @@ function convertComp(comp) {
         case 'nin':
             symbol = '$nin';
             break;
-
+        case 'like':
+            throw new Error('Cannot handle "like" operator here. Do so in translate function')
+            break;
+        case 'nlike':
+            throw new Error('Cannot handle "nlike" operator here. Do so in translate function')
+            break;
     }
 
     return symbol;
@@ -89,6 +94,15 @@ function translate(cond) {
             value['$exists'] = true;
 
             result[fieldName] = value;
+        } else if (comp === 'like') {
+
+            result[fieldName] = new RegExp(value);
+
+        } else if (comp === 'nlike') {
+
+            result[fieldName] = {
+                $not: new RegExp(value)
+            };
         }
         else {
             const subCondBlock = {};
@@ -122,25 +136,6 @@ function translateOrList(conds) {
     })
 
     return orList.length > 0 ? { $or: orList } : {};
-}
-
-
-/**
- * Converts an array of jollof conditions to MongoDB
- * @param {Array} jollofArray
- * @returns MongoDB query
- */
-exports.convertConditionsFromJollof = (jollofArray) => {
-    try {
-        const resp = translateAndList(jollofArray);
-
-        //console.log('The query:', util.inspect(resp))
-        return resp;
-    } catch (e) {
-        console.error('jollof-data-mongodb: Trouble processing ', jollofArray);
-        throw e;
-    }
-
 }
 
 /**
