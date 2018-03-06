@@ -1,6 +1,6 @@
 {
   "name": "jollof-data-mongodb",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "JollofJS MongoDB adapter",
   "main": "jollofDataMongoDB.js",
   "scripts": {
