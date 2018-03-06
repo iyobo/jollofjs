@@ -138,6 +138,25 @@ function translateOrList(conds) {
     return orList.length > 0 ? { $or: orList } : {};
 }
 
+
+/**
+ * Converts an array of jollof conditions to MongoDB
+ * @param {Array} jollofArray
+ * @returns MongoDB query
+ */
+exports.convertConditionsFromJollof = (jollofArray) => {
+    try {
+        const resp = translateAndList(jollofArray);
+
+        //console.log('The query:', util.inspect(resp))
+        return resp;
+    } catch (e) {
+        console.error('jollof-data-mongodb: Trouble processing ', jollofArray);
+        throw e;
+    }
+
+}
+
 /**
  * Converts paging and sorting options
  * @param opts
