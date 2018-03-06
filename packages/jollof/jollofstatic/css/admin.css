@@ -184,3 +184,13 @@ label.label {
     -o-background-size: cover;
     background-size: cover;
 }
+
+.card label {
+    font-size: 14px;
+    color: black
+}
+
+.form-group > label {
+    color: #5e8d9a;
+    font-size: 14px;
+}

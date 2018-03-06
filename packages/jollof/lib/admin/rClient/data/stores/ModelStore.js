@@ -61,6 +61,9 @@ class ModelStore {
 
         let msg = error.message;
 
+        if (error.statusCode === 401) location.reload();
+
+
         if (error.response && error.response.data && error.response.data.keyPath) {
             const data = error.response.data;
             msg = 'Invalid Input at <b>' + data.keyPath.join('.') + '</b>: ' + data.message;

@@ -1,9 +1,9 @@
 /**
  * Created by iyobo on 2017-05-02.
  */
-const idField = '_id';
+const idField = '_key';
 const assert = require('assert');
-const aql = require('arangojs').aqlQuery;
+const aql = require('arangojs').aql;
 const util = require('util')
 
 function convertComp(comp) {
@@ -51,9 +51,10 @@ function convertComp(comp) {
 /**
  * Translates a single jollof condition
  * @param {array | object} cond
+ * @param queryObj
  * @returns {*}
  */
-function translate(cond) {
+function translate(cond, queryObj) {
 
     let result = {};
 
@@ -61,10 +62,10 @@ function translate(cond) {
     if (!Array.isArray(cond)) {
         //...then it is a condition cluster
         if (cond.and) {
-            result = translateAndList(cond.and)
+            result = translateAndList(cond.and, queryObj)
         }
         else if (cond.or) {
-            result = translateOrList(cond.or)
+            result = translateOrList(cond.or, queryObj)
         }
         else {
             //This is an illegal subject.
@@ -79,20 +80,27 @@ function translate(cond) {
         if (fieldName === 'id') {
             fieldName = '_key';
         }
-        fieldName = 'c.' + fieldName.replace('.*', '[*]');
+        fieldName = fieldName.replace('.*', '[*]');
 
         let comp = cond[1];
         let value = cond[2];
 
         // construct mini block
-        if (comp === 'like' || comp !== 'like') {
+        if (comp === 'like' || comp === 'nlike') {
 
             value = '%' + value + '%';
 
         }
 
+        const paramName = 'p' + Object.keys(queryObj.bindVars).length;
+        const valueName = 'v' + Object.keys(queryObj.bindVars).length;
+
         const aqlComp = convertComp(comp);
-        result = aql`${fieldName} ${aqlComp} ${value}`;
+
+        result = `c.@${paramName} ${aqlComp} @${valueName}`;
+
+        queryObj.bindVars[paramName] = fieldName;
+        queryObj.bindVars[valueName] = value;
 
     }
 
@@ -100,41 +108,56 @@ function translate(cond) {
 
 }
 
-function translateAndList(conds) {
+/**
+ *
+ * @param conds
+ * @param queryObj
+ * @returns {string}
+ */
+function translateAndList(conds, queryObj) {
     assert(Array.isArray(conds), 'Expected an array to AND. Instead got ' + typeof conds);
 
+    queryObj.query += ' ( '
     const andList = [];
     conds.forEach((cond) => {
-        andList.push(translate(cond));
+        andList.push(translate(cond, queryObj))
     });
-    //return andList.length > 0 ? { $and: andList } : {};
-    return '(' + andList.join(' AND ') + ')';
+    queryObj.query += andList.join(' AND ')
+    queryObj.query += ' ) '
 }
 
-function translateOrList(conds) {
+/**
+ *
+ * @param conds
+ * @param queryObj
+ * @returns {string}
+ */
+function translateOrList(conds, queryObj) {
     assert(Array.isArray(conds), 'Expected an array to OR. Instead got ' + typeof conds);
 
+    queryObj.query += ' ( '
     const orList = [];
     conds.forEach((cond) => {
-        orList.push(translate(cond));
+        orList.push(translate(cond, queryObj))
     });
+    queryObj.query += orList.join(' OR ')
+    queryObj.query += ' ) '
 
-    //return orList.length > 0 ? { $or: orList } : {};
-    return '(' + orList.join(' OR ') + ')';
 }
 
 
 /**
  * Converts an array of jollof conditions to native query language
  * @param {Array} jollofArray
+ * @param queryObj
  * @returns ArangoDB string query
  */
-exports.convertConditionsFromJollof = (jollofArray) => {
+exports.convertConditionsFromJollof = (jollofArray, queryObj) => {
     try {
-        const resp = translateAndList(jollofArray);
+        translateAndList(jollofArray, queryObj);
 
         //console.log('The query:', util.inspect(resp))
-        return resp;
+
     } catch (e) {
         console.error('jollof-data-arangodb: Trouble processing ', jollofArray);
         throw e;
@@ -157,7 +180,7 @@ exports.convertToJollof = (res) => {
 
             return row;
         });
-    } else {
+    } else if (res) {
         if (res[idField]) {
             res.id = res[idField];
             delete res[idField];

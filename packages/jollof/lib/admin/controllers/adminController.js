@@ -7,7 +7,7 @@ const Boom = require('boom');
 const _ = require('lodash');
 const httpUtil = require('../../util/httpUtil');
 var jql = require('../../data/index.js').jql;
-const {VM} = require('vm2');
+const { VM } = require('vm2');
 
 module.exports = {
     index: async function (ctx) {
@@ -22,12 +22,12 @@ module.exports = {
     models: async function (ctx) {
         //generate a list of model schemas and send it down
         //try {
-            let schemas = [];
-            _.each(models, (model) => {
-                schemas.push(model.schema);
-            });
+        let schemas = [];
+        _.each(models, (model) => {
+            schemas.push(model.schema);
+        });
 
-            ctx.body = schemas;
+        ctx.body = schemas;
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
         //}
@@ -47,38 +47,38 @@ module.exports = {
     list: async function (ctx) {
         //try {
 
-            const modelName = ctx.params.modelName;
+        const modelName = ctx.params.modelName;
 
-            if (!modelName || !models[modelName]) {
-                throw new Boom.badRequest('Model: ' + modelName + ' does not exist');
-                //return [];
-            }
+        if (!modelName || !models[modelName]) {
+            throw new Boom.badRequest('Model: ' + modelName + ' does not exist');
+            //return [];
+        }
 
-            const opts = {};
+        const opts = {};
 
-            if (ctx.query.sort) {
-                opts.sort = JSON.parse(ctx.query.sort);
-            }
-            if (ctx.query.paging) {
-                opts.paging = JSON.parse(ctx.query.paging);
-            }
+        if (ctx.query.sort) {
+            opts.sort = JSON.parse(ctx.query.sort);
+        }
+        if (ctx.query.paging) {
+            opts.paging = JSON.parse(ctx.query.paging);
+        }
 
-            //turn conditions to JQA, in separate context, with a 500ms timeout
-            let vmctx = Object.create(null); //create a context for the vm that does NOT have a prototype to prevent vuln.
-            vmctx.a = 1;
-            const jqa = new VM({
-                timeout: 5
-            }).run(ctx.query['conditions']);
+        //turn conditions to JQA, in separate context, with a 500ms timeout
+        let vmctx = Object.create(null); //create a context for the vm that does NOT have a prototype to prevent vuln.
+        vmctx.a = 1;
+        const jqa = new VM({
+            timeout: 5
+        }).run(ctx.query['conditions']);
 
-            const items = await models[modelName].find(jqa || [], opts);
-            const count = await models[modelName].count(jqa || [], opts);
+        const items = await models[modelName].find(jqa || [], opts) || [];
+        const count = await models[modelName].count(jqa || [], opts) || 0;
 
-            ctx.body = items.map((it) => {
-                return it.display();
-            });
+        ctx.body = items.map((it) => {
+            return it.display();
+        });
 
-            //Set headers
-            ctx.set('jollof-total-count', count);
+        //Set headers
+        ctx.set('jollof-total-count', count);
 
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
@@ -89,15 +89,15 @@ module.exports = {
     //Get singular
     get: async function (ctx) {
         //try {
-            const id = ctx.params.id;
-            const modelName = ctx.params.modelName;
-            const res = await models[modelName].findById(id);
+        const id = ctx.params.id;
+        const modelName = ctx.params.modelName;
+        const res = await models[modelName].findById(id);
 
-            if (res)
-                ctx.body = res.display();
-            else {
-                throw new Boom.notFound(`${modelName}:${id} not found`)
-            }
+        if (res)
+            ctx.body = res.display();
+        else {
+            throw new Boom.notFound(`${modelName}:${id} not found`)
+        }
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
         //}
@@ -111,18 +111,18 @@ module.exports = {
     create: async function (ctx) {
         //get schema
         //try {
-            // console.log('body',ctx.request.body)    // if buffer or text
-            // console.log('files',ctx.request.files)   // if multipart or urlencoded
-            // console.log('fields',ctx.request.fields)
-            const modelName = ctx.params.modelName;
-            const payload = ctx.request.fields;
+        // console.log('body',ctx.request.body)    // if buffer or text
+        // console.log('files',ctx.request.files)   // if multipart or urlencoded
+        // console.log('fields',ctx.request.fields)
+        const modelName = ctx.params.modelName;
+        const payload = ctx.request.fields;
 
 
-            delete payload['id'];
+        delete payload['id'];
 
-            const res = await models[modelName].persist(payload);
+        const res = await models[modelName].persist(payload);
 
-            ctx.body = res.display();
+        ctx.body = res.display();
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
         //}
@@ -131,15 +131,15 @@ module.exports = {
     //Update
     update: async function (ctx) {
         //try {
-            // console.log('body',ctx.request.body)    // if buffer or text
-            // console.log('files',ctx.request.files)   // if multipart or urlencoded
-            // console.log('fields',ctx.request.fields)
-            const modelName = ctx.params.modelName;
-            const payload = ctx.request.fields;
+        // console.log('body',ctx.request.body)    // if buffer or text
+        // console.log('files',ctx.request.files)   // if multipart or urlencoded
+        // console.log('fields',ctx.request.fields)
+        const modelName = ctx.params.modelName;
+        const payload = ctx.request.fields;
 
-            const res = await models[modelName].persist(payload);
-            ctx.body = res.display();
-            //console.log(ctx.body);
+        const res = await models[modelName].persist(payload);
+        ctx.body = res.display();
+        //console.log(ctx.body);
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
         //}
@@ -148,9 +148,9 @@ module.exports = {
     //Delete or disable
     delete: async function (ctx) {
         //try {
-            const id = ctx.params.id;
-            const modelName = ctx.params.modelName;
-            ctx.body = await models[modelName].removeById(id)
+        const id = ctx.params.id;
+        const modelName = ctx.params.modelName;
+        ctx.body = await models[modelName].removeById(id)
         //} catch (err) {
         //    httpUtil.handleError(ctx, err);
         //}

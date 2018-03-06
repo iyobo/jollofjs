@@ -5,9 +5,8 @@ const _ = require('lodash');
 const boom = require('boom')
 
 const arangojs = require('arangojs');
-const convertOptionsFromJollof = require('./util/conversionUtil').convertOptionsFromJollof;
 const Database = arangojs.Database;
-const aql = arangojs.aqlQuery;
+const aql = arangojs.aql;
 
 const convertToJollof = require('./util/conversionUtil.js').convertToJollof;
 const convertConditionsFromJollof = require('./util/conversionUtil.js').convertConditionsFromJollof;
@@ -51,9 +50,9 @@ async function getConnection(url, opts = {}) {
 }
 
 /**
- * A Jollof Data Adapter for MongoDB using mongoose.
+ * A Jollof Data Adapter for ArangoDB using ArangoJS.
  */
-class JollofDataMongoDB {
+class JollofDataArangoDB {
 
     /**
      * Keep constructor free of async calls.
@@ -131,10 +130,13 @@ class JollofDataMongoDB {
      * @returns {*}
      */
     async create(collectionName, data) {
+        const collection = this.db.collection(collectionName);
+        const query = aql`INSERT ${data} IN ${collection}  RETURN NEW`;
+        console.log({ create: query })
 
-        const cursor = await this.db.query(aql`INSERT ${data} IN ${collectionName}`);
+        const cursor = await this.db.query(query);
         const result = cursor.next();
-        return result;
+        return convertToJollof(result);
     }
 
     /**
@@ -142,14 +144,17 @@ class JollofDataMongoDB {
      * @param collectionName
      * @param criteria
      * @param opts
-     * @returns {*}
+     * @returns {*} Ana rray of items or empty array
      */
     async find(collectionName, criteria, opts = {}) {
 
-        const filter = convertConditionsFromJollof(criteria);
-
-        let query = aql`For c IN ${collectionName}\n`;
-        query += aql`FILTER ${filter} \n`;
+        const queryObj = {
+            query: `For c IN @@collectionName 
+             ${criteria.length > 0 ? 'FILTER' : ''} `,
+            bindVars: { '@collectionName': collectionName }
+        }
+        if (criteria.length > 0)
+            convertConditionsFromJollof(criteria, queryObj);
 
         if (opts) {
 
@@ -158,22 +163,31 @@ class JollofDataMongoDB {
                 const count = opts.paging.limit || 10;
                 const offset = ((page - 1) * count);
 
-                query += aql`LIMIT ${offset ? offset + ',' : ''} ${count} \n`;
+                queryObj.query += `LIMIT ${offset ? '@offset,' : ''} @count `;
+                if (offset)
+                    queryObj.bindVars['offset'] = offset
+                queryObj.bindVars['count'] = count
+
             }
 
             if (opts.sort) {
-
-                query += aql`SORT `;
+                queryObj.query += ' SORT '
                 _.each(opts.sort, (v, k) => {
-                    query += aql`${k} ${v > 0 ? 'ASC' : 'DESC'} `;
+                    queryObj.query += `c.@sortField ${v > 0 ? '' : 'DESC'} `;
+                    queryObj.bindVars['sortField'] = k !== 'id' ? k : this.idField
                 })
             }
         }
-        query += aql`RETURN c \n`;
+        queryObj.query += ` RETURN c `;
+        console.log({ find: queryObj })
 
-        const cursor = await this.db.query(query);
-        const result = cursor.next();
-        return result;
+        const cursor = await this.db.query(queryObj);
+        let rawResult = await cursor.all();
+        //if(rawResult && !Array.isArray(rawResult)){
+        //    rawResult = [rawResult]
+        //}
+        const results = convertToJollof(rawResult)
+        return results;
 
     }
 
@@ -186,14 +200,19 @@ class JollofDataMongoDB {
      */
     async count(collectionName, criteria, opts) {
 
-        const filter = convertConditionsFromJollof(criteria);
-        let query = aql`For c IN ${collectionName}\n`;
-        query += aql`FILTER ${filter} \n`;
-        query += aql`COLLECT WITH COUNT INTO length \n`;
-        query += aql`RETURN length \n`;
+        const queryObj = {
+            query: `For c IN @@collectionName
+            COLLECT WITH COUNT INTO length 
+            ${criteria.length > 0 ? 'FILTER' : ''} `,
+            bindVars: { '@collectionName': collectionName }
+        }
+        if (criteria.length > 0)
+            convertConditionsFromJollof(criteria, queryObj);
+        queryObj.query += ` RETURN length \n`;
 
-        const cursor = await this.db.query(query);
-        const count = cursor.next();
+        console.log({ count: queryObj })
+        const cursor = await this.db.query(queryObj);
+        const count = await cursor.next();
         return count;
     }
 
@@ -208,14 +227,21 @@ class JollofDataMongoDB {
      */
     async update(collectionName, criteria, newValues, opts) {
 
-        const filter = convertConditionsFromJollof(criteria);
-        let query = aql`For c IN ${collectionName}\n`;
-        query += aql`FILTER ${filter} \n`;
-        query += aql`UPDATE c WITH ${newValues} IN ${collectionName} \n`;
+        const queryObj = {
+            query: `For c IN @@collectionName
+            ${criteria.length > 0 ? 'FILTER' : ''} `,
+            bindVars: { '@collectionName': collectionName }
+        }
+        if (criteria.length > 0)
+            convertConditionsFromJollof(criteria, queryObj);
+        queryObj.query += ` UPDATE c WITH @newValues IN @@collectionName`;
+        queryObj.bindVars['newValues'] = newValues;
 
-        const cursor = await this.db.query(query);
-        const res = cursor.next();
-        return res;
+
+        console.log({ count: queryObj })
+        const cursor = await this.db.query(queryObj);
+        const result = await cursor.next();
+        return convertToJollof(result);
     }
 
 
@@ -230,17 +256,22 @@ class JollofDataMongoDB {
      */
     async remove(collectionName, criteria, opts) {
 
-        const filter = convertConditionsFromJollof(criteria);
-        let query = aql`For c IN ${collectionName}\n`;
-        query += aql`FILTER ${filter} \n`;
-        query += aql`REMOVE c IN ${collectionName} \n`;
+        const queryObj = {
+            query: `For c IN @@collectionName
+            FILTER `,
+            bindVars: { '@collectionName': collectionName }
+        }
+        convertConditionsFromJollof(criteria, queryObj);
+        queryObj.query += ` REMOVE c IN @@collectionName`;
 
-        const cursor = await this.db.query(query);
-        const res = cursor.next();
-        return res;
+
+        console.log({ count: queryObj })
+        const cursor = await this.db.query(queryObj);
+        const result = await cursor.next();
+        return convertToJollof(result);
 
     }
 
 }
 
-module.exports = JollofDataMongoDB;
+module.exports = JollofDataArangoDB;
