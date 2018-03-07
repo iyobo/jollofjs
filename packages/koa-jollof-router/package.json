@@ -11,7 +11,7 @@
     "router"
   ],
   "author": "Iyobo Eki",
-  "license": "ISC",
+    "license": "MIT",
   "dependencies": {
     "koa-router": "^7.1.1"
   }

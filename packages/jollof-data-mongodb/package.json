@@ -17,7 +17,7 @@
     "mongodb"
   ],
   "author": "Iyobo Eki",
-  "license": "ISC",
+    "license": "MIT",
   "bugs": {
     "url": "https://github.com/iyobo/jollof-data-mongodb/issues"
   },

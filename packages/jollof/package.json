@@ -20,7 +20,7 @@
         "arangodb"
     ],
     "author": "Iyobo Eki",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
         "bcrypt-nodejs": "0.0.3",
         "bcryptjs": "^2.4.3",

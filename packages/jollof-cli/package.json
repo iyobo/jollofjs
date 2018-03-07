@@ -15,7 +15,7 @@
     "jollof": "bin/jollof-cli.js"
   },
   "author": "Iyobo Eki",
-  "license": "ISC",
+    "license": "MIT",
   "dependencies": {
     "chalk": "^1.1.3",
     "edit-json-file": "^1.0.4",
