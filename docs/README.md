@@ -28,6 +28,13 @@ JollofJS has a custom-built data abstraction layer that makes it possible to use
 
 *This doc is a Work-in-Progress*
 
+## Officially Supported DataSources
+
+- MongoDB
+- ArangoDB
+
+It is very easy to make yours!
+
 ## Getting Started
 
 ```

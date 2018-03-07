@@ -7,25 +7,36 @@ The tastiest **NodeJS Application Framework** you ever ate.
 
 ## Key Features
 
-- *Convention over configuration...*
+
+- **Convention over configuration**
 ...Because you have better things to do with your time. But JollofJS is still very configurable.
 
-- *Full support for ES7 Async/Await * 
-Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables 
+- **Full support for ES7 Async/Await**
+Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables
 through ES6 Promises, and Async Await. Powered by KoaJS.
 
 
-- *Built-in Admin User Interface*
+- **Built-in Admin User Interface**
 Ever wondered why something like Django Admin doesn't exist for NodeJS? Well with JollofJS, it does now.
 Administer your site's data with the built-in Jollof Admin (built from scratch using React).
 E.g You could whip up a blog for your Application and use Jollof Admin as a simple CMS backend for that blog.
 The options are endless!
 
-- *Environment-based Configuration Tree*
-JollofJS has a custom-built config system that makes it easy to have different configurations per node.ENV.
-Base configuration can easily be overwritten by environmental configs (i.e. development, test, production, etc).
+- **Data Abstraction Done Right**
+JollofJS has a custom-built data abstraction layer that makes it possible to use any database (or REST API) as a datasource by creating an adapter.
 
-- *And More!...*
+- **And More!...**
+
+*This doc is a Work-in-Progress*
+
+
+## Officially Supported DataSources
+
+- MongoDB
+- ArangoDB
+
+It is very easy to make yours!
+
 
 ## Getting Started
 
@@ -54,128 +65,6 @@ npm start
 ```
 
 You should now be able to see jollof running at `localhost:3000`.\]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ![jollof home](https://raw.github.com/iyobo/jollofjs/master/images/home.png)
