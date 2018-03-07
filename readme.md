@@ -27,8 +27,6 @@ JollofJS has a custom-built data abstraction layer that makes it possible to use
 
 - **And More!...**
 
-*This doc is a Work-in-Progress*
-
 
 ## Officially Supported DataSources
 
