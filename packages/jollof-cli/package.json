@@ -1,6 +1,6 @@
 {
   "name": "jollof-cli",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "description": "The Entry point to creating and working with Jollof Projects",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "jollof": "bin/jollof-cli.js"
   },
   "author": "Iyobo Eki",
-    "license": "MIT",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^1.1.3",
     "edit-json-file": "^1.0.4",

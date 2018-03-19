@@ -1,6 +1,6 @@
 {
   "name": "jollof-data-mongodb",
-    "version": "1.6.0",
+  "version": "1.6.1",
   "description": "JollofJS MongoDB adapter",
   "main": "jollofDataMongoDB.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "mongodb"
   ],
   "author": "Iyobo Eki",
-    "license": "MIT",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/iyobo/jollof-data-mongodb/issues"
   },
