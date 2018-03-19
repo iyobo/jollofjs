@@ -13,6 +13,10 @@ https://www.arangodb.com/
 
 ## How to use
 
+`npm i jollof-data-arangodb`
+
+then
+
 config/<env>.js
 ```
 ...
