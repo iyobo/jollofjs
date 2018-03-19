@@ -369,19 +369,19 @@ var validateAny = function(data, schema, fn, keyPath, options) {
 	}
 
 	if (typeof data === 'undefined' || data === null) {
-		if (data === null) {
-			if (schema.allowNull === true || (options || {}).allowNull === true) {
-				return validateCustom(data, schema, fn, keyPath, options);
-			}
-            const rexc = new Error('What the heck are you waiting for?')
-            const exc = new ValidationError(
-                keyPath,
-                schema._nonFormalizedSchema,
-                'allowNull',
-                (schema.errors || {}).allowNull || 'Cannot be null.'
-            )
-            return fn(exc);
-		}
+        //if (data === null) {
+        //	if (schema.allowNull === true || (options || {}).allowNull === true) {
+        //		return validateCustom(data, schema, fn, keyPath, options);
+        //	}
+        //   const rexc = new Error('What the heck are you waiting for?')
+        //   const exc = new ValidationError(
+        //       keyPath,
+        //       schema._nonFormalizedSchema,
+        //       'allowNull',
+        //       (schema.errors || {}).allowNull || 'Cannot be null.'
+        //   )
+        //   return fn(exc);
+        //}
 		if (typeof schema.default !== 'undefined') {
 			if (typeof schema.default === 'function') {
 				// If function has no arguments it is assumed sync.
