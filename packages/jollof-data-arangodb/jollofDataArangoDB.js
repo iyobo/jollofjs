@@ -63,8 +63,10 @@ class JollofDataArangoDB {
 
         this.connectionOptions = options || {};
 
-        this._convertConditionsFromJollof = convertConditionsFromJollof;
-        this._convertToJollof = convertToJollof;
+        this.convertConditionsFromJollof = convertConditionsFromJollof;
+        this.convertToJollof = convertToJollof;
+
+        this.arangojs = arangojs;
     }
 
     async ensureConnection() {
