@@ -67,6 +67,7 @@ class JollofDataArangoDB {
         this.convertToJollof = convertToJollof;
 
         this.arangojs = arangojs;
+        this.aql = arangojs.aql;
     }
 
     async ensureConnection() {
