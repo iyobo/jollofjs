@@ -811,7 +811,7 @@ exports.modelize = function (schema) {
             get(target, key) {
 
                 //if key exists in data's keys, get from there. otherwise get from the model
-                if (activeNativeFunctions[key])
+                if (activeNativeFunctions && activeNativeFunctions[key])
                     return activeNativeFunctions[key];
                 else
                     throw new Error(`The native function '${key}' has not been defined for nativeType '${activeNativeType}' in model '${collectionName}'.
