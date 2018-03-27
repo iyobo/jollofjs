@@ -235,7 +235,12 @@ exports.modelize = function (schema) {
 
             //Now let the model configure it's own self against its native adapter (e.g indexes etc)
             if (Model.native && Model.native.init) {
-                await Model.native.init();
+                try {
+                    await Model.native.init();
+                } catch (e) {
+                    log.err(`Jollof Model Init Error: Please check init function of ${Model.collectionName}`)
+                    throw e;
+                }
             }
         }
 
