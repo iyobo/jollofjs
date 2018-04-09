@@ -135,11 +135,16 @@ class JollofDataArangoDB {
     async create(collectionName, data) {
         const collection = this.db.collection(collectionName);
         const query = aql`INSERT ${data} IN ${collection}  RETURN NEW`;
-        console.log({ create: query })
 
-        const cursor = await this.db.query(query);
-        const result = cursor.next();
-        return convertToJollof(result);
+        try {
+            const cursor = await this.db.query(query);
+            const result = cursor.next();
+            return convertToJollof(result);
+        } catch (e) {
+            console.error('There was an issue creating wth the AQL query ', query)
+            throw e;
+        }
+
     }
 
     /**
@@ -182,15 +187,19 @@ class JollofDataArangoDB {
             }
         }
         queryObj.query += ` RETURN c `;
-        console.log({ find: queryObj })
 
-        const cursor = await this.db.query(queryObj);
-        let rawResult = await cursor.all();
-        //if(rawResult && !Array.isArray(rawResult)){
-        //    rawResult = [rawResult]
-        //}
-        const results = convertToJollof(rawResult)
-        return results;
+        try {
+            console.log({ queryObj })
+            const cursor = this.db.query(queryObj);
+
+            let rawResult = await cursor.all();
+            const results = convertToJollof(rawResult);
+            //console.log({results})
+            return results;
+        } catch (e) {
+            console.error('There was an issue finding items with the AQL query ', queryObj)
+            throw e;
+        }
 
     }
 
@@ -213,10 +222,14 @@ class JollofDataArangoDB {
             convertConditionsFromJollof(criteria, queryObj);
         queryObj.query += ` RETURN length \n`;
 
-        console.log({ count: queryObj })
-        const cursor = await this.db.query(queryObj);
-        const count = await cursor.next();
-        return count;
+        try {
+            const cursor = await this.db.query(queryObj);
+            const count = await cursor.next();
+            return count;
+        } catch (e) {
+            console.error('There was an issue counting with the AQL query ', queryObj)
+            throw e;
+        }
     }
 
 
@@ -240,11 +253,14 @@ class JollofDataArangoDB {
         queryObj.query += ` UPDATE c WITH @newValues IN @@collectionName`;
         queryObj.bindVars['newValues'] = newValues;
 
-
-        console.log({ count: queryObj })
-        const cursor = await this.db.query(queryObj);
-        const result = await cursor.next();
-        return convertToJollof(result);
+        try {
+            const cursor = await this.db.query(queryObj);
+            const result = await cursor.next();
+            return convertToJollof(result);
+        } catch (e) {
+            console.error('There was an issue updatng with the AQL query ', queryObj)
+            throw e;
+        }
     }
 
 
@@ -267,11 +283,14 @@ class JollofDataArangoDB {
         convertConditionsFromJollof(criteria, queryObj);
         queryObj.query += ` REMOVE c IN @@collectionName`;
 
-
-        console.log({ count: queryObj })
-        const cursor = await this.db.query(queryObj);
-        const result = await cursor.next();
-        return convertToJollof(result);
+        try {
+            const cursor = await this.db.query(queryObj);
+            const result = await cursor.next();
+            return convertToJollof(result);
+        } catch (e) {
+            console.error('There was an issue removing the AQL query ', queryObj)
+            throw e;
+        }
 
     }
 

@@ -38,7 +38,7 @@ module.exports = {
     data: {
         dataSources: {
             default: {
-                adapter: require('jollof-data-memory'),
+                adapter: {},//require('jollof-data-memory'),
                 nativeType: 'memory',
                 options: {
                     filename: '/tmp/jollofdb',
