@@ -190,7 +190,7 @@ class JollofDataArangoDB {
 
         try {
             console.log({ queryObj })
-            const cursor = this.db.query(queryObj);
+            const cursor = await this.db.query(queryObj);
 
             let rawResult = await cursor.all();
             console.log({ rawResult })
