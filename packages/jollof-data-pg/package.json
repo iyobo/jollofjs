@@ -1,0 +1,32 @@
+{
+    "name": "jollof-data-pg",
+    "version": "0.0.1",
+    "description": "JollofJS pg adapter",
+    "main": "jollofDataPg.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iyobo/jollofjs.git"
+    },
+    "keywords": [
+        "jollof",
+        "data",
+        "adapter",
+        "mongodb"
+    ],
+    "author": "Iyobo Eki",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/iyobo/jollof-data-pg/issues"
+    },
+    "homepage": "https://github.com/iyobo/jollof-data-pg#readme",
+    "dependencies": {
+        "bluebird": "^3.5.1",
+        "boom": "^4.3.1",
+        "co": "^4.6.0",
+        "lodash": "^4.17.5",
+        "pg": "^7.4.1"
+    }
+}
