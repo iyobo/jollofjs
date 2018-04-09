@@ -193,8 +193,9 @@ class JollofDataArangoDB {
             const cursor = this.db.query(queryObj);
 
             let rawResult = await cursor.all();
+            console.log({ rawResult })
             const results = convertToJollof(rawResult);
-            //console.log({results})
+            console.log({ results })
             return results;
         } catch (e) {
             console.error('There was an issue finding items with the AQL query ', queryObj)
