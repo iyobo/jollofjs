@@ -37,10 +37,10 @@ function convertComp(comp) {
             symbol = 'NOT IN';
             break;
         case 'like':
-            throw new Error('Cannot handle "like" operator here. Do so in translate function')
+            throw new Error('Cannot handle "like" operator here. Do so in native functions')
             break;
         case 'nlike':
-            throw new Error('Cannot handle "nlike" operator here. Do so in translate function')
+            throw new Error('Cannot handle "nlike" operator here. Do so in native functions')
             break;
 
     }

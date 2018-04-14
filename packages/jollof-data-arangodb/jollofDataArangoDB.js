@@ -138,7 +138,8 @@ class JollofDataArangoDB {
 
         try {
             const cursor = await this.db.query(query);
-            const result = cursor.next();
+            const result = await cursor.next();
+            console.log({ result })
             return convertToJollof(result);
         } catch (e) {
             console.error('There was an issue creating wth the AQL query ', query)
