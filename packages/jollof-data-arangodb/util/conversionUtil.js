@@ -91,13 +91,14 @@ function translate(cond, queryObj) {
             value = '%' + value + '%';
 
         }
+        const keys = Object.keys(queryObj.bindVars);
 
-        const paramName = 'p' + Object.keys(queryObj.bindVars).length;
-        const valueName = 'v' + Object.keys(queryObj.bindVars).length;
+        const paramName = 'p' + keys.length;
+        const valueName = 'v' + keys.length;
 
         const aqlComp = convertComp(comp);
 
-        result = `c.@${paramName} ${aqlComp} @${valueName}`;
+        result = ` c.@${paramName} ${aqlComp} @${valueName} `;
 
         queryObj.bindVars[paramName] = fieldName;
         queryObj.bindVars[valueName] = value;
@@ -114,7 +115,7 @@ function translate(cond, queryObj) {
  * @param queryObj
  * @returns {string}
  */
-function translateAndList(conds, queryObj) {
+function translateAndList(conds, queryObj, op) {
     assert(Array.isArray(conds), 'Expected an array to AND. Instead got ' + typeof conds);
 
     queryObj.query += ' ( '
@@ -122,8 +123,11 @@ function translateAndList(conds, queryObj) {
     conds.forEach((cond) => {
         andList.push(translate(cond, queryObj))
     });
-    queryObj.query += andList.join(' AND ')
+    const ff = andList.join(op || ' AND ')
+    queryObj.query += ff
     queryObj.query += ' ) '
+    console.log('and', queryObj)
+    return queryObj.query;
 }
 
 /**
@@ -132,7 +136,7 @@ function translateAndList(conds, queryObj) {
  * @param queryObj
  * @returns {string}
  */
-function translateOrList(conds, queryObj) {
+function translateOrList(conds, queryObj, op) {
     assert(Array.isArray(conds), 'Expected an array to OR. Instead got ' + typeof conds);
 
     queryObj.query += ' ( '
@@ -140,9 +144,11 @@ function translateOrList(conds, queryObj) {
     conds.forEach((cond) => {
         orList.push(translate(cond, queryObj))
     });
-    queryObj.query += orList.join(' OR ')
+    const ff = orList.join(op || ' OR ')
+    queryObj.query += ff
     queryObj.query += ' ) '
-
+    console.log('or', queryObj)
+    return queryObj.query;
 }
 
 
@@ -154,7 +160,7 @@ function translateOrList(conds, queryObj) {
  */
 exports.convertConditionsFromJollof = (jollofArray, queryObj) => {
     try {
-        translateAndList(jollofArray, queryObj);
+        translateAndList(jollofArray, queryObj, ' && ');
 
         //console.log('The query:', util.inspect(resp))
 

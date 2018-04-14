@@ -189,13 +189,13 @@ class JollofDataArangoDB {
         queryObj.query += ` RETURN c `;
 
         try {
-            console.log({ queryObj })
+            //console.log({ queryObj })
             const cursor = await this.db.query(queryObj);
 
             let rawResult = await cursor.all();
-            console.log({ rawResult })
+            //console.log({ rawResult })
             const results = convertToJollof(rawResult);
-            console.log({ results })
+            //console.log({ results })
             return results;
         } catch (e) {
             console.error('There was an issue finding items with the AQL query ', queryObj)
@@ -221,7 +221,7 @@ class JollofDataArangoDB {
         }
         if (criteria.length > 0)
             convertConditionsFromJollof(criteria, queryObj);
-        queryObj.query += ` RETURN length \n`;
+        queryObj.query += ` RETURN length `;
 
         try {
             const cursor = await this.db.query(queryObj);
