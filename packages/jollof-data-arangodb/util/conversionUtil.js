@@ -91,10 +91,10 @@ function translate(cond, queryObj) {
             value = '%' + value + '%';
 
         }
-        const keys = Object.keys(queryObj.bindVars);
+        const paramIndex = Math.floor(Object.keys(queryObj.bindVars).length / 2);
 
-        const paramName = 'p' + keys.length;
-        const valueName = 'v' + keys.length;
+        const paramName = 'p' + paramIndex;
+        const valueName = 'v' + paramIndex;
 
         const aqlComp = convertComp(comp);
 
@@ -118,16 +118,14 @@ function translate(cond, queryObj) {
 function translateAndList(conds, queryObj, op) {
     assert(Array.isArray(conds), 'Expected an array to AND. Instead got ' + typeof conds);
 
-    queryObj.query += ' ( '
+    let ff = ' ( '
     const andList = [];
     conds.forEach((cond) => {
         andList.push(translate(cond, queryObj))
     });
-    const ff = andList.join(op || ' AND ')
-    queryObj.query += ff
-    queryObj.query += ' ) '
-    console.log('and', queryObj)
-    return queryObj.query;
+    ff += andList.join(op || ' AND ') + ' ) '
+    //console.log('and', ff)
+    return ff;
 }
 
 /**
@@ -139,16 +137,14 @@ function translateAndList(conds, queryObj, op) {
 function translateOrList(conds, queryObj, op) {
     assert(Array.isArray(conds), 'Expected an array to OR. Instead got ' + typeof conds);
 
-    queryObj.query += ' ( '
+    let ff = ' ( '
     const orList = [];
     conds.forEach((cond) => {
         orList.push(translate(cond, queryObj))
     });
-    const ff = orList.join(op || ' OR ')
-    queryObj.query += ff
-    queryObj.query += ' ) '
-    console.log('or', queryObj)
-    return queryObj.query;
+    ff += orList.join(op || ' OR ') + ' ) '
+    //console.log('or', ff)
+    return ff;
 }
 
 
@@ -160,8 +156,10 @@ function translateOrList(conds, queryObj, op) {
  */
 exports.convertConditionsFromJollof = (jollofArray, queryObj) => {
     try {
-        translateAndList(jollofArray, queryObj, ' && ');
+        const q = translateAndList(jollofArray, queryObj, ' && ');
 
+        queryObj.query += q;
+        console.log({ q })
         //console.log('The query:', util.inspect(resp))
 
     } catch (e) {
