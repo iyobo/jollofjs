@@ -159,7 +159,7 @@ exports.convertConditionsFromJollof = (jollofArray, queryObj) => {
         const q = translateAndList(jollofArray, queryObj, ' && ');
 
         queryObj.query += q;
-        console.log({ q })
+        //console.log({ q })
         //console.log('The query:', util.inspect(resp))
 
     } catch (e) {

@@ -139,11 +139,11 @@ class JollofDataArangoDB {
         try {
             const cursor = await this.db.query(query);
             const result = await cursor.next();
-            console.log({ result })
+            //console.log({ result })
             return convertToJollof(result);
         } catch (e) {
             console.error('There was an issue creating wth the AQL query ', query)
-            throw e;
+            throw new Error(e);
         }
 
     }
@@ -200,7 +200,7 @@ class JollofDataArangoDB {
             return results;
         } catch (e) {
             console.error('There was an issue finding items with the AQL query ', queryObj)
-            throw e;
+            throw new Error(e);
         }
 
     }
@@ -215,14 +215,13 @@ class JollofDataArangoDB {
     async count(collectionName, criteria, opts) {
 
         const queryObj = {
-            query: `For c IN @@collectionName
-            COLLECT WITH COUNT INTO length 
+            query: `For c IN @@collectionName 
             ${criteria.length > 0 ? 'FILTER' : ''} `,
             bindVars: { '@collectionName': collectionName }
         }
         if (criteria.length > 0)
             convertConditionsFromJollof(criteria, queryObj);
-        queryObj.query += ` RETURN length `;
+        queryObj.query += ` COLLECT WITH COUNT INTO length   RETURN length `;
 
         try {
             const cursor = await this.db.query(queryObj);
@@ -230,7 +229,7 @@ class JollofDataArangoDB {
             return count;
         } catch (e) {
             console.error('There was an issue counting with the AQL query ', queryObj)
-            throw e;
+            throw new Error(e);
         }
     }
 
@@ -261,7 +260,7 @@ class JollofDataArangoDB {
             return convertToJollof(result);
         } catch (e) {
             console.error('There was an issue updatng with the AQL query ', queryObj)
-            throw e;
+            throw new Error(e);
         }
     }
 
@@ -291,7 +290,7 @@ class JollofDataArangoDB {
             return convertToJollof(result);
         } catch (e) {
             console.error('There was an issue removing the AQL query ', queryObj)
-            throw e;
+            throw new Error(e);
         }
 
     }
