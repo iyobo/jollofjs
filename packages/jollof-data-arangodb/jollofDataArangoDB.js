@@ -3,6 +3,7 @@
  */
 const _ = require('lodash');
 const boom = require('boom')
+const util = require('util')
 
 const arangojs = require('arangojs');
 const Database = arangojs.Database;
@@ -19,34 +20,39 @@ const connPool = {};
  * @returns {Promise<*>}
  */
 async function getConnection(url, opts = {}) {
+    try {
+        const dbName = opts.databaseName;
+        if (!dbName || dbName === '')
+            throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', { url, opts })
 
-    const dbName = opts.databaseName;
-    if (!dbName || dbName === '')
-        throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', { url, opts })
+        const key = url + dbName;
 
-    const key = url + dbName;
+        //Get connection
+        let connection;
+        if (connPool[key]) {
+            connection = connPool[key];
+        } else {
+            connection = new Database(opts)
+            connection.useBasicAuth(opts.username, opts.password)
+            connPool[key] = connection;
+        }
 
-    //Get connection
-    let connection;
-    if (connPool[key]) {
-        connection = connPool[key];
-    } else {
-        connection = new Database(url)
-        connPool[key] = connection;
+        //Now ensure database exists
+        const dbNames = await connection.listDatabases();
+        if (dbNames.indexOf(dbName) > -1) {
+            //our db exists. use it.
+            connection.useDatabase(dbName)
+        } else {
+            //our db does not exist. Attempting to create it
+            await connection.createDatabase(dbName)
+            connection.useDatabase(dbName)
+        }
+
+        return connection;
+    } catch (e) {
+        console.error(`There was an issue creating/ensuring connection to DB: ${url} with opts: ${util.inspect(opts)}`)
+        throw new Error(e);
     }
-
-    //Now ensure database exists
-    const dbNames = await connection.listDatabases();
-    if (dbNames.indexOf(dbName) > -1) {
-        //our db exists. use it.
-        connection.useDatabase(dbName)
-    } else {
-        //our db does not exist. Attempting to create it
-        await connection.createDatabase(dbName, [{ username: opts.username, passw: opts.password }])
-        connection.useDatabase(dbName)
-    }
-
-    return connection;
 }
 
 /**
