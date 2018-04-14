@@ -23,7 +23,7 @@
     },
     "homepage": "https://github.com/iyobo/jollof-data-arangodb#readme",
     "dependencies": {
-        "arangojs": "git+https://github.com/iyobo/arangojs.git",
+        "arangojs": "^6.2.3",
         "bluebird": "^3.5.1",
         "boom": "^4.3.1",
         "co": "^4.6.0",
