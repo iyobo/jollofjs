@@ -28,9 +28,13 @@ class Env {
 
                 _.merge(this.settings, appBase)
 
-                //load environment
-                var envSettings = require(path.join(appPaths.config, this.currentEnv));
-                _.merge(this.settings, envSettings);
+                //load environment config file and merge if exists
+                try {
+                    var envSettings = require(path.join(appPaths.config, this.currentEnv));
+                    _.merge(this.settings, envSettings);
+                } catch (e) {
+                    console.warn(`config/${this.currentEnv}.js not found. Using base alone`)
+                }
             }
 
             console.log('[Environment]', this.currentEnv, 'settings loaded.');
