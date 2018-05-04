@@ -1,8 +1,6 @@
 /**
  * Created by iyobo on 2016-10-17.
  */
-const hijackConsole = require('./lib/util/appUtil').hijackConsole;
-hijackConsole()
 const requireDir = require('require-dir');
 const appPaths = require('./appPaths');
 const co = require('co');
