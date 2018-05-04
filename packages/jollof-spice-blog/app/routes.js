@@ -1,4 +1,4 @@
-const main = require('../controllers/mainController');
+const main = require('./controllers/mainController');
 
 
 module.exports = {

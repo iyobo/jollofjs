@@ -18,7 +18,7 @@ module.exports = async function (jollof) {
         views: {
             path: path.join('node_modules', 'jollof-spice-blog', 'app', 'views')
         },
-        routes: require('./app/routes/default')
+        routes: require('./app/routes')
 
     });
 
