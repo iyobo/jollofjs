@@ -1,0 +1,12 @@
+{% extends 'layouts/base.nunj' %}
+
+{% block content %}
+    <div class="uk-section uk-section-muted">
+
+        <div class="uk-container">
+            <h2>What I'm up to these days...</h2>
+            {% include "snippets/articleList.nunj" %}
+        </div>
+    </div>
+
+{% endblock %}

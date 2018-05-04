@@ -8,7 +8,11 @@
   },
   "dependencies": {
     "boom": "^4.3.1",
-    "jollof": "^1.6.22",
-    "require-dir": "^0.3.2"
+      "gravatar-url": "^2.0.0",
+      "require-dir": "^0.3.2",
+      "slug": "^0.9.1"
+  },
+    "peerDependencies": {
+        "jollof": "*"
   }
 }

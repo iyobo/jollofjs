@@ -1,24 +1,24 @@
-const main = require('./controllers/mainController');
+const blog = require('./controllers/blogController');
 
 
 module.exports = {
-    '/': { flow: main.index},
-    '/about': { flow: main.about},
-    '/contact': { flow: main.contact},
-    '/article/:id': { flow: main.article},
-    '/category/:name': { flow: main.category},
+    //'/': { flow: main.index},
+    //'/about': { flow: main.about},
+    //'/contact': { flow: main.contact},
+    //'/article/:id': { flow: main.article},
+    //'/category/:name': { flow: main.category},
 
+    //blog
+    'get /': { flow: blog.categoryAll },
+    'get /software': { flow: blog.categorySoftware },
+    'get /art': { flow: blog.categoryArt },
+    'get /life': { flow: blog.categoryLife },
 
-    //'post /login': { flow: auth.doLogin},
-    //'post /signup': { flow: auth.doSignup},
-    //'get /logout': { flow: auth.logout},
+    //'post /article/:id': { flow: blog.createComment },,
+    'get /article/:id': { flow: blog.articleById },
 
-    //'get /api/v1/resource': { flow: [auth.loggedIn, admin.models] },
-    //'get /api/v1/resource/:modelName': { flow: [auth.loggedIn, admin.list] },
-    //'get /api/v1/resource/:modelName/:id': { flow: [auth.loggedIn, admin.get] },
-    //'post /api/v1/resource/:modelName': { flow: [auth.loggedIn, admin.create] },
-    //'put /api/v1/resource/:modelName/:id': { flow: [auth.loggedIn, admin.update] },
-    //'patch /api/v1/resource/:modelName/:id': { flow: [auth.loggedIn, admin.update] },
-    //'delete /api/v1/resource/:modelName/:id': { flow: [auth.loggedIn, admin.delete] },
+    'get /:slug': { flow: blog.articleBySlug },
+
+    'post /:slug': { flow: blog.createComment }, //protect this with captcha. We want to mae it easy for folks to enter comments but still be quality
 
 }

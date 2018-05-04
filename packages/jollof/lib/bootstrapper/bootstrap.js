@@ -186,14 +186,15 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         })));
 
         //Spice statics
-        jollof.spices.forEach((it) => {
+        for (let it of jollof.spices) {
             if (it.statics) {
                 serverApp.use(convert(serve({
                     rootDir: it.statics.rootDir,
                     rootPath: it.statics.rootPath
                 })));
             }
-        })
+        }
+
 
         //public file upload statics
         serverApp.use(convert(serve({
@@ -221,11 +222,11 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         let nunjConfig = jollof.config.nunjucks;
 
         //add spice nunjucks view paths
-        jollof.spices.forEach((it) => {
+        for (let it of jollof.spices) {
             if (it.views) {
                 nunjConfig.path.push(it.views.path)
             }
-        })
+        }
 
         jollof.config.nunjucks.configureEnvironment = (env) => {
             jollof.view.setupFilters(env)
@@ -254,11 +255,11 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         }
 
         //spice routes
-        jollof.spices.forEach((it) => {
+        for (let it of jollof.spices) {
             if (it.routes) {
                 router.nestRoutes(jollof.config.spices.blog.mountPath, it.privateBlogAuth, it.routes)
             }
-        })
+        }
 
         //Give Framework user a chance to set things up or mount stuff
         if (overWriteFn)
