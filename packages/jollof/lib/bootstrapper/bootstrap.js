@@ -46,7 +46,7 @@ function* loadModels() {
         const modelClass = data.models[m];
         try {
             yield modelClass.setup();
-            // log.debug('Setup ' + modelClass.collectionName)
+            log.debug('Setup ' + modelClass.collectionName)
         } catch (err) {
             // log.error(err);
             log.error('Error in LoadModels', err.stack)

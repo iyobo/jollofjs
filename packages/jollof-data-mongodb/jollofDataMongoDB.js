@@ -118,6 +118,7 @@ class JollofDataMongoDB {
      */
     async find(collectionName, criteria, opts = {}) {
         //await this.ensureConnection();
+
         //If we're paging
         let res;
 

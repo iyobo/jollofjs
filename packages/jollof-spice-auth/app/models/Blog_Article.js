@@ -8,7 +8,6 @@ const types = data.types;
 //Media files
 const schema = {
     name: 'Blog_Article',
-    dataSource: 'default',
     structure: {
         title: String,
         stub: String,
@@ -32,9 +31,9 @@ const schema = {
      */
     native: {
         mongodb: {
-            async init(){
+            async init() {
 
-                await this.db.collection('Blog_Article').createIndex({ title: 1, domain: 1 }, { unique: true });
+                await this.db.collection('Article').createIndex({ title: 1, domain: 1 }, { unique: true });
             }
         }
 

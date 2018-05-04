@@ -1,0 +1,14 @@
+{
+    "name": "jollof-spice-auth",
+    "version": "0.6.21",
+    "description": "A JollofJS Plugin to add authentication functionality to a jollof app",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "boom": "^4.3.1",
+        "jollof": "^1.6.21",
+        "require-dir": "^0.3.2"
+    }
+}

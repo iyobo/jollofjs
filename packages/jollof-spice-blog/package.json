@@ -1,7 +1,7 @@
 {
   "name": "jollof-spice-blog",
   "version": "0.6.21",
-  "description": "A JollofJS Plugin to add multi-domain blogging functionality to a jollof app",
+    "description": "A JollofJS Plugin to add blogging functionality to a jollof app",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

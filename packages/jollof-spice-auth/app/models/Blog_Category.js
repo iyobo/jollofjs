@@ -1,27 +1,19 @@
 /**
  * Created by iyobo on 2017-01-10.
  */
+/**
+ * Created by iyobo on 2016-09-18.
+ */
 const jollof = require('jollof');
 const data = jollof.data;
 const types = data.types;
 
 //Media files
 const schema = {
-    name: 'Blog_Article',
-    dataSource: 'default',
+    name: 'Blog_Category',
     structure: {
-        title: String,
-        stub: String,
-        subTitle: String,
-        author: { type: String, meta: { widget: 'ref', ref: 'User' } },
-        isPublished: Boolean,
-        datePublished: Date,
-        body: { type: String, meta: { widget: 'richtext' } },
-        tags: [String],
-        category: { type: String, meta: { widget: 'ref', ref: 'Category' } },
-        domain: String,
-        isFeatured: Boolean,
-        featureImage: types.File()
+        name: String,
+        domain: String
     },
 
     /**
@@ -32,15 +24,15 @@ const schema = {
      */
     native: {
         mongodb: {
-            async init(){
+            async init() {
 
-                await this.db.collection('Blog_Article').createIndex({ title: 1, domain: 1 }, { unique: true });
+                await this.db.collection('Category').createIndex({ name: 1 });
             }
         }
 
     }
 
-}
+};
 
 
 module.exports = data.registerModel(schema);
