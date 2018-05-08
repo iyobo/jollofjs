@@ -256,7 +256,8 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         //spice routes
         jollof.spices.forEach((it) => {
             if (it.routes) {
-                router.nestRoutes(jollof.config.spices.blog.mountPath, it.privateBlogAuth, it.routes)
+                const spiceConfig = jollof.config.spices[it.name];
+                router.nestRoutes(spiceConfig.mountPath, spiceConfig.auth, it.routes)
             }
         })
 
