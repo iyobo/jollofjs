@@ -1,6 +1,6 @@
 {
   "name": "isvalid-jollof",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Async JSON validation library for node.js. Customized for JollofJS",
   "main": "./index.js",
   "keywords": [
