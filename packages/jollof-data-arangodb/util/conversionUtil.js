@@ -122,7 +122,6 @@ function translate(cond, queryObj) {
             queryObj.bindVars[paramName] = fieldName;
         }
 
-
         queryObj.bindVars[valueName] = value;
 
     }
