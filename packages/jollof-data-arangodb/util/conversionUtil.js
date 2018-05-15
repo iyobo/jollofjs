@@ -5,6 +5,7 @@ const idField = '_key';
 const assert = require('assert');
 const aql = require('arangojs').aql;
 const util = require('util')
+const moment = require('moment')
 
 function convertComp(comp) {
 
@@ -76,21 +77,30 @@ function translate(cond, queryObj) {
         //...then it's a singular condition
         assert(cond.length === 3, 'Invalid condition item. Condition items must be an array of 3 items representing field, comparator, and value')
 
+        //field
         let fieldName = cond[0];
         if (fieldName === 'id') {
             fieldName = '_key';
         }
-        fieldName = fieldName.replace('.*', '[*]');
 
+        let isNestedQuery = false;
+        if (fieldName.indexOf('*') > -1) {
+            fieldName = fieldName.replace('.*', '[*]');
+            isNestedQuery = true;
+        }
+
+        //comp/value
         let comp = cond[1];
         let value = cond[2];
 
+        if (value)
+
         // construct mini block
-        if (comp === 'like' || comp === 'nlike') {
+            if (comp === 'like' || comp === 'nlike') {
 
-            value = '%' + value + '%';
+                value = '%' + value + '%';
 
-        }
+            }
         const paramIndex = Math.floor(Object.keys(queryObj.bindVars).length / 2);
 
         const paramName = 'p' + paramIndex;
@@ -98,9 +108,23 @@ function translate(cond, queryObj) {
 
         const aqlComp = convertComp(comp);
 
-        result = ` c.@${paramName} ${aqlComp} @${valueName} `;
+        //appendants
+        if (value) {
 
-        queryObj.bindVars[paramName] = fieldName;
+            //NOTE: unfortunatlely, dynamic queries cannot handle nested fields as at Arango 3.1
+
+            if (isNestedQuery) {
+                // FIXME: secure the fieldName variable before using point blank!!! VERY prone to AQL/SQL injection right now.
+                const safeFieldName = fieldName
+                result = ` c.${safeFieldName} ANY ${aqlComp} @${valueName} `;
+            } else {
+
+                result = ` c.@${paramName} ${aqlComp} @${valueName} `;
+                queryObj.bindVars[paramName] = fieldName;
+            }
+
+        }
+
         queryObj.bindVars[valueName] = value;
 
     }
