@@ -57,7 +57,7 @@ function convertComp(comp) {
  */
 function translate(cond, queryObj) {
 
-    let result = {};
+    let result = '1 == 1';
 
     // If condition is not an array...
     if (!Array.isArray(cond)) {
@@ -93,14 +93,16 @@ function translate(cond, queryObj) {
         let comp = cond[1];
         let value = cond[2];
 
-        if (value)
+        if (value) {
 
-        // construct mini block
+            // construct mini block
             if (comp === 'like' || comp === 'nlike') {
 
                 value = '%' + value + '%';
 
             }
+        }
+
         const paramIndex = Math.floor(Object.keys(queryObj.bindVars).length / 2);
 
         const paramName = 'p' + paramIndex;
@@ -109,21 +111,17 @@ function translate(cond, queryObj) {
         const aqlComp = convertComp(comp);
 
         //appendants
-        if (value) {
 
-            //NOTE: unfortunatlely, dynamic queries cannot handle nested fields as at Arango 3.1
-
-            if (isNestedQuery) {
-                // FIXME: secure the fieldName variable before using point blank!!! VERY prone to AQL/SQL injection right now.
-                const safeFieldName = fieldName
-                result = ` c.${safeFieldName} ANY ${aqlComp} @${valueName} `;
-            } else {
-
-                result = ` c.@${paramName} ${aqlComp} @${valueName} `;
-                queryObj.bindVars[paramName] = fieldName;
-            }
-
+        //NOTE: unfortunatlely, dynamic queries cannot handle nested fields as at Arango 3.1
+        if (isNestedQuery) {
+            // FIXME: secure the fieldName variable before using point blank!!! VERY prone to AQL/SQL injection right now.
+            const safeFieldName = fieldName
+            result = ` c.${safeFieldName} ANY ${aqlComp} @${valueName} `;
+        } else {
+            result = ` c.@${paramName} ${aqlComp} @${valueName} `;
+            queryObj.bindVars[paramName] = fieldName;
         }
+
 
         queryObj.bindVars[valueName] = value;
 
