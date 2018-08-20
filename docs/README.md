@@ -33,18 +33,19 @@ JollofJS has a custom-built data abstraction layer that makes it possible to use
 - MongoDB
 - ArangoDB
 
-It is very easy to make yours!
+More to come, and It is very easy to make yours!
 
 ## Getting Started
 
 ```
 npm i -g jollof-cli
 ```
-You also need to have **mongoDB** and **Redis** up and running.
+You also need to have **ArangoDB** and **Redis** up and running.
 
 JollofJS uses Redis for session storage.
-It also comes with the mongodb adapter for data persistence by default.
-More adapters for other datasources will undoubtedly be created in the future.
+The scaffolded app will come with the ArangoDB data adapter by default.
+You can switch to any other compatible datasource anytime by simply making a change in config/ e.g to MongoDB.
+
 
 
 Create your JollofJS app with:
