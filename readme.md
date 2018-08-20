@@ -96,4 +96,4 @@ It supports all the usual field types you find in an other admins, *and then som
 
 Right now, the app you created has only one used model: `User`.
 
-See [Jollof Models](/data/models) for how to work with Models.
+See [Jollof Docs](http://jollofjs.com) for how to work with Models.
