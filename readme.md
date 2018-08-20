@@ -1,18 +1,17 @@
 # JollofJS
 
-The tastiest **NodeJS Application Framework** you ever ate.
+The tastiest **NodeJS Application Framework** you'll ever eat.
 
 ![jollof Logo](https://raw.github.com/iyobo/jollofjs/master/images/jollof.png)
 
 
 ## Key Features
 
-
 - **Convention over configuration**
 ...Because you have better things to do with your time. But JollofJS is still very configurable.
 
 - **Full support for ES7 Async/Await**
-Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables
+Free yourself from the oppressive/convoluted regime of callbacks and use awesome yieldables/awaitables 
 through ES6 Promises, and Async Await. Powered by KoaJS.
 
 
@@ -23,27 +22,30 @@ E.g You could whip up a blog for your Application and use Jollof Admin as a simp
 The options are endless!
 
 - **Data Abstraction Done Right**
-JollofJS has a custom-built data abstraction layer that makes it possible to use any database (or REST API) as a datasource by creating an adapter.
+JollofJS has a custom-built data abstraction layer that makes it possible to use any database (or REST API) as a datasource so long as an adapter exists for it.
 
 - **And More!...**
 
+*This doc is a Work-in-Progress*
 
 ## Officially Supported DataSources
 
 - MongoDB
 - ArangoDB
 
-It is very easy to make yours!
-
+More to come, and It is very easy to make yours!
 
 ## Getting Started
 
 ```
-npm i -g jollofjs
+npm i -g jollof-cli
 ```
-You also need to have `mongoDB` and `Redis` installed and running.
-Redis is used for sessions, and mongoDB is the default data adapter your skeleton app will come with.
-However you are notYou can change that adapter to that of another datasource later.
+You also need to have **ArangoDB** and **Redis** up and running.
+
+JollofJS uses Redis for session storage.
+The scaffolded app will come with the ArangoDB data adapter by default.
+You can switch to any other compatible datasource anytime by simply making a change in config/ e.g to MongoDB.
+
 
 
 Create your JollofJS app with:
@@ -62,8 +64,7 @@ Now you are ready to run your jollof app:
 npm start
 ```
 
-You should now be able to see jollof running at `localhost:3000`.\]
-
+You should now be able to see jollof running at [http://localhost:3001](http://localhost:3001).
 
 ![jollof home](https://raw.github.com/iyobo/jollofjs/master/images/home.png)
 
@@ -74,14 +75,14 @@ You are highly advised to study the structure of this new app, starting from ind
 
 ## Jollof Admin
 
-To enter the Jollof admin, login and go to [http://localhost:3001/admin](http://localhost:3001/admin).
-You have to login with that admin user you created previously with the createAdmin command.
+To enter the Jollof admin, you have to login with that admin user you created **before** launching the app.
 
 ![jollof admin](https://raw.github.com/iyobo/jollofjs/master/images/admin.png)
 
 Editing an item in the Admin...
 
 ![jollof edit](https://raw.github.com/iyobo/jollofjs/master/images/edit.png)
+
 
 
 The Jollof Admin is, quite frankly, the Saber's edge of any NodeJS framework in existence today. 
@@ -93,6 +94,6 @@ It supports all the usual field types you find in an other admins, *and then som
 * GeoLocations
 
 
-Right now, the app you just created has 3 direct models `User`.
+Right now, the app you created has only one used model: `User`.
 
-See the [Jollof docs](http://jollofjs.com) for how to work with Models.
+See [Jollof Models](/data/models) for how to work with Models.
