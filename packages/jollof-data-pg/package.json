@@ -1,6 +1,6 @@
 {
     "name": "jollof-data-pg",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "JollofJS pg adapter",
     "main": "jollofDataPg.js",
     "scripts": {
