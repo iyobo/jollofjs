@@ -122,6 +122,10 @@ module.exports.bootServer = function (overWriteFn, donNotAutoStart) {
         // serverApp.use(kBody());
         serverApp.use(convert(kBetterBody({
             'multipart': true,
+            jsonLimit: '20mb',
+            textLimit: '20mb',
+            formLimit: '20mb',
+            urlencodedLimit: '20mb',
             querystring: require('qs')
         })));
 
