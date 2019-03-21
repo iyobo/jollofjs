@@ -27,7 +27,7 @@ export default class ObjectFieldInput extends Component {
 
         const childData = observable.map(this.props.data||{});
 
-        if (!schema) return <div><i>This field block has no fields. Check Model</i></div>
+        if (!schema) return <div><i>This field block has no fields. Check Model. Raw Data: <pre>{JSON.stringify(this.props.data)}</pre></i></div>
 
         const fields = []
 
