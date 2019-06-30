@@ -30,7 +30,7 @@ Base configuration can easily be overwritten by environmental configs (i.e. deve
 ## Getting Started
 
 ```
-npm i -g jollofjs
+npm i -g jollof-cli
 ```
 You also need to have mongoDB and Redis up and running.
 
@@ -83,4 +83,4 @@ It supports all the usual field types you find in an other admins, *and then som
 
 Right now, the app you created has only one model `User`.
 
-See the [Jollof docs](http://docs.jollofjs.com) for how to work with Models.
+See the [Jollof docs](http://jollofjs.com) for how to work with Models.
