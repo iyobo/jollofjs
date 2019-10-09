@@ -3,7 +3,7 @@
 JollofJS uses nunjucks for server-side views.
 The nunjucks root for JollofJS is `app/views`.
 
-Please see Nunjucks documentation for how to create your own views and layouts.
+Please see [Nunjucks documentation](https://mozilla.github.io/nunjucks/api.html) for how to create your own views and layouts.
 
 Filters can be created by creating them in `app/views/filters/index.js` .
 
