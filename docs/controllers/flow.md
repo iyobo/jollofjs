@@ -8,4 +8,4 @@ Constraints basically just block or allow access down the chain of flow/middlewa
 Controller actions are the leaf-level or tail-level of the flow where the actual route is satisfied.
 
 
-See koa-controller-jollof for more details.
+See [koa-controller-jollof](https://www.npmjs.com/package/koa-controller-jollof) for more details.
