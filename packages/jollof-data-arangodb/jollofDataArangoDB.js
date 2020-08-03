@@ -2,8 +2,8 @@
  * Created by iyobo on 2016-10-30.
  */
 const _ = require('lodash');
-const boom = require('boom')
-const util = require('util')
+const boom = require('boom');
+const util = require('util');
 
 const arangojs = require('arangojs');
 const Database = arangojs.Database;
@@ -23,7 +23,7 @@ async function getConnection(url, opts = {}) {
     try {
         const dbName = opts.databaseName;
         if (!dbName || dbName === '')
-            throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', { url, opts })
+            throw boom.badImplementation('jollof-data-arangodb: databaseName config is required', {url, opts});
 
         const key = url + dbName;
 
@@ -32,26 +32,27 @@ async function getConnection(url, opts = {}) {
         if (connPool[key]) {
             connection = connPool[key];
         } else {
-            connection = new Database(opts)
-            connection.useBasicAuth(opts.username, opts.password)
+            connection = new Database(opts);
+            connection.useBasicAuth(opts.username, opts.password);
             connPool[key] = connection;
         }
 
         //Now ensure database exists
-        const dbNames = await connection.listDatabases();
-        if (dbNames.indexOf(dbName) > -1) {
-            //our db exists. use it.
-            connection.useDatabase(dbName)
-        } else {
-            //our db does not exist. Attempting to create it
-            await connection.createDatabase(dbName)
-            connection.useDatabase(dbName)
-        }
+        // const dbNames = await connection.listDatabases();
+        // if (dbNames.indexOf(dbName) > -1) {
+        //     //our db exists. use it.
+        //     connection.useDatabase(dbName);
+        // } else {
+        //     //our db does not exist. Attempting to create it
+        //     await connection.createDatabase(dbName);
+        //     connection.useDatabase(dbName);
+        // }
+        connection.useDatabase(dbName);
 
         return connection;
     } catch (e) {
-        console.error(`There was an issue creating/ensuring connection to DB: ${url} with opts: ${util.inspect(opts)}`)
-        throw new Error(e);
+        console.error(`There was an issue creating/ensuring connection to DB: ${url} with opts: ${util.inspect(opts)}`);
+        throw e;
     }
 }
 
@@ -95,8 +96,7 @@ class JollofDataArangoDB {
         //add collection
         try {
             await this.db.collection(schema.name).get();
-        }
-        catch (ex) {
+        } catch (ex) {
             await this.db.collection(schema.name).create();
         }
 
@@ -148,7 +148,7 @@ class JollofDataArangoDB {
             //console.log({ result })
             return convertToJollof(result);
         } catch (e) {
-            console.error('There was an issue creating wth the AQL query ', query)
+            console.error('There was an issue creating wth the AQL query ', query);
             throw new Error(e);
         }
 
@@ -166,8 +166,8 @@ class JollofDataArangoDB {
         const queryObj = {
             query: `For c IN @@collectionName 
              ${criteria.length > 0 ? 'FILTER' : ''} `,
-            bindVars: { '@collectionName': collectionName }
-        }
+            bindVars: {'@collectionName': collectionName}
+        };
         if (criteria.length > 0)
             convertConditionsFromJollof(criteria, queryObj);
 
@@ -180,17 +180,17 @@ class JollofDataArangoDB {
 
                 queryObj.query += `LIMIT ${offset ? '@offset,' : ''} @count `;
                 if (offset)
-                    queryObj.bindVars['offset'] = offset
-                queryObj.bindVars['count'] = count
+                    queryObj.bindVars['offset'] = offset;
+                queryObj.bindVars['count'] = count;
 
             }
 
             if (opts.sort) {
-                queryObj.query += ' SORT '
+                queryObj.query += ' SORT ';
                 _.each(opts.sort, (v, k) => {
                     queryObj.query += `c.@sortField ${v > 0 ? '' : 'DESC'} `;
-                    queryObj.bindVars['sortField'] = k !== 'id' ? k : this.idField
-                })
+                    queryObj.bindVars['sortField'] = k !== 'id' ? k : this.idField;
+                });
             }
         }
         queryObj.query += ` RETURN c `;
@@ -205,7 +205,7 @@ class JollofDataArangoDB {
             //console.log({ results })
             return results;
         } catch (e) {
-            console.error('There was an issue finding items with the AQL query ', queryObj)
+            console.error('There was an issue finding items with the AQL query ', queryObj);
             throw new Error(e);
         }
 
@@ -223,8 +223,8 @@ class JollofDataArangoDB {
         const queryObj = {
             query: `For c IN @@collectionName 
             ${criteria.length > 0 ? 'FILTER' : ''} `,
-            bindVars: { '@collectionName': collectionName }
-        }
+            bindVars: {'@collectionName': collectionName}
+        };
         if (criteria.length > 0)
             convertConditionsFromJollof(criteria, queryObj);
         queryObj.query += ` COLLECT WITH COUNT INTO length   RETURN length `;
@@ -234,7 +234,7 @@ class JollofDataArangoDB {
             const count = await cursor.next();
             return count;
         } catch (e) {
-            console.error('There was an issue counting with the AQL query ', queryObj)
+            console.error('There was an issue counting with the AQL query ', queryObj);
             throw new Error(e);
         }
     }
@@ -253,8 +253,8 @@ class JollofDataArangoDB {
         const queryObj = {
             query: `For c IN @@collectionName
             ${criteria.length > 0 ? 'FILTER' : ''} `,
-            bindVars: { '@collectionName': collectionName }
-        }
+            bindVars: {'@collectionName': collectionName}
+        };
         if (criteria.length > 0)
             convertConditionsFromJollof(criteria, queryObj);
         queryObj.query += ` UPDATE c WITH @newValues IN @@collectionName`;
@@ -265,7 +265,7 @@ class JollofDataArangoDB {
             const result = await cursor.next();
             return convertToJollof(result);
         } catch (e) {
-            console.error('There was an issue updatng with the AQL query ', queryObj)
+            console.error('There was an issue updatng with the AQL query ', queryObj);
             throw new Error(e);
         }
     }
@@ -285,8 +285,8 @@ class JollofDataArangoDB {
         const queryObj = {
             query: `For c IN @@collectionName
             FILTER `,
-            bindVars: { '@collectionName': collectionName }
-        }
+            bindVars: {'@collectionName': collectionName}
+        };
         convertConditionsFromJollof(criteria, queryObj);
         queryObj.query += ` REMOVE c IN @@collectionName`;
 
@@ -295,7 +295,7 @@ class JollofDataArangoDB {
             const result = await cursor.next();
             return convertToJollof(result);
         } catch (e) {
-            console.error('There was an issue removing the AQL query ', queryObj)
+            console.error('There was an issue removing the AQL query ', queryObj);
             throw new Error(e);
         }
 
