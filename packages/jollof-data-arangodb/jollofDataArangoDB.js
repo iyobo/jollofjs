@@ -38,7 +38,7 @@ async function getConnection(url, opts = {}) {
         }
 
         //Now ensure database exists
-        const dbNames = await connection.listDatabases();
+        // const dbNames = await connection.listDatabases();
         // if (dbNames.indexOf(dbName) > -1) {
         //     //our db exists. use it.
         //     connection.useDatabase(dbName);
