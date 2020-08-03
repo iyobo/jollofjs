@@ -38,7 +38,7 @@ async function getConnection(url, opts = {}) {
         }
 
         //Now ensure database exists
-        // const dbNames = await connection.listDatabases();
+        const dbNames = await connection.listDatabases();
         // if (dbNames.indexOf(dbName) > -1) {
         //     //our db exists. use it.
         //     connection.useDatabase(dbName);
@@ -47,12 +47,13 @@ async function getConnection(url, opts = {}) {
         //     await connection.createDatabase(dbName);
         //     connection.useDatabase(dbName);
         // }
+        // await connection.createDatabase(dbName);
         connection.useDatabase(dbName);
 
         return connection;
     } catch (e) {
         console.error(`There was an issue creating/ensuring connection to DB: ${url} with opts: ${util.inspect(opts)}`);
-        throw e;
+        throw new Error(e);
     }
 }
 
