@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "async": "~0.2.9",
+    "async": "~3.2.2",
     "fs-extra": "~0.6.3",
     "uglify-js": "~2.3.6",
     "browserify": "~2.25.0"
